@@ -1,7 +1,6 @@
 var fs     = require("fs")
 
 var DEBUG  = process.env.DEBUG
-
 var path   = DEBUG ? "/client/tmp/hbs/" : "/client/hbs/"
 
 var routes = {
