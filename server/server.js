@@ -12,6 +12,7 @@ module.exports = function(__dirname) {
 	var cookie     = require("cookie-parser")
 	var body       = require("body-parser")
 	var session    = require("express-session")
+	var MongoStore = require("connect-mongo")(session)
 
 	var Google     = require('passport-google-oauth').OAuth2Strategy
 	var passport   = require("passport")
@@ -22,7 +23,12 @@ module.exports = function(__dirname) {
 
 	app.use(cookie());
 	app.use(body.json());
-	app.use(session({ secret: 'temporarysecret', resave: true, saveUninitialized: true }));
+	app.use(session({ secret: 'temporarysecret', store: new MongoStore({
+		url: "mongodb://localhost/bydesign"		
+	}),
+		resave: true,
+		saveUninitialized: true,
+	}));
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.use(renderer(__dirname, handlebars))
@@ -38,11 +44,16 @@ module.exports = function(__dirname) {
 	**/
 
 	app.get("/css/:FILE", function (req, res) {
+		console.log("css")
 		res.sendFile(req.params.FILE, {root: path+"css"})
 	})
 
 	app.get("/scripts/:FILE", function (req, res) {
 		res.sendFile(req.params.FILE, {root: path+"scripts"})
+	})
+
+	app.get("/images/:FILE", function (req, res) {
+		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
 
 	/**

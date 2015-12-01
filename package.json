@@ -18,6 +18,7 @@
   "homepage": "https://github.com/elmzteam/bydesign",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "connect-mongo": "^0.8.2",
     "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
     "express-session": "^1.12.1",
@@ -26,6 +27,6 @@
     "gulp-sass": "^2.1.0",
     "handlebars": "^4.0.5",
     "passport": "^0.3.2",
-    "passport-google-oauth": "^0.2.0"  
+    "passport-google-oauth": "^0.2.0"
   }
 }

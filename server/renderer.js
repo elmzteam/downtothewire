@@ -1,10 +1,12 @@
-var fs         = require("fs")
+var fs     = require("fs")
 
-var path = "/client/hbs/"
+var DEBUG  = process.env.DEBUG
+
+var path   = DEBUG ? "/client/tmp/hbs/" : "/client/hbs/"
 
 var routes = {
-	"^/$": {page: "index.html", index: 0},
-	"^/page/([0-9]+)$": {page: "index.html", groups: ["index"]}
+	"^/$": {page: "index.html", index: 0, cache: true},
+	"^/page/([0-9]+)$": {page: "index.html", groups: ["index"], cache: true}
 }
 
 module.exports = function(__dirname, handlebars) {
@@ -36,6 +38,7 @@ renderer.prototype = {
 			that.compiled = {}
 			for (var i = 0; i < templates.length; i++) {
 				that.templates[templates[i].name] = templates[i].data
+				that.handlebars.registerPartial(templates[i].name, templates[i].data)
 			}
 			for (var i = 0; i < templates.length; i++) {
 				that.compiled[templates[i].name] = that.handlebars.compile(templates[i].data)
@@ -72,9 +75,11 @@ renderer.prototype = {
 						context[context.groups[ind-1]] = m[ind]
 					}
 				}
-				console.log(context)
-				this.rendered[req.originalUrl] = this.renderPath(context)
-				res.send(this.rendered[req.originalUrl])
+				var out = this.renderPath(context)
+				if (context.cache && !DEBUG) {
+					this.rendered[req.originalUrl] = out; 
+				}
+				res.send(out)
 				return
 			}
 		}
