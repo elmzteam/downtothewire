@@ -1,8 +1,5 @@
-$color-background: #f8f8f8;
-$color-text-main: #383838;
-$color-black: #000000;
-$color-accent: #f7af1e;
-$color-white: #FFFFFF;
+@import "vars";
+@import "media";
 
 *,
 *:before,
@@ -27,9 +24,9 @@ body {
 header {
 	display: flex;
 	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	margin: 1em 0px;
+	align-items: flex-end;
+	justify-content: center;;
+	margin: 1em 0px 1.4em;
 
 	#js {
 		width: 100px;
@@ -38,17 +35,22 @@ header {
 
 	#by-design {
 		font-family: "Permanent Marker", cursive;
-		font-size: 48px;
+		font-size: 54px;
 		margin-left: .4em;
 		color: $color-black;
+		position: relative;
+		top: 6px;
 	}
 }
 
 content-row {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
+	justify-content: center;
 	
 	main {
+		max-width: 80ch;
 		margin: 0px 1em;
 		flex-basis: 0px;
 		flex-grow: 1;
@@ -63,10 +65,9 @@ content-row {
 			}
 
 			h1 {
-				font-weight: 200;
-				font-family: "Permanent Marker";
+				font-weight: 300;
 				background: $color-accent;
-				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em .6em;
+				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em 0px;
 				font-size: 1.6em;
 				padding: .2em .4em .2em .8em;
 				position: relative;
@@ -78,9 +79,19 @@ content-row {
 					right: 54px;
 					top: 100%;
 					border-color: $color-accent $color-accent transparent transparent;
-					border-width: 12px;
+					border-width: 20px;
 					border-style: solid;
 				}
+			}
+			
+			time {
+				display: block;
+				margin: 0px -1 / .8 * 1em 1em;
+				padding: .1em 1em;
+				font-size: .8em;
+				background: $color-accent-dark;
+				font-weight: 400;
+				color: $color-white;
 			}
 
 			.preview-image {
@@ -168,11 +179,10 @@ content-row {
 			}
 
 			h1 {
-				font-weight: 200;
-				font-family: "Permanent Marker";
+				font-weight: 300;
 				background: $color-accent;
-				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em .6em;
-				font-size: 1.6em;
+				margin: -1 / 1.4 * 1em -1 / 1.4 * 1em .4em;
+				font-size: 1.4em;
 				padding: .2em .4em .2em .8em;
 				position: relative;
 				text-indent: -.4em;
