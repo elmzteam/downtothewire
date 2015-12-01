@@ -31,15 +31,11 @@ module.exports = function(__dirname) {
 	  * Constants and other globals
 	**/
 
-	var path = __dirname+"/client/tmp/"
+	var path = __dirname+"/client/"
 
 	/**
 	  * App routing
 	**/
-
-	app.get("/", function (req, res) {
-		res.sendFile("index.html", {root: path+"hbs"})
-	})
 
 	app.get("/css/:FILE", function (req, res) {
 		res.sendFile(req.params.FILE, {root: path+"css"})

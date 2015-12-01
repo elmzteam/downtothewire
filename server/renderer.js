@@ -1,6 +1,6 @@
 var fs         = require("fs")
 
-var path = "/client/tmp/hbs/"
+var path = "/client/hbs/"
 
 var routes = {
 	"^/$": {page: "index.html", index: 0},
