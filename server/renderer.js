@@ -5,7 +5,8 @@ var path   = DEBUG ? "/client/tmp/hbs/" : "/client/hbs/"
 
 var routes = {
 	"^/$": {page: "index.html", index: 0, cache: true},
-	"^/page/([0-9]+)$": {page: "index.html", groups: ["index"], cache: true}
+	"^/page/([0-9]+)$": {page: "index.html", groups: ["index"], cache: true},
+	"^/userinfo$": {page: "user.html", cache: false},
 }
 
 module.exports = function(__dirname, handlebars) {
@@ -69,6 +70,10 @@ renderer.prototype = {
 			var m = req.originalUrl.match(i)
 			if (m) {
 				var context = routes[i];
+				if (req.user) {
+					context.user = req.user
+				}
+
 				for (var ind = 1; ind < m.length; ind++) {
 					if (context.groups && (ind-1) < context.groups.length) {
 						context[context.groups[ind-1]] = m[ind]

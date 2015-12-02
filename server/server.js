@@ -1,8 +1,8 @@
-module.exports = function(__dirname) {
+module.exports = function(__dirname, settings) {
 	/**
 	  * Imports and Initializations 
 	**/
-
+	
 	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
 
@@ -75,16 +75,18 @@ module.exports = function(__dirname) {
 				callbackURL: "http://127.0.0.1:3000/google/auth"
 			},
 			function(accessToken, refreshToken, profile, done) {
-				done(null, profile.id)
-				return
-				User.findOrCreate({ googleId: profile.id }, function (err, user) {
-					return done(err, user)
-				});
+				for (var i = 0; i < profile.emails.length; i++) {
+					if (settings.admins.indexOf(profile.emails[i].value) >= 0) {
+						done(null, profile)
+						return;
+					}
+				}
+				done("Non Admin")
 			}
 		));
 
 		app.get('/google/login',
-			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/plus.login' }));
+			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/userinfo.email' }));
 
 		app.get('/google/auth',
 			passport.authenticate('google', { failureRedirect: '/google/login' }),

@@ -1,3 +1,4 @@
-var app = require("./server/server")
+var app  = require("./server/server")
+var conf = require("./config") 
 
-app(__dirname)
+app(__dirname, conf)
