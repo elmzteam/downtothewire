@@ -43,9 +43,9 @@ module.exports = function(__dirname) {
 	  * App routing
 	**/
 
-	app.get("/css/:FILE", function (req, res) {
+	app.get("/build/css/:FILE", function (req, res) {
 		console.log("css")
-		res.sendFile(req.params.FILE, {root: path+"css"})
+		res.sendFile(req.params.FILE, {root: path+"build/css"})
 	})
 
 	app.get("/scripts/:FILE", function (req, res) {
