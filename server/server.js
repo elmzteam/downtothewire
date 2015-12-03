@@ -1,10 +1,11 @@
-module.exports = function(__dirname) {
+module.exports = function(__dirname, settings) {
 	/**
 	  * Imports and Initializations 
 	**/
-
+	
 	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
+	var mongojs    = require("mongojs")
 
 	var express    = require("express")
 	var app        = express()
@@ -16,6 +17,8 @@ module.exports = function(__dirname) {
 
 	var Google     = require('passport-google-oauth').OAuth2Strategy
 	var passport   = require("passport")
+
+	//var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
 	/**
 	  * Middleware Initialization
@@ -57,6 +60,22 @@ module.exports = function(__dirname) {
 	})
 
 	/**
+	  * MongoDB access functions
+	**/
+	
+	var getAuthors= function(id) {
+		return new Promise(function(resolve, reject) { 
+			db.authors.findOne({"gid": id}, function(err, val) {
+				if (err || !val) {
+					reject(err || "Nonexistent author")
+					return;
+				}
+				resolve(val)
+			})
+		})
+	}
+
+	/**
 	  * Authentication using Passport OAuth
 	**/
 	 
@@ -75,16 +94,18 @@ module.exports = function(__dirname) {
 				callbackURL: "http://127.0.0.1:3000/google/auth"
 			},
 			function(accessToken, refreshToken, profile, done) {
-				done(null, profile.id)
-				return
-				User.findOrCreate({ googleId: profile.id }, function (err, user) {
-					return done(err, user)
-				});
+				for (var i = 0; i < profile.emails.length; i++) {
+					if (settings.admins.indexOf(profile.emails[i].value) >= 0) {
+						done(null, profile)
+						return;
+					}
+				}
+				done("Non Admin")
 			}
 		));
 
 		app.get('/google/login',
-			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/plus.login' }));
+			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/userinfo.email' }));
 
 		app.get('/google/auth',
 			passport.authenticate('google', { failureRedirect: '/google/login' }),
