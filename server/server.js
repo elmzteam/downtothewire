@@ -5,6 +5,7 @@ module.exports = function(__dirname, settings) {
 	
 	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
+	var mongojs    = require("mongojs")
 
 	var express    = require("express")
 	var app        = express()
@@ -16,6 +17,8 @@ module.exports = function(__dirname, settings) {
 
 	var Google     = require('passport-google-oauth').OAuth2Strategy
 	var passport   = require("passport")
+
+	//var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
 	/**
 	  * Middleware Initialization
@@ -55,6 +58,22 @@ module.exports = function(__dirname, settings) {
 	app.get("/images/:FILE", function (req, res) {
 		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
+
+	/**
+	  * MongoDB access functions
+	**/
+	
+	var getAuthors= function(id) {
+		return new Promise(function(resolve, reject) { 
+			db.authors.findOne({"gid": id}, function(err, val) {
+				if (err || !val) {
+					reject(err || "Nonexistent author")
+					return;
+				}
+				resolve(val)
+			})
+		})
+	}
 
 	/**
 	  * Authentication using Passport OAuth

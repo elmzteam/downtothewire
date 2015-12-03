@@ -1,7 +1,11 @@
 var fs     = require("fs")
+var Path   = require("path")
 
 var DEBUG  = process.env.DEBUG
-var path   = DEBUG ? "/client/tmp/hbs/" : "/client/hbs/"
+var root   = DEBUG ? "/client/tmp/" : "/client/"
+var path   = Path.join(root, "/hbs/")
+var render = Path.join(root, "/render/")
+
 
 var routes = {
 	"^/$": {page: "index.html", index: 0, cache: true},
@@ -9,8 +13,18 @@ var routes = {
 	"^/userinfo$": {page: "user.html", cache: false},
 }
 
+var prerender = [
+	{path: "/", options: null},
+	{path: "/userinfo", options: null},
+	{path: "/page/{0}", options: {groups: [
+		{
+			range: {start:1, end: 9}
+		}
+	]}},
+]
+
 module.exports = function(__dirname, handlebars) {
-	var cl = new renderer(__dirname, handlebars);
+	var cl = new renderer(__dirname, handlebars)
 	return (function(obj) {
 		return function(req, res, next) {
 			obj.handle(req, res, next)
@@ -24,31 +38,37 @@ var renderer = function(__dirname, handlebars) {
 	this.templates = {}
 	this.compiled = {}
 	this.rendered = {}
-	this.compileAll()
+	var that = this;
+	this.compileAll().then(function(a) {
+		that.renderAll() 
+	})
 }
 
 renderer.prototype = {
 	renderPath: function(context) {
-		return this.compiled[context.page](context);
+		return this.compiled[context.page](context)
 	},
 	compileAll: function() {
 		var that = this
-		this.readFiles().then(function(templates) {
-			that.templates = {}
-			that.compiled = {}
-			for (var i = 0; i < templates.length; i++) {
-				that.templates[templates[i].name] = templates[i].data
-				that.handlebars.registerPartial(templates[i].name, templates[i].data)
-			}
-			for (var i = 0; i < templates.length; i++) {
-				that.compiled[templates[i].name] = that.handlebars.compile(templates[i].data)
-			}
-		}, crash)
+		return new Promise(function(resolve, reject) {
+			that.readFiles().then(function(templates) {
+				that.templates = {}
+				that.compiled = {}
+				for (var i = 0; i < templates.length; i++) {
+					that.templates[templates[i].name] = templates[i].data
+					that.handlebars.registerPartial(templates[i].name, templates[i].data)
+				}
+				for (var i = 0; i < templates.length; i++) {
+					that.compiled[templates[i].name] = that.handlebars.compile(templates[i].data)
+				}
+				resolve(that.compiled)
+			}, crash)
+		})
 	},
 	readFiles: function() {
 		var that = this
 		return new Promise(function(resolve, reject) {
-			fs.readdir(that.__dirname+path, function(err, files) {
+			fs.readdir(Path.join(that.__dirname,path),  function(err, files) {
 				if (err) {
 					crash(err)
 					return
@@ -61,30 +81,67 @@ renderer.prototype = {
 			})
 		})
 	},
-	handle: function(req, res, next) {
-		if (this.rendered[req.originalUrl]) {
-			res.send(this.rendered[req.originalUrl])
-			return
-		}
-		for (var i in routes) {
-			var m = req.originalUrl.match(i)
-			if (m) {
-				var context = routes[i];
-				if (req.user) {
-					context.user = req.user
+	renderAll: function() {
+		var promises = []
+		for (var p in prerender) {
+			if (!prerender[p].options || !prerender[p].options.groups) {
+				promises.push(this.renderPage(prerender[p].path))
+			} else {
+				var groups = prerender[p].options.groups
+				for (var i in groups) {
+					if (groups[i].range) {
+						for (var l = groups[i].range.start; l <= groups[i].range.end; l += 1) {
+							var r = new RegExp("\\{"+i+"\\}","g")
+							var url = prerender[p].path.replace(r, l)
+							promises.push(this.renderPage(url))
+						}
+					}
 				}
-
+			}
+		}
+		return Promise.all(promises)
+	},
+	renderPage: function(url) {
+		var loc = Path.join(this.__dirname, render)
+		for (var i in routes) {
+			var m = url.match(i)
+			if (m) {
+				var context = routes[i]
+				if (context.cache === false) {
+					return new Promise(function (resolve, reject) {resolve()})	
+				}
 				for (var ind = 1; ind < m.length; ind++) {
 					if (context.groups && (ind-1) < context.groups.length) {
 						context[context.groups[ind-1]] = m[ind]
 					}
 				}
 				var out = this.renderPath(context)
-				if (context.cache && !DEBUG) {
-					this.rendered[req.originalUrl] = out; 
+				var written = "ROOT"+url.replace(/\//g,".")
+				return denodeify(fs.writeFile, [Path.join(loc, written), out])
+			}
+		}
+	},
+	handle: function(req, res, next) {
+		for (var i in routes) {
+			var m = req.originalUrl.match(i)
+			if (m) {
+				var context = routes[i]
+				if (context.cache === true) {
+					var written = "ROOT"+req.originalUrl.replace(/\//g,".")
+					res.type("html")
+					res.sendFile(written, {root: Path.join(this.__dirname, render)})
+					return;
+				} else {
+					for (var ind = 1; ind < m.length; ind++) {
+						if (context.groups && (ind-1) < context.groups.length) {
+							context[context.groups[ind-1]] = m[ind]
+						}
+					}
+					if (req.user) context.user = req.user
+					var out = this.renderPath(context)
+					res.send(out)
+					return;
 				}
-				res.send(out)
-				return
 			}
 		}
 		next()
@@ -92,14 +149,24 @@ renderer.prototype = {
 }
 
 var crash = function(err) {
-	console.error(err);
+	console.error(err)
 }
 
 var promiseFile = function(path, filename) {
 	return new Promise(function(res, rej) {
-		fs.readFile(path+filename, function(err, file) {
+		fs.readFile(Path.join(path,filename), function(err, file) {
 			if (err) rej(err)
 			else res({name: filename, data: file.toString()})
 		})
+	})
+}
+
+var denodeify = function(fn, args) {
+	return new Promise(function(resolve, reject) {
+		args[args.length] = (function(err, data) {
+			if (err || data == undefined) reject(err || "No Data")
+			else resolve(data)
+		})
+		fn.apply(fn,args)
 	})
 }
