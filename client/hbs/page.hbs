@@ -1,0 +1,50 @@
+<html>
+	{{> head.hbs}}
+	<body>
+		{{> header.hbs}}
+		<content-row>
+			<main>
+				{{#each content.main}}
+				<article>
+					{{#if title.link}}
+					<h1><a class="no-display" href="{{title.link}}">{{title.text}}</a></h1>
+					{{else}}
+					<h1>{{title.text}}</h1>
+					{{/if}}
+					
+					<time>{{timestamp}}</time>
+					
+					{{#if preview}}
+					<img class="preview-image" src="{{preview}}" />
+					{{/if}}
+					
+					{{#if author.image}}
+					<div class="author-image" style="background-image: url('{{author.image}}');" data-author-name="{{author.name}}"></div>
+					{{else}}
+					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{author.name}}"></div>
+					{{/if}}
+					
+					{{{content}}}
+					
+					{{#if tags}}
+					<footer>
+						Tags: 
+						{{#each tags}}
+						<a class="tag" href="/tags/{{this}}">{{this}}</a>
+						{{/each}}
+					</footer>
+					{{/if}}
+				</article>
+				{{/each}}
+			</main>
+			<aside>
+				{{#each content.sidebar}}
+				<article>
+					<h1>{{title}}</h1>
+					{{content}}
+				</article>
+				{{/each}}
+			</aside>
+		</content-row>
+	</body>
+</html>
