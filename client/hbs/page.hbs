@@ -8,7 +8,7 @@
 				<article>
 					{{#if title.link}}
 					<h1><a class="no-display" href="{{title.link}}">{{title.text}}</a></h1>
-					{{#else}}
+					{{else}}
 					<h1>{{title.text}}</h1>
 					{{/if}}
 					
@@ -19,12 +19,21 @@
 					{{/if}}
 					
 					{{#if author.image}}
-					<div class="author-image" src="" data-author-name="{{author.name}}"></div>
-					{{#else}}
-					<div class="author-image" src="{{author.image}}" data-author-name="{{author.name}}"></div>
+					<div class="author-image" style="background-image: url('{{author.image}}');" data-author-name="{{author.name}}"></div>
+					{{else}}
+					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{author.name}}"></div>
 					{{/if}}
 					
-					{{content}}
+					{{{content}}}
+					
+					{{#if tags}}
+					<footer>
+						Tags: 
+						{{#each tags}}
+						<a class="tag" href="/tags/{{this}}">{{this}}</a>
+						{{/each}}
+					</footer>
+					{{/if}}
 				</article>
 				{{/each}}
 			</main>

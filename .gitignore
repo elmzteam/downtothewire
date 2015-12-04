@@ -33,6 +33,8 @@ node_modules
 
 # Built resources
 client/build
+client/render
+client/tmp
 
 # Mongo Data
 data

@@ -17,6 +17,9 @@ module.exports = function(__dirname, settings) {
 
 	var Google     = require('passport-google-oauth').OAuth2Strategy
 	var passport   = require("passport")
+	
+	var logger     = require("./logger")
+	var morgan     = require("morgan")
 
 	//var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
@@ -34,6 +37,7 @@ module.exports = function(__dirname, settings) {
 	}));
 	app.use(passport.initialize());
 	app.use(passport.session());
+	app.use(morgan("dev"))
 	app.use(renderer(__dirname, handlebars))
 
 	/**
@@ -47,7 +51,6 @@ module.exports = function(__dirname, settings) {
 	**/
 
 	app.get("/build/css/:FILE", function (req, res) {
-		console.log("css")
 		res.sendFile(req.params.FILE, {root: path+"build/css"})
 	})
 
@@ -114,7 +117,7 @@ module.exports = function(__dirname, settings) {
 				res.redirect('/')
 			});
 	} else {
-		console.log("ERROR: Missing authentication variable. Authentication will be unavailable")
+		logger.warn("Missing authentication variable. Authentication will be unavailable.")
 	}
 	/**
 	  * Start Server

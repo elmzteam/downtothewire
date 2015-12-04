@@ -2,25 +2,66 @@ var fs     = require("fs")
 var Path   = require("path")
 
 var DEBUG  = process.env.DEBUG
-var root   = DEBUG ? "/client/tmp/" : "/client/"
+var root   = DEBUG ? "/client/" : "/client/"
 var path   = Path.join(root, "/hbs/")
 var render = Path.join(root, "/render/")
 
+var logger = require("./logger");
+
 
 var routes = {
-	"^/$": {page: "index.html", index: 0, cache: true},
-	"^/page/([0-9]+)$": {page: "index.html", groups: ["index"], cache: true},
-	"^/userinfo$": {page: "user.html", cache: false},
+	"^/$": {
+		page: "page.hbs",
+		cache: true,
+		content: {
+			main: [
+				{
+					title: {
+						text: "Why you shoud dedicate your life to arrow functions"	
+					},
+					author: {
+						name: "Arrow Function"
+					},
+					timestamp: "December 3, 2015",
+					content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
+					tags: ["es6", "life-changing"]
+				},
+				{
+					title: {
+						text: "Never use me again!"	
+					},
+					author: {
+						name: "Callbacks"
+					},
+					timestamp: "December 3, 2025",
+					content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
+					tags: ["es6", "callbacks-suck"]
+				}
+			],
+			sidebar: [
+				{
+					title: "Sidebar Title 1",
+					content: "Lorem ipsum dolor sit whatever"
+				},
+				{
+					title: "Sidebar Title 2",
+					content: "More content..."
+				}
+			]
+		}
+	},
+//	"^/page/([0-9]+)$": {page: "page.hbs", groups: ["index"], cache: true},
+//	"^/userinfo$": {page: "user.html", cache: false},
 }
 
 var prerender = [
 	{path: "/", options: null},
-	{path: "/userinfo", options: null},
-	{path: "/page/{0}", options: {groups: [
-		{
-			range: {start:1, end: 9}
-		}
-	]}},
+//	{path: "/userinfo", options: null},
+//	{path: "/page/{0}", options: {groups: [
+//		{
+//			range: {start:1, end: 9}
+//		}
+//	]}},
 ]
 
 module.exports = function(__dirname, handlebars) {
@@ -41,7 +82,7 @@ var renderer = function(__dirname, handlebars) {
 	var that = this;
 	this.compileAll().then(function(a) {
 		that.renderAll() 
-	})
+	}).catch(crash)
 }
 
 renderer.prototype = {
@@ -102,6 +143,7 @@ renderer.prototype = {
 		return Promise.all(promises)
 	},
 	renderPage: function(url) {
+		logger.info("[render]", url);
 		var loc = Path.join(this.__dirname, render)
 		for (var i in routes) {
 			var m = url.match(i)
@@ -149,10 +191,11 @@ renderer.prototype = {
 }
 
 var crash = function(err) {
-	console.error(err)
+	logger.error(err.stack)
 }
 
 var promiseFile = function(path, filename) {
+	logger.info("[file-request]", path, filename)
 	return new Promise(function(res, rej) {
 		fs.readFile(Path.join(path,filename), function(err, file) {
 			if (err) rej(err)
