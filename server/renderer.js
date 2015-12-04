@@ -6,7 +6,8 @@ var root   = DEBUG ? "/client/tmp/" : "/client/"
 var path   = Path.join(root, "/hbs/")
 var render = Path.join(root, "/render/")
 
-var logger = require("./logger");
+var logger = require("./logger")
+var mkdirp = require("mkdirp")
 
 if (!DEBUG) {
 	var routes = {
@@ -28,10 +29,10 @@ if (!DEBUG) {
 					},
 					{
 						title: {
-							text: "Never use me again!"	
+							text: "Why you should name your children after the Fetch API"	
 						},
 						author: {
-							name: "Callbacks"
+							name: "Zach Wade"
 						},
 						timestamp: "December 3, 2025",
 						content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
@@ -88,7 +89,7 @@ var renderer = function(__dirname, handlebars) {
 	this.rendered = {}
 	var that = this;
 	this.compileAll().then(function(a) {
-		that.renderAll() 
+		return that.renderAll() 
 	}).catch(crash)
 }
 
@@ -166,6 +167,7 @@ renderer.prototype = {
 				}
 				var out = this.renderPath(context)
 				var written = "ROOT"+url.replace(/\//g,".")
+				mkdirp(Path.join(loc))
 				return denodeify(fs.writeFile, [Path.join(loc, written), out])
 			}
 		}

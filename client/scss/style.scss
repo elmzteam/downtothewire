@@ -10,7 +10,7 @@
 html {
 	box-sizing: border-box;
 	font-family: "Exo 2", sans-serif;
-	background: $color-background;
+	background: $color-page-background;
 	color: $color-text-main;
 	margin: 0px;
 	padding: 0px;
@@ -57,7 +57,7 @@ content-row {
 
 		article {
 			padding: 1em 1em .4em;
-			background: #eee;
+			background: $color-content-background;
 			margin-bottom: 2em;
 			
 			&:last {
@@ -115,7 +115,7 @@ content-row {
 
 				&:before {
 					content: attr(data-author-name);
-					background: #444;
+					background: $color-dark-overlay;
 					white-space: nowrap;
 					position: absolute;
 					right: 100%;
@@ -133,7 +133,7 @@ content-row {
 					content: "";
 					border-width: 12px;
 					border-style: solid;
-					border-color: transparent transparent transparent #444;
+					border-color: transparent transparent transparent $color-dark-overlay;
 					position: absolute;
 					left: 0px;
 				}
@@ -155,10 +155,18 @@ content-row {
 			}
 			
 			footer {
-				background: #ddd;
+				background: $color-tag-line;
 				margin: 1 / .8 * 1em -1 / .8 * 1em -1 / .8 * 1em;
-				padding: .2em .4em;
+				padding: .6em .4em;
 				font-size: .8em;
+				
+				.tag {
+					color: $color-white;
+					padding: .1em .4em;
+					text-decoration: none;
+					border-radius: 4px;
+					margin: 0px .4em 0px 0px;
+				}
 			}
 
 			p {
@@ -180,7 +188,7 @@ content-row {
 		
 		article {
 			padding: 1em 1em .4em;
-			background: #eee;
+			background: $color-content-background;
 			margin-bottom: 1em;
 			
 			&:last {

@@ -28,10 +28,7 @@
 					
 					{{#if tags}}
 					<footer>
-						Tags: 
-						{{#each tags}}
-						<a class="tag" href="/tags/{{this}}">{{this}}</a>
-						{{/each}}
+						Tags: {{#each tags}}{{tag this}}{{/each}}
 					</footer>
 					{{/if}}
 				</article>
