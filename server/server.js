@@ -5,6 +5,8 @@ module.exports = function(__dirname, settings) {
 	
 	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
+	    handlebars = require("./stachehelper")(handlebars)
+
 	var mongojs    = require("mongojs")
 
 	var express    = require("express")
@@ -21,7 +23,7 @@ module.exports = function(__dirname, settings) {
 	var logger     = require("./logger")
 	var morgan     = require("morgan")
 
-	//var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
+	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
 	/**
 	  * Middleware Initialization
@@ -66,7 +68,7 @@ module.exports = function(__dirname, settings) {
 	  * MongoDB access functions
 	**/
 	
-	var getAuthors= function(id) {
+	var getAuthors = function(id) {
 		return new Promise(function(resolve, reject) { 
 			db.authors.findOne({"gid": id}, function(err, val) {
 				if (err || !val) {
@@ -83,8 +85,10 @@ module.exports = function(__dirname, settings) {
 	**/
 	 
 	passport.serializeUser(function(user, done) {
-		done(null, JSON.stringify(user))
-	});
+		db.authors.update({"gid": user.id}, user, function(err) {
+			done(err, JSON.stringify(user));
+		})
+	})
 
 	passport.deserializeUser(function(user, done) {
 		done(null, JSON.parse(user))

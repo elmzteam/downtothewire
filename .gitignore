@@ -34,7 +34,7 @@ node_modules
 # Built resources
 client/build
 client/render
-client/tmp
+client/tmp/render
 
 # Mongo Data
 data

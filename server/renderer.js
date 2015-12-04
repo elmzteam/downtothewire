@@ -1,68 +1,75 @@
 var fs     = require("fs")
 var Path   = require("path")
 
-var DEBUG  = process.env.DEBUG
-var root   = DEBUG ? "/client/" : "/client/"
+var DEBUG  = process.env.DEBUG ? true : false
+var root   = DEBUG ? "/client/tmp/" : "/client/"
 var path   = Path.join(root, "/hbs/")
 var render = Path.join(root, "/render/")
 
 var logger = require("./logger");
 
-
-var routes = {
-	"^/$": {
-		page: "page.hbs",
-		cache: true,
-		content: {
-			main: [
-				{
-					title: {
-						text: "Why you shoud dedicate your life to arrow functions"	
+if (!DEBUG) {
+	var routes = {
+		"^/$": {
+			page: "page.hbs",
+			cache: true,
+			content: {
+				main: [
+					{
+						title: {
+							text: "Why you shoud dedicate your life to arrow functions"	
+						},
+						author: {
+							name: "Arrow Function"
+						},
+						timestamp: "December 3, 2015",
+						content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
+						tags: ["es6", "life-changing"]
 					},
-					author: {
-						name: "Arrow Function"
+					{
+						title: {
+							text: "Never use me again!"	
+						},
+						author: {
+							name: "Callbacks"
+						},
+						timestamp: "December 3, 2025",
+						content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
+						tags: ["es6", "callbacks-suck"]
+					}
+				],
+				sidebar: [
+					{
+						title: "Sidebar Title 1",
+						content: "Lorem ipsum dolor sit whatever"
 					},
-					timestamp: "December 3, 2015",
-					content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
-					tags: ["es6", "life-changing"]
-				},
-				{
-					title: {
-						text: "Never use me again!"	
-					},
-					author: {
-						name: "Callbacks"
-					},
-					timestamp: "December 3, 2025",
-					content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
-					tags: ["es6", "callbacks-suck"]
-				}
-			],
-			sidebar: [
-				{
-					title: "Sidebar Title 1",
-					content: "Lorem ipsum dolor sit whatever"
-				},
-				{
-					title: "Sidebar Title 2",
-					content: "More content..."
-				}
-			]
-		}
-	},
-//	"^/page/([0-9]+)$": {page: "page.hbs", groups: ["index"], cache: true},
-//	"^/userinfo$": {page: "user.html", cache: false},
+					{
+						title: "Sidebar Title 2",
+						content: "More content..."
+					}
+				]
+			}
+		},
+	}
+	var prerender = [
+		{path: "/", options: null},
+	]
+} else {
+	var routes = {
+		"^/$": {page: "index.html", index: 0, cache: true}, 
+		"^/page/([0-9]+)$": {page: "index.html", groups: ["index"], cache: true},
+		"^/userinfo$": {page: "user.html", cache: false},
+	}
+	var prerender = [
+		{path: "/", options: null},
+		{path: "/userinfo", options: null},
+		{path: "/page/{0}", options: {groups: [
+			{
+				range: {start:1, end: 9}
+			}
+		]}},
+	]
 }
-
-var prerender = [
-	{path: "/", options: null},
-//	{path: "/userinfo", options: null},
-//	{path: "/page/{0}", options: {groups: [
-//		{
-//			range: {start:1, end: 9}
-//		}
-//	]}},
-]
 
 module.exports = function(__dirname, handlebars) {
 	var cl = new renderer(__dirname, handlebars)
