@@ -7,7 +7,9 @@ var path   = Path.join(root, "/hbs/")
 var render = Path.join(root, "/render/")
 
 var logger = require("./logger")
-var mkdirp = require("mkdirp")
+var wait   = require("wait.for")
+
+var Fiber = require("fibers")
 
 if (!DEBUG) {
 	var routes = {
@@ -15,30 +17,6 @@ if (!DEBUG) {
 			page: "page.hbs",
 			cache: true,
 			content: {
-				main: [
-					{
-						title: {
-							text: "Why you shoud dedicate your life to arrow functions"	
-						},
-						author: {
-							name: "Arrow Function"
-						},
-						timestamp: "December 3, 2015",
-						content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
-						tags: ["es6", "life-changing"]
-					},
-					{
-						title: {
-							text: "Why you should name your children after the Fetch API"	
-						},
-						author: {
-							name: "Zach Wade"
-						},
-						timestamp: "December 3, 2025",
-						content: "I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.  I believe that we are who we choose to be. Nobody’s going to come and save you, you’ve got to save yourself. Nobody’s going to give you anything. You’ve got to go out and fight for it. Nobody knows what you want except for you. And nobody will be as sorry as you if you don’t get it. So don’t give up on your dreams.",
-						tags: ["es6", "callbacks-suck"]
-					}
-				],
 				sidebar: [
 					{
 						title: "Sidebar Title 1",
@@ -88,13 +66,16 @@ var renderer = function(__dirname, handlebars) {
 	this.compiled = {}
 	this.rendered = {}
 	var that = this;
-	this.compileAll().then(function(a) {
-		return that.renderAll() 
-	}).catch(crash)
+	var comp = function() {
+		that.compileAll().then(function(a) {
+			return that.renderAll() 
+		}).catch(crash)
+	}
+	comp()
 }
 
 renderer.prototype = {
-	renderPath: function(context) {
+	renderPath:function(context) {
 		return this.compiled[context.page](context)
 	},
 	compileAll: function() {
@@ -167,7 +148,6 @@ renderer.prototype = {
 				}
 				var out = this.renderPath(context)
 				var written = "ROOT"+url.replace(/\//g,".")
-				mkdirp(Path.join(loc))
 				return denodeify(fs.writeFile, [Path.join(loc, written), out])
 			}
 		}

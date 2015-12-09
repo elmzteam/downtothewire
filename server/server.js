@@ -1,13 +1,20 @@
 module.exports = function(__dirname, settings) {
 	/**
+	  * Constants and other globals
+	**/
+
+	var path = __dirname+"/client/"
+
+	/**
 	  * Imports and Initializations 
 	**/
 	
+	var mongojs    = require("mongojs")
+	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
+
 	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
-	    handlebars = require("./stachehelper")(handlebars)
-
-	var mongojs    = require("mongojs")
+	    handlebars = require("./stachehelper")(handlebars, db, path)
 
 	var express    = require("express")
 	var app        = express()
@@ -23,7 +30,6 @@ module.exports = function(__dirname, settings) {
 	var logger     = require("./logger")
 	var morgan     = require("morgan")
 
-	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
 	/**
 	  * Middleware Initialization
@@ -43,16 +49,10 @@ module.exports = function(__dirname, settings) {
 	app.use(renderer(__dirname, handlebars))
 
 	/**
-	  * Constants and other globals
-	**/
-
-	var path = __dirname+"/client/"
-
-	/**
 	  * App routing
 	**/
 
-	app.get("/build/css/:FILE", function (req, res) {
+	app.get("/css/:FILE", function (req, res) {
 		res.sendFile(req.params.FILE, {root: path+"build/css"})
 	})
 
@@ -85,8 +85,17 @@ module.exports = function(__dirname, settings) {
 	**/
 	 
 	passport.serializeUser(function(user, done) {
-		db.authors.update({"gid": user.id}, user, function(err) {
-			done(err, JSON.stringify(user));
+		db.authors.find({"id": user.id}, function(err, data) {
+			console.log(arguments)
+			if (!err && data.length > 0) {
+				db.authors.update({"id": user.id}, user, function(err) {
+					done(err, JSON.stringify(user));
+				})
+			} else {
+				db.authors.insert(user, function(err) {
+					done(err, JSON.stringify(user));	
+				});
+			}
 		})
 	})
 

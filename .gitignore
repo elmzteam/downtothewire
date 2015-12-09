@@ -35,6 +35,7 @@ node_modules
 client/build
 client/render
 client/tmp/render
+client/.sass-cache
 
 # Mongo Data
 data
