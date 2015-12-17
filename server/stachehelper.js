@@ -5,6 +5,11 @@ var Path    = require("path")
 var marked  = require("marked")
 var fs      = require("fs")
 
+
+marked.setOptions({
+	gfm: true,
+})
+
 module.exports = function(handlebars, db, root) {
 
 	handlebars.registerHelper("noop", function(options) {
@@ -34,7 +39,7 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getPosts(start, end, cb) {
-		db.posts.find().sort({timestamp: 1}).skip(start).limit(end-start, function(err, data) {
+		db.posts.find().sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
 			cb(err, data);
 		})
 	}
@@ -45,6 +50,12 @@ module.exports = function(handlebars, db, root) {
 		})
 	}
 
+	function getSize(cb) {
+		db.posts.stats(function(err, res) {
+			cb(null, res.count)
+		})
+	}
+
 	handlebars.registerHelper("loadcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {
@@ -52,6 +63,24 @@ module.exports = function(handlebars, db, root) {
 		} else {
 			return "Error"
 		}
+	})
+	handlebars.registerHelper("inc", function(ind) {
+		return parseInt(ind) + 1;
+	})
+	handlebars.registerHelper("dec", function(ind) {
+		return parseInt(ind) - 1; 
+	})
+	handlebars.registerHelper("atBottom", function(ind) {
+		return parseInt(ind) >= Math.ceil(deasync(getSize)()/5)-1;
+	})
+	handlebars.registerHelper("atTop", function(ind) {
+		return parseInt(ind) <= 0;
+	})
+	handlebars.registerHelper("notBottom", function(ind) {
+		return parseInt(ind) <  Math.ceil(deasync(getSize)()/5)-1;
+	})
+	handlebars.registerHelper("notTop", function(ind) {
+		return parseInt(ind) > 0;
 	})
 	handlebars.registerHelper("fetchcontent", function(id) {
 		var out = deasync(getContent)(id)
