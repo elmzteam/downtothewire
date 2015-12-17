@@ -38,9 +38,17 @@ module.exports = function(handlebars, db, root) {
 		})
 	}
 
-	function getPosts(start, end, cb) {
-		db.posts.find().sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
+	function getPosts(start, end, tag, cb) {
+		var query = {}
+		if (tag) query.tags = tag
+		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
 			cb(err, data);
+		})
+	}
+
+	function getTags(cb) {
+		db.posts.distinct("tags", {}, function(err, data) {
+			cb(err, data)
 		})
 	}
 
@@ -56,6 +64,12 @@ module.exports = function(handlebars, db, root) {
 		})
 	}
 
+	function getPost(id, cb) {
+		db.posts.findOne({timestamp: parseInt(id)}, function(err, data) {
+			cb(err, data)
+		})
+	}
+
 	handlebars.registerHelper("loadcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {
@@ -63,6 +77,9 @@ module.exports = function(handlebars, db, root) {
 		} else {
 			return "Error"
 		}
+	})
+	handlebars.registerHelper("tags", function() {
+		return deasync(getTags)();	
 	})
 	handlebars.registerHelper("inc", function(ind) {
 		return parseInt(ind) + 1;
@@ -90,13 +107,23 @@ module.exports = function(handlebars, db, root) {
 			return "Error"
 		}
 	})
+	handlebars.registerHelper("fetchpost", function(id) {
+		var out = deasync(getPost)(id)
+		if (out) {
+			return out;
+		} else {
+			return {title: {text: "New Post"},
+				tags: [],
+			}
+		}
+	})
 	handlebars.registerHelper("author", function(id) {
 		return deasync(getUser)(id)
 	})
 
-	handlebars.registerHelper("posts", function(page) {
+	handlebars.registerHelper("posts", function(page, tag) {
 		var val = parseInt(page)
-		return deasync(getPosts)(page*5, (page+1)*5)
+		return deasync(getPosts)(page*5, (page+1)*5, tag)
 	})
 
 	handlebars.registerHelper("longtime", function(time) {
@@ -107,6 +134,16 @@ module.exports = function(handlebars, db, root) {
 		return new handlebars.SafeString(
 			sprintf("<a class='tag' href='/tags/%s' style='background-color: %s;'>%s</a>", tag, hashStringToColor(tag), tag)
 		);
+	})
+
+	handlebars.registerHelper("sidebar", function() {
+		return [{
+			title: "About",
+			content: "Bydesign is my blog! Weeeeeee"
+		}, {
+			title: "Who",
+			content: "Me, of course, and them, and a bunch of us"
+		}]
 	})
 
 	return handlebars

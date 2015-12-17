@@ -7,15 +7,19 @@
 		<link rel="stylesheet" href="/css/editor.css">
 	</head>
 	<body>
-		{{#if content}}
-		<span class="header">Editing {{content}}</span>
+		{{#with this as |ctx|}}
+		{{#with (fetchpost content) as |info|}}
+		{{#if ctx.content}}
+		<span class="header">Editing {{ctx.content}}</span>
 		{{else}}
 		<span class="header">Create New Post</span>
 		{{/if}}
-		Title: <input type="text" id="title"></input><br>
-		<div id="editor">{{#if content}}{{fetchcontent content}}{{/if}}</div><br>
-		Tags: <input type="text" id="tags"></input><br>
+		Title: <input type="text" id="title" value="{{info.title.text}}"></input><br>
+		<div id="editor">{{#if ctx.content}}{{fetchcontent ctx.content}}{{/if}}</div><br>
+		Tags: <input type="text" id="tags" value="{{#each info.tags}}{{this}} {{/each}}"></input><br>
 		<button class="submit">Submit</button>
+		{{/with}}
+		{{/with}}
 	</body>
 {{else}}
 	You must be logged in to use this page

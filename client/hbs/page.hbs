@@ -4,7 +4,10 @@
 		{{> header.hbs}}
 		<content-row>
 			<main>
-				{{#each (posts index)}}
+				{{#if currtag}}
+				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
+				{{/if}}
+				{{#each (posts index currtag)}}
 				{{#with this}}
 				<article>
 					{{#if title.link}}
@@ -41,12 +44,18 @@
 				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="btn right btn-default btn-lg {{#if (atTop index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-right"></i></button>{{#if (notTop index)}}</a>{{/if}}
 			</main>
 			<aside>
-				{{#each content.sidebar}}
+				{{#each (sidebar)}}
 				<article>
 					<h1>{{title}}</h1>
 					{{content}}
 				</article>
 				{{/each}}
+				<article>
+					<h1>Tags</h1>
+					{{#each (tags)}}
+						{{tag this}}&nbsp;&nbsp;
+					{{/each}}
+				</article>
 			</aside>
 		</content-row>
 	</body>

@@ -27,7 +27,12 @@ if (!DEBUG) {
 			page: "upload.hbs",
 			cache: false,
 			groups: ["content"]
-		}
+		},
+		"^/tags/([a-z0-9]+)$": {
+			page: "page.hbs",
+			cache: false,
+			groups: ["currtag"]
+		},
 	}
 	var prerender = [
 		{path: "/", options: null},
@@ -56,11 +61,14 @@ if (!DEBUG) {
 
 module.exports = function(__dirname, handlebars) {
 	var cl = new renderer(__dirname, handlebars)
-	return (function(obj) {
-		return function(req, res, next) {
-			obj.handle(req, res, next)
+	return {
+		handle: function(req, res, next) {
+			cl.handle(req, res, next)
+		},
+		reload: function() {
+			cl.renderAll()
 		}
-	})(cl)
+	}
 }
 
 var renderer = function(__dirname, handlebars) {

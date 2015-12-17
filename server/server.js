@@ -12,10 +12,10 @@ module.exports = function(__dirname, settings) {
 	var mongojs    = require("mongojs")
 	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
-	var insert     = require("./insertPost")(db, path)
-	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
 	    handlebars = require("./stachehelper")(handlebars, db, path)
+	var insert     = require("./insertPost")(db, path)
+	var renderer   = require("./renderer")(__dirname, handlebars)
 
 	var express    = require("express")
 	var app        = express()
@@ -47,7 +47,7 @@ module.exports = function(__dirname, settings) {
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.use(morgan("dev"))
-	app.use(renderer(__dirname, handlebars))
+	app.use(renderer.handle)
 
 	/**
 	  * App routing
@@ -67,11 +67,13 @@ module.exports = function(__dirname, settings) {
 
 	app.post("/editor/", function(req, res) {
 		uploadPost(null, req.body, req.user.id);
+		renderer.reload()
 		res.send("Ok")
 	})
 
 	app.post("/editor/:MOD", function(req, res) {
 		uploadPost(req.params.MOD, req.body, req.user.id);
+		renderer.reload()
 		res.send("Ok")
 	})
 	
