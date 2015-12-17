@@ -1,10 +1,21 @@
-module.exports = function(__dirname) {
+module.exports = function(__dirname, settings) {
+	/**
+	  * Constants and other globals
+	**/
+
+	var path = __dirname+"/client/"
+
 	/**
 	  * Imports and Initializations 
 	**/
+	
+	var mongojs    = require("mongojs")
+	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
-	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
+	    handlebars = require("./stachehelper")(handlebars, db, path)
+	var insert     = require("./insertPost")(db, path)
+	var renderer   = require("./renderer")(__dirname, handlebars)
 
 	var express    = require("express")
 	var app        = express()
@@ -16,6 +27,10 @@ module.exports = function(__dirname) {
 
 	var Google     = require('passport-google-oauth').OAuth2Strategy
 	var passport   = require("passport")
+	
+	var logger     = require("./logger")
+	var morgan     = require("morgan")
+
 
 	/**
 	  * Middleware Initialization
@@ -31,21 +46,15 @@ module.exports = function(__dirname) {
 	}));
 	app.use(passport.initialize());
 	app.use(passport.session());
-	app.use(renderer(__dirname, handlebars))
-
-	/**
-	  * Constants and other globals
-	**/
-
-	var path = __dirname+"/client/"
+	app.use(morgan("dev"))
+	app.use(renderer.handle)
 
 	/**
 	  * App routing
 	**/
 
 	app.get("/css/:FILE", function (req, res) {
-		console.log("css")
-		res.sendFile(req.params.FILE, {root: path+"css"})
+		res.sendFile(req.params.FILE, {root: path+"build/css"})
 	})
 
 	app.get("/scripts/:FILE", function (req, res) {
@@ -56,13 +65,72 @@ module.exports = function(__dirname) {
 		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
 
+	app.post("/editor/", function(req, res) {
+		uploadPost(null, req.body, req.user.id);
+		renderer.reload()
+		res.send("Ok")
+	})
+
+	app.post("/editor/:MOD", function(req, res) {
+		uploadPost(req.params.MOD, req.body, req.user.id);
+		renderer.reload()
+		res.send("Ok")
+	})
+	
+	/**
+	  * Upload Handling
+	**/
+
+	var uploadPost = function(modify, body, author) {
+		data = {
+			db: {	
+				title: {
+					text: body.title,
+				},
+				timestamp: modify ? modify : Date.now(),
+				tags: body.tags,
+				author: author
+			},
+			content: {
+				value: body.content
+			}
+		}
+		insert(data, modify ? true : false)
+	}
+	/**
+	  * MongoDB access functions
+	**/
+	
+	var getAuthors = function(id) {
+		return new Promise(function(resolve, reject) { 
+			db.authors.findOne({"gid": id}, function(err, val) {
+				if (err || !val) {
+					reject(err || "Nonexistent author")
+					return;
+				}
+				resolve(val)
+			})
+		})
+	}
+
 	/**
 	  * Authentication using Passport OAuth
 	**/
 	 
 	passport.serializeUser(function(user, done) {
-		done(null, JSON.stringify(user))
-	});
+		db.authors.find({"id": user.id}, function(err, data) {
+			console.log(arguments)
+			if (!err && data.length > 0) {
+				db.authors.update({"id": user.id}, user, function(err) {
+					done(err, JSON.stringify(user));
+				})
+			} else {
+				db.authors.insert(user, function(err) {
+					done(err, JSON.stringify(user));	
+				});
+			}
+		})
+	})
 
 	passport.deserializeUser(function(user, done) {
 		done(null, JSON.parse(user))
@@ -75,16 +143,18 @@ module.exports = function(__dirname) {
 				callbackURL: "http://127.0.0.1:3000/google/auth"
 			},
 			function(accessToken, refreshToken, profile, done) {
-				done(null, profile.id)
-				return
-				User.findOrCreate({ googleId: profile.id }, function (err, user) {
-					return done(err, user)
-				});
+				for (var i = 0; i < profile.emails.length; i++) {
+					if (settings.admins.indexOf(profile.emails[i].value) >= 0) {
+						done(null, profile)
+						return;
+					}
+				}
+				done("Non Admin")
 			}
 		));
 
 		app.get('/google/login',
-			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/plus.login' }));
+			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/userinfo.email' }));
 
 		app.get('/google/auth',
 			passport.authenticate('google', { failureRedirect: '/google/login' }),
@@ -93,7 +163,7 @@ module.exports = function(__dirname) {
 				res.redirect('/')
 			});
 	} else {
-		console.log("ERROR: Missing authentication variable. Authentication will be unavailable")
+		logger.warn("Missing authentication variable. Authentication will be unavailable.")
 	}
 	/**
 	  * Start Server

@@ -1,0 +1,62 @@
+<html>
+	{{> head.hbs}}
+	<body>
+		{{> header.hbs}}
+		<content-row>
+			<main>
+				{{#if currtag}}
+				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
+				{{/if}}
+				{{#each (posts index currtag)}}
+				{{#with this}}
+				<article>
+					{{#if title.link}}
+					<h1><a class="no-display" href="{{title.link}}">{{title.text}}</a></h1>
+					{{else}}
+					<h1>{{title.text}}</h1>
+					{{/if}}
+					
+					<time>{{longtime timestamp}}</time>
+					
+					{{#if preview}}
+					<img class="preview-image" src="{{preview}}" />
+					{{/if}}
+					
+					{{#with (author author) as |postAuthor|}} 
+					{{#if postAuthor.image}}
+					<div class="author-image" style="background-image: url('{{postAuthor.image}}');" data-author-name="{{postAuthor.displayName}}"></div>
+					{{else}}
+					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.displayName}}"></div>
+					{{/if}}
+					{{/with}}
+					
+					{{{loadcontent timestamp}}}
+					
+					{{#if tags}}
+					<footer>
+						Tags: {{#each tags}}{{tag this}}{{/each}}
+					</footer>
+					{{/if}}
+				</article>
+				{{/with}}
+				{{/each}}
+				{{#if (notBottom index)}}<a href="/page/{{inc index}}">{{/if}}<button class="btn left btn-default btn-lg {{#if (atBottom index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-left"></i></button>{{#if (notBottom index)}}</a>{{/if}}
+				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="btn right btn-default btn-lg {{#if (atTop index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-right"></i></button>{{#if (notTop index)}}</a>{{/if}}
+			</main>
+			<aside>
+				{{#each (sidebar)}}
+				<article>
+					<h1>{{title}}</h1>
+					{{content}}
+				</article>
+				{{/each}}
+				<article>
+					<h1>Tags</h1>
+					{{#each (tags)}}
+						{{tag this}}&nbsp;&nbsp;
+					{{/each}}
+				</article>
+			</aside>
+		</content-row>
+	</body>
+</html>

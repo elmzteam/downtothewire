@@ -33,3 +33,10 @@ node_modules
 
 # Built resources
 client/build
+client/render
+client/tmp/render
+client/.sass-cache
+client/posts
+
+# Mongo Data
+data

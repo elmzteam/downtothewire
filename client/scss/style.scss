@@ -10,7 +10,7 @@
 html {
 	box-sizing: border-box;
 	font-family: "Exo 2", sans-serif;
-	background: $color-background;
+	background: $color-page-background;
 	color: $color-text-main;
 	margin: 0px;
 	padding: 0px;
@@ -25,7 +25,7 @@ header {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-end;
-	justify-content: center;;
+	justify-content: center;
 	margin: 1em 0px 1.4em;
 
 	#js {
@@ -55,10 +55,15 @@ content-row {
 		flex-basis: 0px;
 		flex-grow: 1;
 
+		.tagged {
+			font-size: 30px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
 		article {
 			padding: 1em 1em .4em;
-			background: #eee;
-			margin-bottom: 1em;
+			background: $color-content-background;
+			margin-bottom: 2em;
 			
 			&:last {
 				margin-bottom: 0px;
@@ -66,7 +71,7 @@ content-row {
 
 			h1 {
 				font-weight: 300;
-				background: $color-accent;
+				background: $color-primary;
 				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em 0px;
 				font-size: 1.6em;
 				padding: .2em .4em .2em .8em;
@@ -78,7 +83,7 @@ content-row {
 					position: absolute;
 					right: 54px;
 					top: 100%;
-					border-color: $color-accent $color-accent transparent transparent;
+					border-color: $color-primary $color-primary transparent transparent;
 					border-width: 20px;
 					border-style: solid;
 				}
@@ -89,7 +94,7 @@ content-row {
 				margin: 0px -1 / .8 * 1em 1em;
 				padding: .1em 1em;
 				font-size: .8em;
-				background: $color-accent-dark;
+				background: $color-primary-dark;
 				font-weight: 400;
 				color: $color-white;
 			}
@@ -104,16 +109,18 @@ content-row {
 			.author-image {
 				float: right;
 				display: inline-block;
-				width: 64px;
-				height: 64px;
-				border-radius: 32px;
-				background-size: 64px 64px;
+				width: 72px;
+				height: 72px;
+				border-radius: 36px;
+				background-position: center center;
+				background-size: cover;
 				position: relative;
 				margin: 16px 0px .6em .6em;
+				border: 4px solid $color-accent;
 
 				&:before {
 					content: attr(data-author-name);
-					background: #444;
+					background: $color-dark-overlay;
 					white-space: nowrap;
 					position: absolute;
 					right: 100%;
@@ -131,7 +138,7 @@ content-row {
 					content: "";
 					border-width: 12px;
 					border-style: solid;
-					border-color: transparent transparent transparent #444;
+					border-color: transparent transparent transparent $color-dark-overlay;
 					position: absolute;
 					left: 0px;
 				}
@@ -150,6 +157,14 @@ content-row {
 					transform: translate(-8px, -50%);
 					opacity: 1;
 				}
+			}
+			
+			footer {
+				background: $color-tag-line;
+				margin: 1 / .8 * 1em -1 / .8 * 1em -1 / .8 * 1em;
+				padding: .6em .4em;
+				font-size: .8em;
+				
 			}
 
 			p {
@@ -171,7 +186,7 @@ content-row {
 		
 		article {
 			padding: 1em 1em .4em;
-			background: #eee;
+			background: $color-content-background;
 			margin-bottom: 1em;
 			
 			&:last {
@@ -180,13 +195,40 @@ content-row {
 
 			h1 {
 				font-weight: 300;
-				background: $color-accent;
+				background: $color-primary;
 				margin: -1 / 1.4 * 1em -1 / 1.4 * 1em .4em;
 				font-size: 1.4em;
 				padding: .2em .4em .2em .8em;
 				position: relative;
 				text-indent: -.4em;
 			}
+			
+			.tag {
+				line-height: 28px;
+			}
 		}
 	}
 }
+
+a {
+	color: $color-accent;
+	text-decoration: none;
+	
+	&:hover {
+		text-decoration: underline;
+	}
+	
+	&.no-display {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+.tag {
+	color: $color-white;
+	padding: .1em .4em;
+	text-decoration: none;
+	border-radius: 4px;
+	margin: 0px .4em 0px 0px;
+}
+
