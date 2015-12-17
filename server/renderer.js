@@ -16,22 +16,26 @@ if (!DEBUG) {
 		"^/$": {
 			page: "page.hbs",
 			cache: true,
-			content: {
-				sidebar: [
-					{
-						title: "Sidebar Title 1",
-						content: "Lorem ipsum dolor sit whatever"
-					},
-					{
-						title: "Sidebar Title 2",
-						content: "More content..."
-					}
-				]
-			}
+			index: 0,
 		},
+		"^/page/([0-9]+)$": {
+			page: "page.hbs",
+			cache: true,
+			groups: ["index"]
+		},
+		"^/editor/?([0-9]*)$": {
+			page: "upload.hbs",
+			cache: false,
+			groups: ["content"]
+		}
 	}
 	var prerender = [
 		{path: "/", options: null},
+		{path: "/page/{0}", options: {groups: [
+			{
+				range: {start: 0, end: 5}
+			}
+		]}},
 	]
 } else {
 	var routes = {
@@ -155,7 +159,7 @@ renderer.prototype = {
 	handle: function(req, res, next) {
 		for (var i in routes) {
 			var m = req.originalUrl.match(i)
-			if (m) {
+			if (m && req.method == "GET") {
 				var context = routes[i]
 				if (context.cache === true) {
 					var written = "ROOT"+req.originalUrl.replace(/\//g,".")

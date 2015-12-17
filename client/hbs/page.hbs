@@ -4,7 +4,7 @@
 		{{> header.hbs}}
 		<content-row>
 			<main>
-				{{#each (posts 0 5)}}
+				{{#each (posts index)}}
 				{{#with this}}
 				<article>
 					{{#if title.link}}
@@ -21,9 +21,9 @@
 					
 					{{#with (author author) as |postAuthor|}} 
 					{{#if postAuthor.image}}
-					<div class="author-image" style="background-image: url('{{postAuthor.image}}');" data-author-name="{{postAuthor.name}}"></div>
+					<div class="author-image" style="background-image: url('{{postAuthor.image}}');" data-author-name="{{postAuthor.displayName}}"></div>
 					{{else}}
-					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.name}}"></div>
+					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.displayName}}"></div>
 					{{/if}}
 					{{/with}}
 					

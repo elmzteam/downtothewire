@@ -1,0 +1,23 @@
+<html>
+{{#if user}}
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js"></script>
+		<script src="/scripts/jquery.js"></script>
+		<script src="/scripts/editor.js"></script>
+		<link rel="stylesheet" href="/css/editor.css">
+	</head>
+	<body>
+		{{#if content}}
+		<span class="header">Editing {{content}}</span>
+		{{else}}
+		<span class="header">Create New Post</span>
+		{{/if}}
+		Title: <input type="text" id="title"></input><br>
+		<div id="editor">{{#if content}}{{fetchcontent content}}{{/if}}</div><br>
+		Tags: <input type="text" id="tags"></input><br>
+		<button class="submit">Submit</button>
+	</body>
+{{else}}
+	You must be logged in to use this page
+{{/if}}
+</html>

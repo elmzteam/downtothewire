@@ -53,12 +53,21 @@ module.exports = function(handlebars, db, root) {
 			return "Error"
 		}
 	})
+	handlebars.registerHelper("fetchcontent", function(id) {
+		var out = deasync(getContent)(id)
+		if (out) {
+			return out.toString()
+		} else {
+			return "Error"
+		}
+	})
 	handlebars.registerHelper("author", function(id) {
 		return deasync(getUser)(id)
 	})
 
-	handlebars.registerHelper("posts", function(start, end) {
-		return deasync(getPosts)(start, end)
+	handlebars.registerHelper("posts", function(page) {
+		var val = parseInt(page)
+		return deasync(getPosts)(page*5, (page+1)*5)
 	})
 
 	handlebars.registerHelper("longtime", function(time) {

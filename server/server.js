@@ -12,6 +12,7 @@ module.exports = function(__dirname, settings) {
 	var mongojs    = require("mongojs")
 	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
+	var insert     = require("./insertPost")(db, path)
 	var renderer   = require("./renderer")
 	var handlebars = require("handlebars")
 	    handlebars = require("./stachehelper")(handlebars, db, path)
@@ -64,6 +65,36 @@ module.exports = function(__dirname, settings) {
 		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
 
+	app.post("/editor/", function(req, res) {
+		uploadPost(null, req.body, req.user.id);
+		res.send("Ok")
+	})
+
+	app.post("/editor/:MOD", function(req, res) {
+		uploadPost(req.params.MOD, req.body, req.user.id);
+		res.send("Ok")
+	})
+	
+	/**
+	  * Upload Handling
+	**/
+
+	var uploadPost = function(modify, body, author) {
+		data = {
+			db: {	
+				title: {
+					text: body.title,
+				},
+				timestamp: modify ? modify : Date.now(),
+				tags: body.tags,
+				author: author
+			},
+			content: {
+				value: body.content
+			}
+		}
+		insert(data, modify ? true : false)
+	}
 	/**
 	  * MongoDB access functions
 	**/
