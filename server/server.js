@@ -169,7 +169,7 @@ module.exports = function(__dirname, settings) {
 	  * Start Server
 	**/
 
-	app.listen(3000);
+	app.listen(process.env.PORT || 3000);
 
 	return app;
 }
