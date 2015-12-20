@@ -66,14 +66,12 @@ module.exports = function(__dirname, settings) {
 	})
 
 	app.post("/editor/", function(req, res) {
-		uploadPost(null, req.body, req.user.id);
-		renderer.reload()
+		uploadPost(null, req.body, req.user.id).then(renderer.reload)
 		res.send("Ok")
 	})
 
 	app.post("/editor/:MOD", function(req, res) {
-		uploadPost(req.params.MOD, req.body, req.user.id);
-		renderer.reload()
+		uploadPost(req.params.MOD, req.body, req.user.id).then(renderer.reload)
 		res.send("Ok")
 	})
 	
@@ -82,12 +80,14 @@ module.exports = function(__dirname, settings) {
 	**/
 
 	var uploadPost = function(modify, body, author) {
+		var time = modify ? modify : Date.now()
 		data = {
 			db: {	
 				title: {
 					text: body.title,
+					url: "/posts/"+time
 				},
-				timestamp: modify ? modify : Date.now(),
+				timestamp: time,
 				tags: body.tags,
 				author: author
 			},
@@ -95,7 +95,7 @@ module.exports = function(__dirname, settings) {
 				value: body.content
 			}
 		}
-		insert(data, modify ? true : false)
+		return insert(data, modify ? true : false)
 	}
 	/**
 	  * MongoDB access functions

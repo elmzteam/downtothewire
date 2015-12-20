@@ -17,12 +17,16 @@ var fetchData = function() {
 
 var parseData = function(data) {
 	return new Promise(function(resolve, reject) {
+		var time = Date.now()
 		var out = {
 			db: {
-				title: {text: data.title},
+				title: {
+					text: data.title,
+					url: "/posts/"+time,
+				},
 				author: data.author,
 				tags: data.tags.split(" "),
-				timestamp: Date.now(),
+				timestamp: time,
 			},
 			content: {
 				address: data.content	

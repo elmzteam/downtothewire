@@ -30,8 +30,8 @@
 					{{/if}}
 					{{/with}}
 					
-					{{{loadcontent timestamp}}}
-					
+					{{{abbreviate (loadcontent timestamp)}}}
+					{{expand timestamp}}	
 					{{#if tags}}
 					<footer>
 						Tags: {{#each tags}}{{tag this}}{{/each}}

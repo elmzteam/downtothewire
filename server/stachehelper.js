@@ -69,7 +69,12 @@ module.exports = function(handlebars, db, root) {
 			cb(err, data)
 		})
 	}
-	
+	handlebars.registerHelper("expand", function(id) {
+		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <i class='zmdi zmdi-long-arrow-right'></i></a></div>");
+	})
+	handlebars.registerHelper("abbreviate", function(content) {
+		return content.split("<more>")[0]
+	})
 	handlebars.registerHelper("loadcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {
