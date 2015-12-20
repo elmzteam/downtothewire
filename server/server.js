@@ -15,7 +15,7 @@ module.exports = function(__dirname, settings) {
 	var handlebars = require("handlebars")
 	    handlebars = require("./stachehelper")(handlebars, db, path)
 	var insert     = require("./insertPost")(db, path)
-	var renderer   = require("./renderer")(__dirname, handlebars)
+	var renderer   = require("./renderer")(__dirname, handlebars, db)
 
 	var express    = require("express")
 	var app        = express()
@@ -140,7 +140,7 @@ module.exports = function(__dirname, settings) {
 		passport.use(new Google({
 				clientID: "477715393921-ft3c5717cv685qomofqhksgtg2sk6ciu.apps.googleusercontent.com",
 				clientSecret: process.env.AUTH_SECRET,
-				callbackURL: "http://jsby.design/google/auth"
+				callbackURL: process.env.REMOTE ? "http://jsby.design/google/auth" : "http://127.0.0.1:3000/google/auth"
 			},
 			function(accessToken, refreshToken, profile, done) {
 				for (var i = 0; i < profile.emails.length; i++) {

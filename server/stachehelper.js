@@ -69,7 +69,7 @@ module.exports = function(handlebars, db, root) {
 			cb(err, data)
 		})
 	}
-
+	
 	handlebars.registerHelper("loadcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {

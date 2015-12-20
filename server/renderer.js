@@ -8,11 +8,14 @@ var render = Path.join(root, "/render/")
 
 var logger = require("./logger")
 var wait   = require("wait.for")
+var deasync= require("deasync")
 
-var Fiber = require("fibers")
+var getTags;
+var getPosts;
 
-if (!DEBUG) {
-	var routes = {
+var compileRoutes = function(db) {
+	var obj = {}
+	obj.routes = {
 		"^/$": {
 			page: "page.hbs",
 			cache: true,
@@ -30,37 +33,39 @@ if (!DEBUG) {
 		},
 		"^/tags/([a-z0-9]+)$": {
 			page: "page.hbs",
-			cache: false,
+			cache: true,
 			groups: ["currtag"]
 		},
+		"^/posts/([0-9]{13})$": {
+			page: "post.hbs",
+			cache: true,
+			groups: ["post"]
+		},
 	}
-	var prerender = [
+	obj.prerender = [
 		{path: "/", options: null},
 		{path: "/page/{0}", options: {groups: [
 			{
 				range: {start: 0, end: 5}
 			}
 		]}},
-	]
-} else {
-	var routes = {
-		"^/$": {page: "index.html", index: 0, cache: true}, 
-		"^/page/([0-9]+)$": {page: "index.html", groups: ["index"], cache: true},
-		"^/userinfo$": {page: "user.html", cache: false},
-	}
-	var prerender = [
-		{path: "/", options: null},
-		{path: "/userinfo", options: null},
-		{path: "/page/{0}", options: {groups: [
+		{path: "/tags/{0}", options: {groups: [
 			{
-				range: {start:1, end: 9}
+				each: getTags(db) 
 			}
 		]}},
+		{path: "/posts/{0}", options: {groups: [
+			{
+				each: getPosts(db)
+			}
+		]}}
 	]
+	return obj
 }
 
-module.exports = function(__dirname, handlebars) {
-	var cl = new renderer(__dirname, handlebars)
+module.exports = function(__dirname, handlebars, db) {
+	var obj = compileRoutes(db)
+	var cl = new renderer(__dirname, handlebars, obj)
 	return {
 		handle: function(req, res, next) {
 			cl.handle(req, res, next)
@@ -71,9 +76,11 @@ module.exports = function(__dirname, handlebars) {
 	}
 }
 
-var renderer = function(__dirname, handlebars) {
+var renderer = function(__dirname, handlebars, obj) {
 	this.__dirname = __dirname
 	this.handlebars = handlebars
+	this.routes = obj.routes
+	this.prerender = obj.prerender
 	this.templates = {}
 	this.compiled = {}
 	this.rendered = {}
@@ -125,16 +132,23 @@ renderer.prototype = {
 	},
 	renderAll: function() {
 		var promises = []
-		for (var p in prerender) {
-			if (!prerender[p].options || !prerender[p].options.groups) {
-				promises.push(this.renderPage(prerender[p].path))
+		for (var p in this.prerender) {
+			if (!this.prerender[p].options || !this.prerender[p].options.groups) {
+				promises.push(this.renderPage(this.prerender[p].path))
 			} else {
-				var groups = prerender[p].options.groups
+				var groups = this.prerender[p].options.groups
 				for (var i in groups) {
 					if (groups[i].range) {
 						for (var l = groups[i].range.start; l <= groups[i].range.end; l += 1) {
 							var r = new RegExp("\\{"+i+"\\}","g")
-							var url = prerender[p].path.replace(r, l)
+							var url = this.prerender[p].path.replace(r, l)
+							promises.push(this.renderPage(url))
+						}
+					}
+					if (groups[i].each) {
+						for (var l = 0; l < groups[i].each.length; l++) {
+							var r = new RegExp("\\{"+i+"\\}","g")
+							var url = this.prerender[p].path.replace(r, groups[i].each[l])
 							promises.push(this.renderPage(url))
 						}
 					}
@@ -146,10 +160,10 @@ renderer.prototype = {
 	renderPage: function(url) {
 		logger.info("[render]", url);
 		var loc = Path.join(this.__dirname, render)
-		for (var i in routes) {
+		for (var i in this.routes) {
 			var m = url.match(i)
 			if (m) {
-				var context = routes[i]
+				var context = this.routes[i]
 				if (context.cache === false) {
 					return new Promise(function (resolve, reject) {resolve()})	
 				}
@@ -165,10 +179,10 @@ renderer.prototype = {
 		}
 	},
 	handle: function(req, res, next) {
-		for (var i in routes) {
+		for (var i in this.routes) {
 			var m = req.originalUrl.match(i)
 			if (m && req.method == "GET") {
-				var context = routes[i]
+				var context = this.routes[i]
 				if (context.cache === true) {
 					var written = "ROOT"+req.originalUrl.replace(/\//g,".")
 					res.type("html")
@@ -213,4 +227,20 @@ var denodeify = function(fn, args) {
 		})
 		fn.apply(fn,args)
 	})
+}
+
+var getTags = function(db) {
+	return deasync(function(cb) {
+		db.posts.distinct("tags", {}, function(err, data) {
+			cb(err, data)
+		})
+	})()
+}
+
+var getPosts = function(db) {
+	return deasync(function(cb) {
+		db.posts.distinct("timestamp", {}, function(err, data) {
+			cb(err, data)
+		})
+	})()
 }
