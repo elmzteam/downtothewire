@@ -69,7 +69,7 @@ content-row {
 				margin-bottom: 0px;
 			}
 
-			h1 {
+			&>h1 {
 				font-weight: 300;
 				background: $color-primary;
 				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em 0px;
@@ -158,7 +158,10 @@ content-row {
 					opacity: 1;
 				}
 			}
-			
+				
+			.body {
+				min-height: 112px;
+			}
 			footer {
 				background: $color-tag-line;
 				margin: 1 / .8 * 1em -1 / .8 * 1em -1 / .8 * 1em;
@@ -173,6 +176,9 @@ content-row {
 				&:last {
 					margin-bottom: 0px;
 				}
+			}
+			.disqus {
+				margin-top: 20px;
 			}
 		}
 	}

@@ -64,8 +64,7 @@ var compileRoutes = function(db) {
 }
 
 module.exports = function(__dirname, handlebars, db) {
-	var obj = compileRoutes(db)
-	var cl = new renderer(__dirname, handlebars, obj)
+	var cl = new renderer(__dirname, handlebars, db)
 	return {
 		handle: function(req, res, next) {
 			cl.handle(req, res, next)
@@ -76,11 +75,10 @@ module.exports = function(__dirname, handlebars, db) {
 	}
 }
 
-var renderer = function(__dirname, handlebars, obj) {
+var renderer = function(__dirname, handlebars, db) {
 	this.__dirname = __dirname
 	this.handlebars = handlebars
-	this.routes = obj.routes
-	this.prerender = obj.prerender
+	this.db = db
 	this.templates = {}
 	this.compiled = {}
 	this.rendered = {}
@@ -131,6 +129,9 @@ renderer.prototype = {
 		})
 	},
 	renderAll: function() {
+		var obj = compileRoutes(this.db)
+		this.routes = obj.routes
+		this.prerender = obj.prerender
 		var promises = []
 		for (var p in this.prerender) {
 			if (!this.prerender[p].options || !this.prerender[p].options.groups) {

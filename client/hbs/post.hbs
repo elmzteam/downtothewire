@@ -7,9 +7,9 @@
 				{{#with (fetchpost post)}}
 				<article class="single">
 					{{#if title.link}}
-					<h1><a class="no-display" href="{{title.link}}">{{title.text}}</a></h1>
+					<h1 class="large"><a class="no-display" href="{{title.link}}">{{title.text}}</a></h1>
 					{{else}}
-					<h1>{{title.text}}</h1>
+					<h1 class="large">{{title.text}}</h1>
 					{{/if}}
 					
 					<time>{{longtime timestamp}}</time>
@@ -19,20 +19,23 @@
 					{{/if}}
 					
 					{{#with (author author) as |postAuthor|}} 
-					{{#if postAuthor.image}}
-					<div class="author-image" style="background-image: url('{{postAuthor.image}}');" data-author-name="{{postAuthor.displayName}}"></div>
+					{{#if postAuthor._json.image.url}}
+					<div class="author-image" style="background-image: url('{{postAuthor._json.image.url}}');" data-author-name="{{postAuthor.displayName}}"></div>
 					{{else}}
 					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.displayName}}"></div>
 					{{/if}}
 					{{/with}}
 					
-					{{{loadcontent timestamp}}}
+					<div class="body">
+						{{{loadcontent timestamp}}}
+					</div>
 					
 					{{#if tags}}
 					<footer>
 						Tags: {{#each tags}}{{tag this}}{{/each}}
 					</footer>
 					{{/if}}
+					{{> disqus.hbs timestamp}}
 				</article>
 				{{/with}}
 			</main>
