@@ -7,17 +7,10 @@
 				{{#with (fetchpost post)}}
 				<article class="single">
 					{{#if title.link}}
-					<h1 class="large"><a class="no-display" href="{{title.link}}">{{title.text}}</a></h1>
+					<h1 class="large"><span class="subtext"><a class="no-display" href="{{title.link}}">{{title.text}}</a></span>
 					{{else}}
-					<h1 class="large">{{title.text}}</h1>
+					<h1 class="large"><span class="subtext">{{title.text}}</span>
 					{{/if}}
-					
-					<time>{{longtime timestamp}}</time>
-					
-					{{#if preview}}
-					<img class="preview-image" src="{{preview}}" />
-					{{/if}}
-					
 					{{#with (author author) as |postAuthor|}} 
 					{{#if postAuthor._json.image.url}}
 					<div class="author-image" style="background-image: url('{{postAuthor._json.image.url}}');" data-author-name="{{postAuthor.displayName}}"></div>
@@ -25,6 +18,14 @@
 					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.displayName}}"></div>
 					{{/if}}
 					{{/with}}
+					</h1>
+					
+					<time>{{longtime timestamp}}</time>
+					
+					{{#if preview}}
+					<img class="preview-image" src="{{preview}}" />
+					{{/if}}
+					
 					
 					<div class="body">
 						{{{loadcontent timestamp}}}

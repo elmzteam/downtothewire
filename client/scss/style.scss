@@ -78,7 +78,7 @@ content-row {
 				position: relative;
 				text-indent: -.4em;
 
-				&:after {
+				&:after:not(.large) {
 					content: "";
 					position: absolute;
 					right: 54px;
@@ -86,6 +86,24 @@ content-row {
 					border-color: $color-primary $color-primary transparent transparent;
 					border-width: 20px;
 					border-style: solid;
+				}
+
+				&.large {
+					height: 88px;
+					vertical-align: baseline;
+					div.author-image {
+						position: absolute;
+						top: 8px;
+						right: 8px;
+						margin: 0;
+						size: 14px;
+					}
+					.subtext {
+						display: block;
+						width: calc(100% - 80px);
+						height: 100%;
+						font-size: 1.28em;
+					}
 				}
 			}
 			
@@ -117,6 +135,7 @@ content-row {
 				position: relative;
 				margin: 16px 0px .6em .6em;
 				border: 4px solid $color-accent;
+				font-size: 16px; 
 
 				&:before {
 					content: attr(data-author-name);
@@ -125,7 +144,7 @@ content-row {
 					position: absolute;
 					right: 100%;
 					display: flex;
-					padding: 0px .6em;
+					padding: .6em .6em;
 					justify-content: center;
 					align-items: center;
 					height: 24px;
