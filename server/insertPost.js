@@ -63,6 +63,7 @@ var updateDatabase = function(data) {
 	for (var t = 0; t < data.db.tags.length; t++) {
 		if (!data.db.tags[t].match(/[a-z]+/)) {
 			data.db.tags.splice(t)
+			t--
 		}
 	}
 	return denodeify(globals.coll.update, [{timestamp: data.db.timestamp}, {$set: data.db}], undefined , globals.coll);
