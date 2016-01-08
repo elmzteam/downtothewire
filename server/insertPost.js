@@ -59,7 +59,13 @@ var saveDatabase = function(data) {
 }
 
 var updateDatabase = function(data) {
-	return denodeify(globals.coll.update, [{timestamp: data.db.timestamp}, {$set: data.db}], undefined, globals.coll);
+	console.log(data.db)
+	for (var t = 0; t < data.db.tags.length; t++) {
+		if (!data.db.tags[t].match(/[a-z]+/)) {
+			data.db.tags.splice(t)
+		}
+	}
+	return denodeify(globals.coll.update, [{timestamp: data.db.timestamp}, {$set: data.db}], undefined , globals.coll);
 }
 
 var insertPost = function(data, coll, path, update) {

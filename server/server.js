@@ -82,7 +82,7 @@ module.exports = function(__dirname, settings) {
 	**/
 
 	var uploadPost = function(modify, body, author) {
-		var time = modify ? modify : Date.now()
+		var time = modify ? parseInt(modify) : Date.now()
 		data = {
 			db: {	
 				title: {
