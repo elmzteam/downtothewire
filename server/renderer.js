@@ -41,6 +41,11 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["post"]
 		},
+		"^/raw/([0-9]{13})$": {
+			page: "raw.hbs",
+			cache: true,
+			groups: ["post"]
+		},
 	}
 	obj.prerender = [
 		{path: "/", options: null},
@@ -55,6 +60,11 @@ var compileRoutes = function(db) {
 			}
 		]}},
 		{path: "/posts/{0}", options: {groups: [
+			{
+				each: getPosts(db)
+			}
+		]}},
+		{path: "/raw/{0}", options: {groups: [
 			{
 				each: getPosts(db)
 			}

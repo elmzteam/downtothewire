@@ -151,5 +151,10 @@ module.exports = function(handlebars, db, root) {
 		}]
 	})
 
+	handlebars.registerHelper("log", function(val) {
+		console.log(val)
+		return ""
+	})
+
 	return handlebars
 }

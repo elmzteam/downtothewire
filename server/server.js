@@ -16,6 +16,7 @@ module.exports = function(__dirname, settings) {
 	    handlebars = require("./stachehelper")(handlebars, db, path)
 	var insert     = require("./insertPost")(db, path)
 	var renderer   = require("./renderer")(__dirname, handlebars, db)
+	var api        = require("./api")(db)
 
 	var express    = require("express")
 	var app        = express()
@@ -48,6 +49,7 @@ module.exports = function(__dirname, settings) {
 	app.use(passport.session());
 	app.use(morgan("dev"))
 	app.use(renderer.handle)
+	app.use(api)
 
 	/**
 	  * App routing
@@ -165,6 +167,13 @@ module.exports = function(__dirname, settings) {
 	} else {
 		logger.warn("Missing authentication variable. Authentication will be unavailable.")
 	}
+
+	/**
+	  * API Access
+	**/
+
+	
+
 	/**
 	  * Start Server
 	**/

@@ -1,10 +1,10 @@
 <html>
-	{{> head.hbs}}
+	{{#with (fetchpost post)}}
+	{{> head.hbs title}}
 	<body>
 		{{> header.hbs}}
 		<content-row>
 			<main>
-				{{#with (fetchpost post)}}
 				<article class="single">
 					{{#if title.link}}
 					<h1 class="large"><span class="subtext"><a class="no-display" href="{{title.link}}">{{title.text}}</a></span>
@@ -38,7 +38,6 @@
 					{{/if}}
 					{{> disqus.hbs timestamp}}
 				</article>
-				{{/with}}
 			</main>
 			<aside>
 				{{#each (sidebar)}}
@@ -56,4 +55,5 @@
 			</aside>
 		</content-row>
 	</body>
+	{{/with}}
 </html>
