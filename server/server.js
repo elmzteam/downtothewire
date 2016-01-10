@@ -91,7 +91,6 @@ module.exports = function(__dirname, settings) {
 				},
 				timestamp: time,
 				tags: body.tags,
-				author: author
 			},
 			content: {
 				value: body.content
