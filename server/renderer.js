@@ -169,7 +169,7 @@ renderer.prototype = {
 		return Promise.all(promises)
 	},
 	renderPage: function(url) {
-		logger.info("[render]", url);
+		logger.info("[render]", "Rendering", url);
 		var loc = Path.join(this.__dirname, render)
 		for (var i in this.routes) {
 			var m = url.match(i)
@@ -185,6 +185,7 @@ renderer.prototype = {
 				}
 				var out = this.renderPath(context)
 				var written = "ROOT"+url.replace(/\//g,".")
+				logger.info("[render]", "Caching", url)
 				return denodeify(fs.writeFile, [Path.join(loc, written), out])
 			}
 		}

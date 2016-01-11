@@ -1,59 +1,37 @@
-<html>
-	{{#with (fetchpost post)}}
-	{{> head.hbs title}}
-	<body>
-		{{> header.hbs}}
-		<content-row>
-			<main>
-				<article class="single">
-					{{#if title.link}}
-					<h1 class="large"><span class="subtext"><a class="no-display" href="{{title.link}}">{{title.text}}</a></span>
-					{{else}}
-					<h1 class="large"><span class="subtext">{{title.text}}</span>
-					{{/if}}
-					{{#with (author author) as |postAuthor|}} 
-					{{#if postAuthor._json.image.url}}
-					<div class="author-image" style="background-image: url('{{postAuthor._json.image.url}}');" data-author-name="{{postAuthor.displayName}}"></div>
-					{{else}}
-					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.displayName}}"></div>
-					{{/if}}
-					{{/with}}
-					</h1>
-					
-					<time>{{longtime timestamp}}</time>
-					
-					{{#if preview}}
-					<img class="preview-image" src="{{preview}}" />
-					{{/if}}
-					
-					
-					<div class="body">
-						{{{loadcontent timestamp}}}
-					</div>
-					
-					{{#if tags}}
-					<footer>
-						Tags: {{#each tags}}{{tag this}}{{/each}}
-					</footer>
-					{{/if}}
-					{{> disqus.hbs timestamp}}
-				</article>
-			</main>
-			<aside>
-				{{#each (sidebar)}}
-				<article>
-					<h1>{{title}}</h1>
-					{{content}}
-				</article>
-				{{/each}}
-				<article>
-					<h1>Tags</h1>
-					{{#each (tags)}}
-						{{tag this}}&nbsp;&nbsp;
-					{{/each}}
-				</article>
-			</aside>
-		</content-row>
-	</body>
+<article>
+	{{#if title.url}}
+	<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
+	{{else}}
+	<h1>{{title.text}}</h1>
+	{{/if}}
+
+	<time>{{longtime timestamp}}</time>
+
+	{{#if preview}}
+	<img class="preview-image" src="{{preview}}" />
+	{{/if}}
+
+	{{#with (getAuthorInfo author)}} 
+	{{#if image.url}}
+	<div class="author-image" data-author-name="{{displayName}}">
+		<img src="{{image.url}}" />
+	</div>
+	{{else}}
+	<div class="author-image">
+		<img src="/images/default.png" />
+	</div>
+	{{/if}}
 	{{/with}}
-</html>
+
+	<div class="body">
+		{{{abbreviate (loadcontent timestamp)}}}
+	</div>
+
+
+	{{expand timestamp}}	
+	{{#if tags}}
+	<footer>
+		Tags: {{#each tags}}{{tag this}}{{/each}}
+	</footer>
+	{{/if}}
+</article>

@@ -8,41 +8,9 @@
 				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
 				{{/if}}
 				{{#each (posts index currtag)}}
-				{{#with this}}
-				<article>
-					{{#if title.url}}
-					<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
-					{{else}}
-					<h1>{{title.text}}</h1>
-					{{/if}}
-					
-					<time>{{longtime timestamp}}</time>
-					
-					{{#if preview}}
-					<img class="preview-image" src="{{preview}}" />
-					{{/if}}
-					
-					{{#with (author author) as |postAuthor|}} 
-					{{#if postAuthor._json.image.url}}
-					<div class="author-image" style="background-image: url('{{postAuthor._json.image.url}}');" data-author-name="{{postAuthor.displayName}}"></div>
-					{{else}}
-					<div class="author-image" style="background-image: url('/images/default.png');" data-author-name="{{postAuthor.displayName}}"></div>
-					{{/if}}
-					{{/with}}
-					
-					<div class="body">
-						{{{abbreviate (loadcontent timestamp)}}}
-					</div>
-
-
-					{{expand timestamp}}	
-					{{#if tags}}
-					<footer>
-						Tags: {{#each tags}}{{tag this}}{{/each}}
-					</footer>
-					{{/if}}
-				</article>
-				{{/with}}
+				
+				{{> post.hbs}}
+				
 				{{/each}}
 				{{#if currtag}}
 				{{else}}

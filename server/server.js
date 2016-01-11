@@ -123,6 +123,7 @@ module.exports = function(__dirname, settings) {
 		db.authors.find({"id": user.id}, function(err, data) {
 			console.log(arguments)
 			if (!err && data.length > 0) {
+				user._json.image.url = user._json.image.url.replace("sz=50", "sz=72");
 				db.authors.update({"id": user.id}, user, function(err) {
 					done(err, JSON.stringify(user));
 				})

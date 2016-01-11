@@ -122,7 +122,7 @@ module.exports = function(handlebars, db, root) {
 			}
 		}
 	})
-	handlebars.registerHelper("author", function(id) {
+	handlebars.registerHelper("getAuthorInfo", function(id) {
 		return deasync(getUser)(id)
 	})
 
