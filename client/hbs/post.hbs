@@ -7,11 +7,14 @@
 
 	<time>{{longtime timestamp}}</time>
 
+	{{!--
 	{{#if preview}}
 	<img class="preview-image" src="{{preview}}" />
 	{{/if}}
+	--}}
 
 	{{#with (getAuthorInfo author)}} 
+	
 	{{#if image.url}}
 	<div class="author-image" data-author-name="{{displayName}}">
 		<img src="{{image.url}}" />
@@ -21,17 +24,30 @@
 		<img src="/images/default.png" />
 	</div>
 	{{/if}}
+	
 	{{/with}}
 
 	<div class="body">
+		{{#if single}}
+		{{{loadcontent timestamp}}}
+		{{else}}
 		{{{abbreviate (loadcontent timestamp)}}}
+		{{/if}}
 	</div>
 
-
-	{{expand timestamp}}	
+	{{#if single}}
+	{{else}}
+	{{expand timestamp}}
+	{{/if}}
+	
 	{{#if tags}}
 	<footer>
 		Tags: {{#each tags}}{{tag this}}{{/each}}
 	</footer>
 	{{/if}}
+	
+	{{#if single}}
+	{{> disqus.hbs timestamp}}
+	{{/if}}
+	
 </article>

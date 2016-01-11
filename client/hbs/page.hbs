@@ -7,11 +7,26 @@
 				{{#if currtag}}
 				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
 				{{/if}}
+				
+				{{#if single}}
+				
+				{{#with (fetchpost post)}}
+				
+				{{log this}}
+				{{set this "single" true}}
+				{{log this}}
+				{{> post.hbs }}
+				
+				{{/with}}
+				
+				{{else}}
+				
 				{{#each (posts index currtag)}}
-				
 				{{> post.hbs}}
-				
 				{{/each}}
+				
+				{{/if}}
+				
 				{{#if currtag}}
 				{{else}}
 				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="btn left btn-default btn-lg {{#if (atTop index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-left"></i></button>{{#if (notTop index)}}</a>{{/if}}
@@ -28,7 +43,7 @@
 				<article>
 					<h1>Tags</h1>
 					{{#each (tags)}}
-						{{tag this}}&nbsp;&nbsp;
+						{{tag this}}
 					{{/each}}
 				</article>
 			</aside>

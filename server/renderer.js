@@ -37,9 +37,10 @@ var compileRoutes = function(db) {
 			groups: ["currtag"]
 		},
 		"^/posts/([0-9]{13})$": {
-			page: "post.hbs",
+			page: "page.hbs",
 			cache: true,
-			groups: ["post"]
+			groups: ["post"],
+			single: true
 		},
 		"^/raw/([0-9]{13})$": {
 			page: "raw.hbs",
@@ -116,7 +117,9 @@ renderer.prototype = {
 					that.handlebars.registerPartial(templates[i].name, templates[i].data)
 				}
 				for (var i = 0; i < templates.length; i++) {
-					that.compiled[templates[i].name] = that.handlebars.compile(templates[i].data)
+					that.compiled[templates[i].name] = that.handlebars.compile(templates[i].data, {
+						preventIndent: true,
+					})
 				}
 				resolve(that.compiled)
 			}, crash)

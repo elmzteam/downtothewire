@@ -1,6 +1,7 @@
 @import "vars";
-@import "media";
 @import "mixins";
+@import "shCoreMonokai";
+@import "shThemeMonokai";
 
 *,
 *:before,
@@ -70,7 +71,6 @@ header {
 
 		&:after {
 			content: "";
-			display: block;
 			width: 0px;
 			height: 2em;
 			position: absolute;
@@ -220,7 +220,8 @@ content-row {
 				position: relative;
 				background: $color-primary-dark;
 				margin-right: -16px;
-				padding: .6em .6em .6em 1em;
+				padding: .6em .6em .6em .8em;
+				text-align: center;
 
 				img {
 					width: 72px;
@@ -239,6 +240,12 @@ content-row {
 					border-top-color: transparent;
 					left: 0px;
 					border-right-color: transparent;
+				}
+				
+				&:after {
+					content: attr(data-author-name);
+					display: block;
+					color: $color-white;
 				}
 			}
 
@@ -290,6 +297,7 @@ content-row {
 			h1 {
 				font-weight: 300;
 				background: $color-primary;
+				color: $color-white;
 				margin: -1 / 1.4 * 1em -1 / 1.4 * 1em .4em;
 				font-size: 1.4em;
 				padding: .2em .4em .2em .8em;
@@ -358,3 +366,8 @@ a {
 		border-radius: 0px 5px 5px 0px;
 	}
 }
+
+
+// don't touch this
+
+@import "media";

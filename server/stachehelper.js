@@ -1,13 +1,17 @@
-var sprintf = require("sprintf")
-var deasync = require("deasync")
-var moment  = require("moment")
-var Path    = require("path")
-var marked  = require("marked")
-var fs      = require("fs")
+var sprintf		= require("sprintf")
+var deasync		= require("deasync")
+var moment		= require("moment")
+var Path		= require("path")
+var marked		= require("marked")
+var fs			= require("fs")
+var highlight	= require("node-syntaxhighlighter")
 
 
 marked.setOptions({
 	gfm: true,
+	highlight: function(code, lang){
+		return highlight.highlight(code, highlight.getLanguage(lang ? lang : "text"));
+	},
 })
 
 module.exports = function(handlebars, db, root) {
@@ -118,12 +122,13 @@ module.exports = function(handlebars, db, root) {
 			return out;
 		} else {
 			return {title: {text: "New Post"},
-				tags: [],
-			}
+					tags: [],
+				   }
 		}
 	})
 	handlebars.registerHelper("getAuthorInfo", function(id) {
-		return deasync(getUser)(id)
+		console.warn(id);
+		return deasync(getUser)(id)._json
 	})
 
 	handlebars.registerHelper("posts", function(page, tag) {
@@ -149,6 +154,10 @@ module.exports = function(handlebars, db, root) {
 			title: "Who",
 			content: "Me, of course, and them, and a bunch of us"
 		}]
+	})
+	
+	handlebars.registerHelper("set", function(obj, key, val){
+		obj[key] = val
 	})
 
 	handlebars.registerHelper("log", function(val) {
