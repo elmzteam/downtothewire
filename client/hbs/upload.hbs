@@ -4,24 +4,33 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js"></script>
 		<script src="/scripts/jquery.js"></script>
 		<script src="/scripts/editor.js"></script>
+		<link rel="stylesheet" href="/css/style.css">
 		<link rel="stylesheet" href="/css/editor.css">
 	</head>
 	<body>
 		{{#with this as |ctx|}}
 		{{#with (fetchpost content) as |info|}}
 		{{#if ctx.content}}
-		<span class="header">Editing {{ctx.content}}</span>
+		<div class="header">Editing {{ctx.content}}</div>
 		{{else}}
-		<span class="header">Create New Post</span>
+		<div class="header">Create New Post</div>
 		{{/if}}
-		Title: <input type="text" id="title" value="{{info.title.text}}"></input><br>
+
+		<div class="title">
+			<div>Title:</div><input type="text" id="title" value="{{info.title.text}}"></input>
+		</div><br>
+
 		<div id="editor">{{#if ctx.content}}{{fetchcontent ctx.content}}{{/if}}</div><br>
-		Tags: <input type="text" id="tags" value="{{#each info.tags}}{{this}} {{/each}}"></input><br>
-		<button class="submit">Submit</button>
+
+		<div class="footer">
+			<div>Tags:</div> <input type="text" id="tags" value="{{#each info.tags}}{{this}} {{/each}}"></input><br>
+			<button class="submit">Submit</button>
+		</div>
+
 		{{/with}}
 		{{/with}}
 	</body>
 {{else}}
-	You must be logged in to use this page
+	You must be <a href="/google/login">logged in</a> to use this page
 {{/if}}
 </html>

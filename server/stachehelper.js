@@ -149,10 +149,10 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("sidebar", function() {
 		return [{
 			title: "About",
-			content: "Bydesign is my blog! Weeeeeee"
+			content: "By Design is blog about the latest and greatest in development tools."
 		}, {
 			title: "Who",
-			content: "Me, of course, and them, and a bunch of us"
+			content: (new handlebars.SafeString("Contributors include <a href='zwad3.com'>Zachary Wade</a>, Matthew Savage, and others."))
 		}]
 	})
 	
