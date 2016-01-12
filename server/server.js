@@ -96,6 +96,7 @@ module.exports = function(__dirname, settings) {
 				value: body.content
 			}
 		}
+		if (!modify) data.db.author = author
 		return insert(data, modify ? true : false)
 	}
 	/**
@@ -120,9 +121,8 @@ module.exports = function(__dirname, settings) {
 	 
 	passport.serializeUser(function(user, done) {
 		db.authors.find({"id": user.id}, function(err, data) {
-			console.log(arguments)
 			if (!err && data.length > 0) {
-				user._json.image.url = user._json.image.url.replace("sz=50", "sz=72");
+				user._json.image.url = user._json.image.url.replace("sz=50", "sz=144");
 				db.authors.update({"id": user.id}, user, function(err) {
 					done(err, JSON.stringify(user));
 				})
@@ -138,10 +138,10 @@ module.exports = function(__dirname, settings) {
 		done(null, JSON.parse(user))
 	});
 
-	if (process.env.AUTH_SECRET) {
+	if (true) {
 		passport.use(new Google({
-				clientID: "477715393921-ft3c5717cv685qomofqhksgtg2sk6ciu.apps.googleusercontent.com",
-				clientSecret: process.env.AUTH_SECRET,
+				clientID: "649437300441-70a97t3jp4nmbpvru13ddp5dr1u00ifb.apps.googleusercontent.com",
+				clientSecret: "2uwN0gLj3h2FPy3zU1w4D4ri",
 				callbackURL: process.env.REMOTE ? "http://jsby.design/google/auth" : "http://127.0.0.1:3000/google/auth"
 			},
 			function(accessToken, refreshToken, profile, done) {

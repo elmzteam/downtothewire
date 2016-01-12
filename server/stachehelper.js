@@ -127,7 +127,6 @@ module.exports = function(handlebars, db, root) {
 		}
 	})
 	handlebars.registerHelper("getAuthorInfo", function(id) {
-		console.warn(id);
 		return deasync(getUser)(id)._json
 	})
 

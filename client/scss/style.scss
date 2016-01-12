@@ -142,6 +142,7 @@ content-row {
 				position: relative;
 				text-indent: -.4em;
 				color: $color-white;
+				box-shadow: 0px 4px rgba(0, 0, 0, .2);
 
 				&:before {
 					content: "";
@@ -158,13 +159,15 @@ content-row {
 				&.large {
 					height: 88px;
 					vertical-align: baseline;
-					div.author-image {
+
+					div.author {
 						position: absolute;
 						top: 8px;
 						right: 8px;
 						margin: 0;
 						size: 14px;
 					}
+
 					.subtext {
 						display: block;
 						width: calc(100% - 80px);
@@ -184,26 +187,30 @@ content-row {
 				color: $color-white;
 				height: 2.4em;
 				position: relative;
-
-				&:before,
-				&:after {
-					content: "";
-					width: 0px;
-					height: 0px;
-					border: .6em solid $color-content-background;
-					position: absolute;
-					bottom: 0px;
-					border-top-color: transparent;
-				}
+				box-shadow: 0px 4px $color-drop-shadow;
 
 				&:before {
-					left: 0px;
-					border-right-color: transparent;
+					content: "";
+					width: 0px;
+					height: calc(2.4em + 4px);
+					border: 1.2em solid transparent;
+					position: absolute;
+					bottom: calc(-1.2em - 4px);
+					right: 0px;
+					border-right-color: $color-content-background;
 				}
 
 				&:after {
+					content: "";
+					width: 1.2em;
+					height: 0em;
+					position: absolute;
 					right: 0px;
-					border-left-color: transparent;
+					top: 100%;
+					transform: skewY(-45deg);
+					transform-origin: bottom left;
+					border-bottom: 4px solid $color-drop-shadow;
+					z-index: 1;
 				}
 			}
 
@@ -214,14 +221,15 @@ content-row {
 				height: 100px;
 			}
 
-			.author-image {
+			.author {
 				float: right;
 				display: inline-block;
 				position: relative;
 				background: $color-primary-dark;
-				margin-right: -16px;
+				margin: 0px -16px .6em .6em;
 				padding: .6em .6em .6em .8em;
 				text-align: center;
+				box-shadow: 0px 4px $color-drop-shadow;
 
 				img {
 					width: 72px;
@@ -233,16 +241,28 @@ content-row {
 				&:before {
 					content: "";
 					width: 0px;
-					height: 0px;
-					border: .6em solid $color-content-background;
+					height: calc(2.4em + 4px);
+					border: 1.2em solid transparent;
 					position: absolute;
-					bottom: 0px;
-					border-top-color: transparent;
+					bottom: calc(-1.2em - 4px);
 					left: 0px;
-					border-right-color: transparent;
+					border-left-color: $color-content-background;
 				}
 				
 				&:after {
+					content: "";
+					width: 1.2em;
+					height: 0em;
+					position: absolute;
+					left: 0px;
+					top: 100%;
+					transform: skewY(45deg);
+					transform-origin: bottom right;
+					border-bottom: 4px solid $color-drop-shadow;
+					z-index: 1;
+				}
+
+				.author-name {
 					content: attr(data-author-name);
 					display: block;
 					color: $color-white;
@@ -303,6 +323,19 @@ content-row {
 				padding: .2em .4em .2em .8em;
 				position: relative;
 				text-indent: -.4em;
+				box-shadow: 0px 4px $color-drop-shadow;
+
+				&:before {
+					content: "";
+					width: 0;
+					height: 0;
+					border: 6px solid $color-page-background;
+					position: absolute;
+					right: 0px;
+					top: 0px;
+					border-bottom-color: transparent;
+					border-left-color: transparent;
+				}
 			}
 
 			.tag {
@@ -367,6 +400,20 @@ a {
 	}
 }
 
+input[type=text] {
+	background: transparent;
+	outline: none;
+	border: none;
+	border-bottom: 2px solid #B2B2B2;
+	padding: 0px .2em;
+	height: auto;
+	font-size: .8em;
+	transition: border-bottom-color 400ms;
+
+	&:focus {
+		border-bottom-color: $color-primary;
+	}
+}
 
 // don't touch this
 

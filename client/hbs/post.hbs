@@ -16,12 +16,14 @@
 	{{#with (getAuthorInfo author)}} 
 	
 	{{#if image.url}}
-	<div class="author-image" data-author-name="{{displayName}}">
+	<div class="author">
 		<img src="{{image.url}}" />
+		<div class="author-name">{{displayName}}</div>
 	</div>
 	{{else}}
-	<div class="author-image">
+	<div class="author">
 		<img src="/images/default.png" />
+		<div class="author-name">{{displayName}}</div>
 	</div>
 	{{/if}}
 	
