@@ -1,7 +1,7 @@
+"use strict";
+
 var gulp = require("gulp");
-var sass = require("gulp-sass");
-var merge = require('merge-stream');
-var autoprefix = require("gulp-autoprefixer")
+var $ = require("gulp-load-plugins")();
 
 gulp.task("watch", function(){
 	gulp.watch("client/scss/**/*.scss", ["sass"]);
@@ -9,24 +9,13 @@ gulp.task("watch", function(){
 
 gulp.task("build", ["sass"]);
 
-gulp.task("sass", function(){
-	var style = gulp.src("client/scss/style.scss")
-		.pipe(sass({outputStyle: "compressed"}))
-		.pipe(autoprefix({
-		browsers: ["last 2 versions", "> 1%"],
-		cascade: false,
-		remove: false
-	}))
+gulp.task("sass", function() {
+	return gulp.src("client/scss/{style.scss,editor.scss}")
+		.pipe($.sass({outputStyle: "compressed"}))
+		.pipe($.autoprefixer({
+			browsers: ["last 2 versions", "> 1%"],
+			cascade: false,
+			remove: false
+		}))
 		.pipe(gulp.dest("client/build/css"));
-	
-	var editor = gulp.src("client/scss/editor.scss")
-		.pipe(sass({outputStyle: "compressed"}))
-		.pipe(autoprefix({
-		browsers: ["last 2 versions", "> 1%"],
-		cascade: false,
-		remove: false
-	}))
-		.pipe(gulp.dest("client/build/css"));
-	
-	return merge(style, editor);
 });
