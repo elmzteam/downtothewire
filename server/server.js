@@ -138,10 +138,10 @@ module.exports = function(__dirname, settings) {
 		done(null, JSON.parse(user))
 	});
 
-	if (true) {
+	if (process.env.AUTH_SECRET) {
 		passport.use(new Google({
-				clientID: "649437300441-70a97t3jp4nmbpvru13ddp5dr1u00ifb.apps.googleusercontent.com",
-				clientSecret: "2uwN0gLj3h2FPy3zU1w4D4ri",
+				clientID: "477715393921-ft3c5717cv685qomofqhksgtg2sk6ciu.apps.googleusercontent.com",
+				clientSecret: process.env.AUTH_SECRET,
 				callbackURL: process.env.REMOTE ? "http://jsby.design/google/auth" : "http://127.0.0.1:3000/google/auth"
 			},
 			function(accessToken, refreshToken, profile, done) {
