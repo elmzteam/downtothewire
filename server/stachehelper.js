@@ -52,10 +52,7 @@ module.exports = function(handlebars, db, root) {
 		var query = {}
 		if (tag) query.tags = tag
 		if (!del) query.deleted = {$ne: true}
-		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
-			console.log(data);
-			cb(err, data);
-		})
+		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, cb)
 	}
 
 	function getTags(cb) {
