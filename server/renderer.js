@@ -31,7 +31,7 @@ var compileRoutes = function(db) {
 			cache: false,
 			groups: ["content"]
 		},
-		"^/tags/([a-z0-9]+)$": {
+		"^/tags/([a-z0-9]{0,16})$": {
 			page: "page.hbs",
 			cache: true,
 			groups: ["currtag"]

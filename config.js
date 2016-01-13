@@ -5,5 +5,6 @@ module.exports = {
 		"dhlanm@gmail.com",
 		"ellisstsung@gmail.com",
 		"bzhang.2003@gmail.com",
+		"lee123456771@gmail.com",
 	]
 }
