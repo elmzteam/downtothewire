@@ -1,0 +1,12 @@
+<html>
+	{{> head.hbs}}
+	{{#if user}}
+	<ul>
+	{{#each (allPosts)}}
+		<li><a href="{{title.url}}">{{title.text}}</a> ({{#with (getAuthorInfo author)}}{{displayName}}{{/with}}) <a href="/editor/{{timestamp}}">Edit</a></li>
+	{{/each}}
+	</ul>
+	{{else}}
+	Please <a href="/google/login">log in</a> first.
+	{{/if}}
+</html>

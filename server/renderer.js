@@ -47,6 +47,10 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["post"]
 		},
+		"^/admin/?$": {
+			page: "admin.hbs",
+			cache: false,
+		}
 	}
 	obj.prerender = [
 		{path: "/", options: null},
