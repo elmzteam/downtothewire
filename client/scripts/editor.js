@@ -1,14 +1,18 @@
 var editor;
-$(window).load(function() {
+$(function() {
 	editor = ace.edit("editor");
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/markdown");
 
-	$(".submit").click(submit)
-})
+	$("#submit").click(submit);
+	$("#theme-switcher").click(function() {
+		$("#post-container").toggleClass("dark");
+		$("html").toggleClass("dark");
+	})
+});
 
 var submit = function() {
-	if (!confirm("Confirm upload")) return;
+	if (!confirm("Are you sure?")) return;
 	var val = editor.getValue()
 	var tags = $("#tags").val().split(" ")
 	var title = $("#title").val()
@@ -20,4 +24,4 @@ var submit = function() {
 		tags: tags,
 		title: title
 	}))
-}
+};
