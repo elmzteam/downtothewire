@@ -12,7 +12,7 @@ $(function() {
 });
 
 var submit = function() {
-	if (!confirm("Confirm upload")) return;
+	if (!confirm("Are you sure?")) return;
 	var val = editor.getValue()
 	var tags = $("#tags").val().split(" ")
 	var title = $("#title").val()

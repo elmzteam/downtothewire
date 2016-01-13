@@ -41,6 +41,8 @@ header {
 	padding: 5px;
 	cursor: pointer;
 	user-select: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: transparent;
 
 	&:active {
 		background-color: rgba(0, 0, 0, 0.1);
@@ -107,7 +109,10 @@ button {
 	color: white;
 	padding: 0.5rem 1rem;
 	font-size: 1rem;
+	text-transform: uppercase;
 	transition: all 0.2s $transition-timing;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: transparent;
 
 	&:hover, &:active {
 		color: white;
@@ -122,6 +127,66 @@ button {
 	}
 }
 
-@media (max-width: $width-small) {
+@media only screen and (max-width: 123ch) {
+	body {
+		display: flex;
+		flex-flow: column nowrap;
+	}
+	header {
+		position: relative;
+		height: 8rem;
+		&>h1 {
+			font-size: 4rem;
+		}
+	}
+	#theme-switcher {
+		font-size: 4rem;
+		padding: 1rem;
+	}
+	#post-container {
+		display: flex;
+		flex-flow: column nowrap;
+		flex-grow: 1;
+		margin: 0;
+		box-shadow: none;
+		width: 100%;
+		height: auto;
 
+		&>input {
+			font-size: 3rem;
+			padding: 2rem;
+		}
+
+		&>#title {
+			padding-top: 2.5rem;
+		}
+		&.dark #submit:active {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
+	}
+	#editor {
+		flex-grow: 1;
+		height: auto;
+		font-size: 2.5rem;
+	}
+	#submit {
+		display: block;
+		box-shadow: none;
+		background-color: transparent;
+		color: #2196F3;
+		font-size: 3rem;
+		padding: 1rem 0;
+		width: 100%;
+		font-weight: bold;
+		&:hover, &:active {
+			color: #2196F3;
+			box-shadow: none;
+		}
+		&:hover {
+			background-color: transparent;
+		}
+		&:active {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+	}
 }
