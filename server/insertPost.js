@@ -51,21 +51,12 @@ var writeFile = function(data) {
 }
 
 var saveDatabase = function(data) {
-	console.log(globals.coll._getServer)
-	globals.coll.fn = function() {
-		console.log(this)
-	}
+	data.db.tags = tagCheck(data.db.tags)	
 	return denodeify(globals.coll.insert, [data.db], undefined, globals.coll);
 }
 
 var updateDatabase = function(data) {
-	console.log(data.db)
-	for (var t = 0; t < data.db.tags.length; t++) {
-		if (!data.db.tags[t].match(/[a-z]+/)) {
-			data.db.tags.splice(t)
-			t--
-		}
-	}
+	data.db.tags = tagCheck(data.db.tags)	
 	return denodeify(globals.coll.update, [{timestamp: data.db.timestamp}, {$set: data.db}], undefined , globals.coll);
 }
 
@@ -108,6 +99,16 @@ module.exports = function(db, path) {
 
 var crash = function(a) {
 	console.error(a)
+}
+
+var tagCheck = function(tags) {
+	for (var t = 0; t < tags.length; t++) {
+		if (!tags[t].match(/[a-z0-9]{0,16}/)) {
+			tags.splice(t)
+			t--
+		}
+	}
+	return tags
 }
 
 if (!module.parent) {
