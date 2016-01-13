@@ -48,9 +48,10 @@ module.exports = function(handlebars, db, root) {
 		})
 	}
 
-	function getPosts(start, end, tag, cb) {
+	function getPosts(start, end, tag, del, cb) {
 		var query = {}
 		if (tag) query.tags = tag
+		if (!del) query.deleted = {$ne: true}
 		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
 			console.log(data);
 			cb(err, data);
@@ -136,11 +137,11 @@ module.exports = function(handlebars, db, root) {
 
 	handlebars.registerHelper("posts", function(page, tag) {
 		var val = parseInt(page)
-		return deasync(getPosts)(val*5, (val+1)*5, tag)
+		return deasync(getPosts)(val*5, (val+1)*5, tag, false)
 	})
 
 	handlebars.registerHelper("allPosts", function() {
-		return deasync(getPosts)(0,0, undefined);
+		return deasync(getPosts)(0,0, undefined, true);
 	})
 
 	//Content Access (This is still gross)

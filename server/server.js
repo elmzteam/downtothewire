@@ -67,14 +67,53 @@ module.exports = function(__dirname, settings) {
 		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
 
+	app.get("/delete/:PAGE", function(req, res) {
+		if (req.user) { 
+			handleDelete(true, req.params.PAGE).
+				then(renderer.reload).
+				catch(logger.error)
+			res.send("Ok")
+		} else {
+			req.status(403)
+			res.send("Please Log In first")
+		}
+	})
+
+	app.get("/restore/:PAGE", function(req, res) {
+		if (req.user) { 
+			handleDelete(false, req.params.PAGE).
+				then(renderer.reload).
+				catch(logger.error)
+			res.send("Ok")
+		} else {
+			req.status(403)
+			res.send("Please Log In first")
+		}
+	})
+
 	app.post("/editor/", function(req, res) {
-		uploadPost(null, req.body, req.user.id).then(renderer.reload)
-		res.send("Ok")
+		if (req.user) {
+			uploadPost(null, req.body, req.user.id).
+				then(renderer.reload).
+				catch(logger.error)
+
+			res.send("Ok")
+		} else {
+			req.status(403)
+			res.send("Please Log In first")
+		}
 	})
 
 	app.post("/editor/:MOD", function(req, res) {
-		uploadPost(req.params.MOD, req.body, req.user.id).then(renderer.reload)
-		res.send("Ok")
+		if (req.user) {
+			uploadPost(req.params.MOD, req.body, req.user.id).
+				then(renderer.reload).
+				catch(logger.error)
+			res.send("Ok")
+		} else {
+			req.status(403)
+			res.send("Please Log In first")
+		}
 	})
 	
 	/**
@@ -99,6 +138,24 @@ module.exports = function(__dirname, settings) {
 		if (!modify) data.db.author = author
 		return insert(data, modify ? true : false)
 	}
+
+	var handleDelete = function(del, page) {
+		return new Promise(function(resolve, reject) {
+			var id = parseInt(page);
+			if (isNaN(id)) {
+				reject("Bad Id")
+				return
+			}
+			db.posts.update({timestamp: id}, {$set:{deleted: del}}, function(err, doc) {
+				if (err) {
+					reject(err || "Bad Id")
+					return
+				}
+				resolve("A OK")
+			})
+		})
+	}
+
 	/**
 	  * MongoDB access functions
 	**/
