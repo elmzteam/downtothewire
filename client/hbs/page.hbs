@@ -27,8 +27,8 @@
 				
 				{{#if currtag}}
 				{{else}}
-				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="left {{#if (atTop index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-left"></i></button>{{#if (notTop index)}}</a>{{/if}}
-				{{#if (notBottom index)}}<a href="/page/{{inc index}}">{{/if}}<button class="btn right {{#if (atBottom index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-right"></i></button>{{#if (notBottom index)}}</a>{{/if}}
+				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="pagination left {{#if (atTop index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-left"></i></button>{{#if (notTop index)}}</a>{{/if}}
+				{{#if (notBottom index)}}<a href="/page/{{inc index}}">{{/if}}<button class="pagination right {{#if (atBottom index)}}disabled{{/if}}"><i class="zmdi zmdi-hc-3x zmdi-long-arrow-right"></i></button>{{#if (notBottom index)}}</a>{{/if}}
 				{{/if}}
 			</main>
 			<aside>

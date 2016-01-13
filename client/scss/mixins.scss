@@ -32,3 +32,11 @@
 @function set-units($number, $units) {
 	@return strip-units($number) * ($units * 0 + 1);
 }
+
+%shadowed {
+	box-shadow: 0px 4px $color-drop-shadow;
+}
+
+.dark %shadowed {
+	box-shadow: 0px 4px $color-drop-shadow-dark;
+}

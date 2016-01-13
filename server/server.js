@@ -59,8 +59,8 @@ module.exports = function(__dirname, settings) {
 		res.sendFile(req.params.FILE, {root: path+"build/css"})
 	})
 
-	app.get("/scripts/:FILE", function (req, res) {
-		res.sendFile(req.params.FILE, {root: path+"scripts"})
+	app.get("/js/:FILE", function (req, res) {
+		res.sendFile(req.params.FILE, {root: path+"js"})
 	})
 
 	app.get("/images/:FILE", function (req, res) {

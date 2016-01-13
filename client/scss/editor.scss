@@ -1,13 +1,14 @@
 @import "vars";
+@import "mixins";
 
 $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
 html {
-	background-color: #F2F2F2;
+	background-color: $color-content-background;
 	transition: background-color 0.2s $transition-timing;
 
 	&.dark {
-		background-color: #202020;
+		background-color: $color-text-main;
 	}
 }
 
@@ -16,14 +17,21 @@ header {
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
-	top: 0; left: 0;
+	top: 0px;
+	left: 0px;
 	height: 56px;
 	width: 100%;
-	background-color: #2196F3;
-	box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+	background-color: $color-primary-dark;
+	box-shadow: 0px 4px $color-drop-shadow;
 	color: white;
 	margin: 0;
 	padding: 0 2rem;
+	transition: background-color 0.2s $transition-timing, box-shadow .2s $transition-timing;
+
+	.dark & {
+		background-color: $color-primary-vdark;
+		box-shadow: 0px 4px $color-drop-shadow-dark;
+	}
 
 	&>h1 {
 		flex-grow: 1;
@@ -50,40 +58,42 @@ header {
 	}
 }
 
-hr {
-	width: 100%;
-	height: 1px;
-	border: 0;
-	border-top: 1px solid #EEE;
-	margin: 0;
-	padding: 0;
-	transition: background-color 0.2s $transition-timing;
-}
-
 #post-container {
 	background-color: white;
-	width: 66.66%;
+	width: 80ch;
+	max-width: 100%;
 	margin: 5rem auto 2rem;
-	box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 4px rgba(0, 0, 0, .24);
-	transition: background-color 0.2s $transition-timing;
+	box-shadow: 0px 4px $color-drop-shadow;
+	transition: background-color 0.2s $transition-timing, box-shadow .2s $transition-timing;
 
-	&>input {
+	input {
 		width: 100%;
 		border: none;
-		font-size: 1.2rem;
-		padding: 1rem;
-		transition: color 0.2s $transition-timing;
-	}
+		padding: .8em;
+		transition: color 0.2s $transition-timing, border-color 0.2s $transition-timing;
+		font-family: inherit;
 
-	&>#title {
-		padding-top: 1.2rem;
-	}
-
-	&.dark {
-		background-color: #2F3129;
-		&>hr {
-			border-color: #757575;
+		&#title {
+			font-size: 1.4em;
+			border-bottom: 1px solid $color-divider;
 		}
+
+		&#tags {
+			font-size: .8em;
+			border-top: 1px solid $color-divider;
+			border-bottom: 1px solid $color-divider;
+		}
+	}
+
+	.dark & {
+		background-color: #2F3129;
+		box-shadow: 0px 4px $color-drop-shadow-dark;
+
+		input#title,
+		input#tags {
+			border-color: $color-divider-dark;
+		}
+
 		&>input {
 			color: white;
 		}
@@ -97,41 +107,49 @@ hr {
 
 .footer {
 	width: 100%;
-	padding: 1rem;
+	padding: 1em;
+	text-align: right;
+}
+
+.ace_editor * {
+	transition: color 0.2s $transition-timing, background 0.2s $transition-timing, border 0.2s $transition-timing;
 }
 
 button {
+	@extend %shadowed;
+
 	display: inline-block;
-	background-color: #2196F3;
+	background-color: #4CAF50;
 	border: none;
-	border-radius: 2px;
-	box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 4px rgba(0, 0, 0, .24);
-	color: white;
-	padding: 0.5rem 1rem;
-	font-size: 1rem;
+	color: $color-white;
+	padding: 0.4em 1em;
+	font-size: 1em;
 	text-transform: uppercase;
 	transition: all 0.2s $transition-timing;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	-webkit-tap-highlight-color: transparent;
+	font-family: inherit;
+	outline: none;
 
 	&:hover, &:active {
-		color: white;
-		box-shadow: 0 0 5px rgba(0, 0, 0, .16), 0 2px 5px 0 rgba(0, 0, 0, 0.3);
+		color: $color-white;
 	}
+
 	&:hover {
-		background-color: #1E88E5;
+		background-color: #43A047;
 	}
 
 	&:active {
-		background-color: #1976D2;
+		background-color: #2E7D32;
 	}
 }
 
-@media only screen and (max-width: 123ch) {
+@media only screen and (max-width: $width-small) {
 	body {
 		display: flex;
 		flex-flow: column nowrap;
 	}
+
 	header {
 		position: relative;
 		height: 8rem;
@@ -139,10 +157,12 @@ button {
 			font-size: 4rem;
 		}
 	}
+
 	#theme-switcher {
 		font-size: 4rem;
 		padding: 1rem;
 	}
+
 	#post-container {
 		display: flex;
 		flex-flow: column nowrap;
@@ -159,16 +179,20 @@ button {
 
 		&>#title {
 			padding-top: 2.5rem;
+			border-bottom: white;
 		}
+
 		&.dark #submit:active {
 			background-color: rgba(255, 255, 255, 0.1);
 		}
 	}
+
 	#editor {
 		flex-grow: 1;
 		height: auto;
 		font-size: 2.5rem;
 	}
+
 	#submit {
 		display: block;
 		box-shadow: none;
@@ -178,13 +202,17 @@ button {
 		padding: 1rem 0;
 		width: 100%;
 		font-weight: bold;
-		&:hover, &:active {
+
+		&:hover,
+		&:active {
 			color: #2196F3;
 			box-shadow: none;
 		}
+
 		&:hover {
 			background-color: transparent;
 		}
+
 		&:active {
 			background-color: rgba(0, 0, 0, 0.1);
 		}

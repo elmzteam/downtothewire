@@ -134,6 +134,8 @@ content-row {
 			}
 
 			&>h1 {
+				@extend %shadowed;
+				
 				font-weight: 300;
 				background: $color-primary;
 				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em 0px;
@@ -142,7 +144,6 @@ content-row {
 				position: relative;
 				text-indent: -.4em;
 				color: $color-white;
-				box-shadow: 0px 4px rgba(0, 0, 0, .2);
 
 				&:before {
 					content: "";
@@ -178,6 +179,8 @@ content-row {
 			}
 
 			time {
+				@extend %shadowed;
+				
 				display: inline-block;
 				margin: 0px -1 / .8 * 1em .6em;
 				padding: .6em 1.6em 0em;
@@ -187,7 +190,6 @@ content-row {
 				color: $color-white;
 				height: 2.4em;
 				position: relative;
-				box-shadow: 0px 4px $color-drop-shadow;
 
 				&:before {
 					content: "";
@@ -222,6 +224,8 @@ content-row {
 			}
 
 			.author {
+				@extend %shadowed;
+				
 				float: right;
 				display: inline-block;
 				position: relative;
@@ -229,7 +233,6 @@ content-row {
 				margin: 0px -16px .4em .4em;
 				padding: .6em .6em .6em .8em;
 				text-align: center;
-				box-shadow: 0px 4px $color-drop-shadow;
 
 				img {
 					width: 72px;
@@ -317,6 +320,8 @@ content-row {
 			}
 
 			h1 {
+				@extend %shadowed;
+				
 				font-weight: 300;
 				background: $color-primary;
 				color: $color-white;
@@ -325,7 +330,6 @@ content-row {
 				padding: .2em .4em .2em .8em;
 				position: relative;
 				text-indent: -.4em;
-				box-shadow: 0px 4px $color-drop-shadow;
 
 				&:before {
 					content: "";
@@ -374,7 +378,7 @@ a {
 	margin: 0px .4em 0px 0px;
 }
 
-button {
+button.pagination {
 	background: $color-text-main;
 	color: $color-white;
 	border: none;
