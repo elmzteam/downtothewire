@@ -103,11 +103,13 @@ var crash = function(a) {
 
 var tagCheck = function(tags) {
 	for (var t = 0; t < tags.length; t++) {
-		if (!tags[t].match(/[a-z0-9]{0,16}/)) {
+		if (!tags[t].match(/^[a-z0-9]{1,16}$/)) {
 			tags.splice(t)
+			console.log(t)
 			t--
 		}
 	}
+	console.log(tags)
 	return tags
 }
 
