@@ -45,7 +45,9 @@ module.exports = function(handlebars, db, root) {
 	function getPosts(start, end, tag, cb) {
 		var query = {}
 		if (tag) query.tags = tag
+		console.log(start, end);
 		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
+			console.log(data);
 			cb(err, data);
 		})
 	}
@@ -132,7 +134,7 @@ module.exports = function(handlebars, db, root) {
 
 	handlebars.registerHelper("posts", function(page, tag) {
 		var val = parseInt(page)
-		return deasync(getPosts)(page*5, (page+1)*5, tag)
+		return deasync(getPosts)(val*5, (val+1)*5, tag)
 	})
 
 	handlebars.registerHelper("longtime", function(time) {

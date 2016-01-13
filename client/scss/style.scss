@@ -179,7 +179,7 @@ content-row {
 
 			time {
 				display: inline-block;
-				margin: 0px -1 / .8 * 1em 1em;
+				margin: 0px -1 / .8 * 1em .6em;
 				padding: .6em 1.6em 0em;
 				font-size: .8em;
 				background: $color-primary-dark;
@@ -226,7 +226,7 @@ content-row {
 				display: inline-block;
 				position: relative;
 				background: $color-primary-dark;
-				margin: 0px -16px .6em .6em;
+				margin: 0px -16px .4em .4em;
 				padding: .6em .6em .6em .8em;
 				text-align: center;
 				box-shadow: 0px 4px $color-drop-shadow;
@@ -271,6 +271,8 @@ content-row {
 
 			.body {
 				min-height: 112px;
+				position: relative;
+				z-index: 1;
 			}
 			footer {
 				background: $color-tag-line;
