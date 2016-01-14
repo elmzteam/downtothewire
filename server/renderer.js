@@ -9,6 +9,7 @@ var render = Path.join(root, "/render/")
 var logger = require("./logger")
 var wait   = require("wait.for")
 var deasync= require("deasync")
+var extend = require("extend")
 
 var getTags;
 var getPosts;
@@ -181,7 +182,7 @@ renderer.prototype = {
 		for (var i in this.routes) {
 			var m = url.match(i)
 			if (m) {
-				var context = this.routes[i]
+				var context = extend(true, {}, this.routes[i])
 				if (context.cache === false) {
 					return new Promise(function (resolve, reject) {resolve()})	
 				}
@@ -201,7 +202,7 @@ renderer.prototype = {
 		for (var i in this.routes) {
 			var m = req.originalUrl.match(i)
 			if (m && req.method == "GET") {
-				var context = this.routes[i]
+				var context = extend(true, {}, this.routes[i])
 				if (context.cache === true) {
 					var written = "ROOT"+req.originalUrl.replace(/\//g,".")
 					res.type("html")
