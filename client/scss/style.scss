@@ -23,7 +23,7 @@ body {
 	padding: 0px;
 }
 
-header {
+html:not(.admin) header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -446,6 +446,11 @@ input[type=text] {
 	&:focus {
 		border-bottom-color: $color-primary;
 	}
+}
+
+dttw-icon.material-icons {
+	font-size: 1em;
+	vertical-align: bottom;
 }
 
 // don't touch this

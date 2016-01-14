@@ -1,4 +1,4 @@
-<html>
+<html class="admin">
 	{{#if user}}
 	{{set this "admin" true}}
 	{{> head.hbs}}
@@ -8,8 +8,10 @@
 		{{/if}}
 
 		<header>
+			<a href="/admin"><dttw-icon id="back" class="material-icons">arrow_back</dttw-icon></a>
+			
 			{{#if info}}
-			<h1>Editing {{info.title.text}}</h1>
+			<h1>Editing "{{info.title.text}}"</h1>
 			{{else}}
 			<h1>Create New Post</h1>
 			{{/if}}
@@ -22,9 +24,12 @@
 			<div id="editor">{{#if info}}{{fetchcontent info.timestamp}}{{/if}}</div>
 			<input type="text" id="tags" value="{{#if info}}{{#each info.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags"/>
 
-			<div class="footer">
-				<button id="submit">Submit</button>
-			</div>
+			<footer>
+				<span id="status"></span>
+				<input id="visible" type="checkbox" {{#if info}}{{#if info.visible}}checked{{/if}}{{/if}} />
+				<label for="visible">Visible</label>
+				<button id="submit">{{#if info}}Update{{else}}Save{{/if}}</button>
+			</footer>
 		</main>
 	</body>
 

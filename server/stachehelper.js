@@ -56,9 +56,7 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getTags(cb) {
-		db.posts.distinct("tags", {}, function(err, data) {
-			cb(err, data)
-		})
+		db.posts.distinct("tags", {}, cb)
 	}
 
 	function getContent(id, cb) {
@@ -72,14 +70,12 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getPost(id, cb) {
-		db.posts.findOne({timestamp: parseInt(id)}, function(err, data) {
-			cb(err, data)
-		})
+		db.posts.findOne({timestamp: parseInt(id)}, cb)
 	}
 
 	//String Manipulation Helpers
 	handlebars.registerHelper("expand", function(id) {
-		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <i class='zmdi zmdi-long-arrow-right'></i></a></div>");
+		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>");
 	})
 	handlebars.registerHelper("abbreviate", function(content) {
 		return content.split("<more>")[0]

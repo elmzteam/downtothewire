@@ -130,6 +130,7 @@ module.exports = function(__dirname, settings) {
 				},
 				timestamp: time,
 				tags: body.tags,
+				visible: body.visible || false
 			},
 			content: {
 				value: body.content

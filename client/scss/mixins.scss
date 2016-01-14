@@ -35,8 +35,12 @@
 
 %shadowed {
 	box-shadow: 0px 4px $color-drop-shadow;
+	
+	.dark & {
+		box-shadow: 0px 4px $color-drop-shadow-dark;
+	}
 }
 
-.dark %shadowed {
-	box-shadow: 0px 4px $color-drop-shadow-dark;
+%no-select {
+	user-select: none;
 }

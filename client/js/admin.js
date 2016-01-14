@@ -20,7 +20,7 @@ $(function() {
 			}
 		}
 	})
-	
+
 	if(localStorage.useDarkTheme == "true"){
 		$("html").addClass("force-no-animation")
 		$("#theme-switcher").trigger("click")
@@ -29,16 +29,36 @@ $(function() {
 });
 
 var submit = function() {
-	var val = editor.getValue()
+	var content = editor.getValue()
 	var tags = $("#tags").val().split(" ")
 	var title = $("#title").val()
+	var visible = $("#visible").prop("checked")
+
+	$("#status").text("Uploading...")
 
 	var XHR = new XMLHttpRequest()
 	XHR.open("POST", "")
 	XHR.setRequestHeader("Content-Type", "application/json")
+
+	XHR.onload = function(){
+		setTimeout(function(that){
+			return function(){
+				switch(that.status){
+					case 200:
+						$("#status").text("Update succesful.")
+						break
+						default:
+						$("#status").text("Error: " + that.responseText)
+						break
+				}
+			}
+		}(this), 200);
+	}
+
 	XHR.send(JSON.stringify({
-		content: val,
+		content: content,
 		tags: tags,
-		title: title
+		title: title,
+		visible: visible
 	}))
 };
