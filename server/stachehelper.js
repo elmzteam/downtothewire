@@ -51,7 +51,7 @@ module.exports = function(handlebars, db, root) {
 	function getPosts(start, end, tag, del, cb) {
 		var query = {}
 		if (tag) query.tags = tag
-		if (!del) query.deleted = {$ne: true}
+		if (!del) query.visible = true
 		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, cb)
 	}
 
@@ -62,9 +62,7 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getContent(id, cb) {
-		fs.readFile(Path.join(root, "posts", id+".md"), function(err, data) {
-			cb(err, data);
-		})
+		fs.readFile(Path.join(root, "posts", id+".md"), cb)
 	}
 
 	function getSize(cb) {
@@ -123,9 +121,7 @@ module.exports = function(handlebars, db, root) {
 		if (out) {
 			return out;
 		} else {
-			return {title: {text: "New Post"},
-					tags: [],
-				   }
+			return null;
 		}
 	})
 	handlebars.registerHelper("getAuthorInfo", function(id) {

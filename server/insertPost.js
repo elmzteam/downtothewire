@@ -28,6 +28,7 @@ var parseData = function(data) {
 				author: data.author,
 				tags: data.tags.split(" "),
 				timestamp: time,
+				visible: true,
 			},
 			content: {
 				address: data.content	

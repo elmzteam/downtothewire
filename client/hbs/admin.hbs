@@ -1,18 +1,28 @@
 <html>
+	{{set this "admin" true}}
 	{{> head.hbs}}
+
+	<header>
+		<h1>Posts</h1>
+		<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
+	</header>
+
 	{{#if user}}
-	<ul>
-	{{#each (allPosts)}}
-		<li>
-			<a href="{{title.url}}">{{title.text}}</a> 
-			({{#with (getAuthorInfo author)}}{{displayName}}{{/with}}) 
-			<a href="/editor/{{timestamp}}">Edit</a>
-			<a href="/{{#if deleted}}restore{{else}}delete{{/if}}/{{timestamp}}">
-				{{#if deleted}}un{{/if}}delete
-			</a>
-		</li>
-	{{/each}}
-	</ul>
+	<main>
+		{{#each (allPosts)}}
+		<div class="post">
+			<span class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
+
+			{{#with (getAuthorInfo author)}}
+			<img class="author-image small" src="{{image.url}}" />
+			{{/with}}
+
+			<span class="title">{{title.text}}</span>
+			<a href="/posts/{{timestamp}}"><dttw-icon class="material-icons" id="view">pageview</dttw-icon></a>
+			<a href="/editor/{{timestamp}}"><dttw-icon class="material-icons" id="edit">edit</dttw-icon></a>
+		</div>
+		{{/each}}
+	</main>
 	{{else}}
 	Please <a href="/google/login">log in</a> first.
 	{{/if}}

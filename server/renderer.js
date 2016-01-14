@@ -27,7 +27,7 @@ var compileRoutes = function(db) {
 			groups: ["index"]
 		},
 		"^/editor/?([0-9]*)$": {
-			page: "upload.hbs",
+			page: "editor.hbs",
 			cache: false,
 			groups: ["content"]
 		},

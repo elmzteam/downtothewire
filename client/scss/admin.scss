@@ -10,6 +10,14 @@ html {
 	&.dark {
 		background-color: $color-text-main;
 	}
+	
+	&.force-no-animation {
+		transition: none;
+		
+		* {
+			transition: none;
+		}
+	}
 }
 
 header {
@@ -58,7 +66,7 @@ header {
 	}
 }
 
-#post-container {
+main {
 	background-color: white;
 	width: 80ch;
 	max-width: 100%;
@@ -66,7 +74,7 @@ header {
 	box-shadow: 0px 4px $color-drop-shadow;
 	transition: background-color 0.2s $transition-timing, box-shadow .2s $transition-timing;
 
-	input {
+	input[type=text] {
 		width: 100%;
 		border: none;
 		padding: .8em;
@@ -144,7 +152,59 @@ button {
 	}
 }
 
-@media only screen and (max-width: $width-small) {
+.post {
+	height: 4em;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	color: $color-text-main;
+	transition: all 200ms $transition-timing;
+	
+	.dark & {
+		color: $color-white;
+	}
+
+	&:not(:last-child) {
+		border-bottom: 1px solid $color-divider;
+
+		.dark & {
+			border-bottom-color: $color-divider-dark;
+		}
+	}
+
+	.status-bar {
+		width: 1em;
+		height: 100%;
+		background: $color-primary;
+		margin-right: 1em;
+
+		&.visible {
+			background: #4CAF50;
+		}
+	}
+
+	.author-image {
+		margin-right: 1em;
+	}
+
+	.title {
+		flex-grow: 1;
+	}
+
+	#view,
+	#edit {
+		margin-right: .4em;
+		color: $color-text-main;
+		transition: color 200ms $transition-timing;
+		
+		.dark & {
+			color: $color-white;
+		}
+	}
+}
+
+@media only screen and (max-device-width: $width-small) {
 	body {
 		display: flex;
 		flex-flow: column nowrap;
@@ -163,7 +223,7 @@ button {
 		padding: 1rem;
 	}
 
-	#post-container {
+	main {
 		display: flex;
 		flex-flow: column nowrap;
 		flex-grow: 1;

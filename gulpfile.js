@@ -10,7 +10,7 @@ gulp.task("watch", function(){
 gulp.task("build", ["sass"]);
 
 gulp.task("sass", function() {
-	return gulp.src("client/scss/{style.scss,editor.scss}")
+	return gulp.src("client/scss/{style.scss,admin.scss}")
 		.pipe($.sass({outputStyle: "compressed"}))
 		.pipe($.autoprefixer({
 			browsers: ["last 2 versions", "> 1%"],

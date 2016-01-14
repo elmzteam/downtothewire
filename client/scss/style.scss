@@ -135,7 +135,7 @@ content-row {
 
 			&>h1 {
 				@extend %shadowed;
-				
+
 				font-weight: 300;
 				background: $color-primary;
 				margin: -1 / 1.6 * 1em -1 / 1.6 * 1em 0px;
@@ -180,7 +180,7 @@ content-row {
 
 			time {
 				@extend %shadowed;
-				
+
 				display: inline-block;
 				margin: 0px -1 / .8 * 1em .6em;
 				padding: .6em 1.6em 0em;
@@ -225,7 +225,7 @@ content-row {
 
 			.author {
 				@extend %shadowed;
-				
+
 				float: right;
 				display: inline-block;
 				position: relative;
@@ -233,13 +233,6 @@ content-row {
 				margin: 0px -16px .4em .4em;
 				padding: .6em .6em .6em .8em;
 				text-align: center;
-
-				img {
-					width: 72px;
-					height: 72px;
-					border-radius: 36px;
-					border: 4px solid $color-text-main;
-				}
 
 				&:before {
 					content: "";
@@ -251,7 +244,7 @@ content-row {
 					left: 0px;
 					border-left-color: $color-content-background;
 				}
-				
+
 				&:after {
 					content: "";
 					width: 1.2em;
@@ -321,7 +314,7 @@ content-row {
 
 			h1 {
 				@extend %shadowed;
-				
+
 				font-weight: 300;
 				background: $color-primary;
 				color: $color-white;
@@ -349,6 +342,20 @@ content-row {
 				white-space: nowrap;
 			}
 		}
+	}
+}
+
+.author-image {
+	width: 72px;
+	height: 72px;
+	border-radius: 36px;
+	border: 4px solid $color-text-main;
+
+	&.small {
+		width: 48px;
+		height: 48px;
+		border-radius: 24px;
+		border: 3px solid $color-text-main;
 	}
 }
 
@@ -393,7 +400,7 @@ button.pagination {
 	&.disabled {
 		display: none;
 	}
-	
+
 	&:after {
 		content: "";
 		border: .6em solid $color-page-background;
@@ -404,7 +411,7 @@ button.pagination {
 
 	&.left {
 		float: left;
-		
+
 		&:after {
 			left: 0px;
 			border-right-color: transparent;
@@ -413,7 +420,7 @@ button.pagination {
 
 	&.right {
 		float: right;
-		
+
 		&:after {
 			right: 0px;
 			border-left-color: transparent;
