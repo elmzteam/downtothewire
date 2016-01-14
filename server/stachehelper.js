@@ -51,23 +51,16 @@ module.exports = function(handlebars, db, root) {
 	function getPosts(start, end, tag, del, cb) {
 		var query = {}
 		if (tag) query.tags = tag
-		if (!del) query.deleted = {$ne: true}
-		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, function(err, data) {
-			console.log(data);
-			cb(err, data);
-		})
+		if (!del) query.visible = true
+		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, cb)
 	}
 
 	function getTags(cb) {
-		db.posts.distinct("tags", {}, function(err, data) {
-			cb(err, data)
-		})
+		db.posts.distinct("tags", {}, cb)
 	}
 
 	function getContent(id, cb) {
-		fs.readFile(Path.join(root, "posts", id+".md"), function(err, data) {
-			cb(err, data);
-		})
+		fs.readFile(Path.join(root, "posts", id+".md"), cb)
 	}
 
 	function getSize(cb) {
@@ -77,14 +70,12 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getPost(id, cb) {
-		db.posts.findOne({timestamp: parseInt(id)}, function(err, data) {
-			cb(err, data)
-		})
+		db.posts.findOne({timestamp: parseInt(id)}, cb)
 	}
 
 	//String Manipulation Helpers
 	handlebars.registerHelper("expand", function(id) {
-		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <i class='zmdi zmdi-long-arrow-right'></i></a></div>");
+		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>");
 	})
 	handlebars.registerHelper("abbreviate", function(content) {
 		return content.split("<more>")[0]
@@ -126,9 +117,7 @@ module.exports = function(handlebars, db, root) {
 		if (out) {
 			return out;
 		} else {
-			return {title: {text: "New Post"},
-					tags: [],
-				   }
+			return null;
 		}
 	})
 	handlebars.registerHelper("getAuthorInfo", function(id) {

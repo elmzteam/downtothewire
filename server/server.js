@@ -59,17 +59,17 @@ module.exports = function(__dirname, settings) {
 		res.sendFile(req.params.FILE, {root: path+"build/css"})
 	})
 
-	app.get("/scripts/:FILE", function (req, res) {
-		res.sendFile(req.params.FILE, {root: path+"scripts"})
+	app.get("/js/:FILE", function (req, res) {
+		res.sendFile(req.params.FILE, {root: path+"js"})
 	})
 
 	app.get("/images/:FILE", function (req, res) {
 		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
 
-	app.get("/delete/:PAGE", function(req, res) {
+	app.get("/hide/:PAGE", function(req, res) {
 		if (req.user) { 
-			handleDelete(true, req.params.PAGE).
+			handleVisibility(true, req.params.PAGE).
 				then(renderer.reload).
 				catch(logger.error)
 			res.send("Ok")
@@ -79,9 +79,9 @@ module.exports = function(__dirname, settings) {
 		}
 	})
 
-	app.get("/restore/:PAGE", function(req, res) {
+	app.get("/show/:PAGE", function(req, res) {
 		if (req.user) { 
-			handleDelete(false, req.params.PAGE).
+			handleVisibility(false, req.params.PAGE).
 				then(renderer.reload).
 				catch(logger.error)
 			res.send("Ok")
@@ -130,6 +130,7 @@ module.exports = function(__dirname, settings) {
 				},
 				timestamp: time,
 				tags: body.tags,
+				visible: body.visible || false
 			},
 			content: {
 				value: body.content
@@ -139,14 +140,14 @@ module.exports = function(__dirname, settings) {
 		return insert(data, modify ? true : false)
 	}
 
-	var handleDelete = function(del, page) {
+	var handleVisibility = function(visible, page) {
 		return new Promise(function(resolve, reject) {
 			var id = parseInt(page);
 			if (isNaN(id)) {
 				reject("Bad Id")
 				return
 			}
-			db.posts.update({timestamp: id}, {$set:{deleted: del}}, function(err, doc) {
+			db.posts.update({timestamp: id}, {$set:{visible: visible}}, function(err, doc) {
 				if (err) {
 					reject(err || "Bad Id")
 					return
