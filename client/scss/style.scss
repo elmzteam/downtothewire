@@ -124,7 +124,10 @@ content-row {
 			font-weight: bold;
 			margin-bottom: 10px;
 		}
+		
 		article {
+			@extend %shadowed;
+			
 			padding: 1em 1em .4em;
 			background: $color-content-background;
 			margin-bottom: 2em;
@@ -304,6 +307,8 @@ content-row {
 		margin-right: 1em;
 
 		article {
+			@extend %shadowed;
+			
 			padding: 1em 1em .4em;
 			background: $color-content-background;
 			margin-bottom: 1em;
