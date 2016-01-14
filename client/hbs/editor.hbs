@@ -1,15 +1,17 @@
 <html>
-{{#if user}}
+	{{#if user}}
 	{{set this "admin" true}}
 	{{> head.hbs}}
 	<body>
-		{{#with (fetchpost content) as |info|}}
-		
+		{{#if content}}
+		{{set this "info" (fetchpost content)}}
+		{{/if}}
+
 		<header>
 			{{#if info}}
-				<h1>Editing {{info.title.text}}</h1>
+			<h1>Editing {{info.title.text}}</h1>
 			{{else}}
-				<h1>Create New Post</h1>
+			<h1>Create New Post</h1>
 			{{/if}}
 
 			<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
@@ -17,19 +19,16 @@
 
 		<main>
 			<input type="text" id="title" {{#if info}}value="{{info.title.text}}"{{/if}} placeholder="Post Title" autocomplete="off" />
-			{{log info}}
 			<div id="editor">{{#if info}}{{fetchcontent info.timestamp}}{{/if}}</div>
 			<input type="text" id="tags" value="{{#if info}}{{#each info.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags"/>
-			
+
 			<div class="footer">
 				<button id="submit">Submit</button>
 			</div>
 		</main>
-		
-		{{/with}}
 	</body>
 
-{{else}}
+	{{else}}
 	You must be <a href="/google/login">logged in</a> to use this page
-{{/if}}
+	{{/if}}
 </html>
