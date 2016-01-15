@@ -62,6 +62,7 @@ var compileRoutes = function(db) {
 		"^/rss/?": {
 			page: "rss.hbs",
 			cache: true,
+			mime: "text/xml"
 		},
 	}
 	obj.prerender = [
@@ -91,7 +92,6 @@ var compileRoutes = function(db) {
 				each: ["","/"]
 			}
 		],
-			mime: "text/xml"
 		}},
 	]
 	return obj
@@ -242,7 +242,7 @@ renderer.prototype = {
 				var context = extend(true, {}, this.routes[i])
 				if (context.cache === true) {
 					var written = "ROOT"+req.originalUrl.replace(/\//g,".")
-					res.type("html")
+					res.type(context.mime || "html")
 					res.sendFile(written, {root: Path.join(this.__dirname, render)})
 					return;
 				} else {
