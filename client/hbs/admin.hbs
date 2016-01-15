@@ -12,7 +12,7 @@
 	<main>
 		{{#each (allPosts)}}
 		<div class="post">
-			<span class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
+			<span post="{{timestamp}}" visible="{{visible}}" class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
 
 			{{#with (getAuthorInfo author)}}
 			<img class="author-image small" src="{{image.url}}" />
