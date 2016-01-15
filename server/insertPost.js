@@ -2,14 +2,14 @@
 
 "use strict";
 
-var fs			= require("fs")
-var path		= require("path")
-var config		= require("../config")
+var fs       = require("fs")
+var path     = require("path")
+var config   = require("../config")
 
 var prompt
-var globals 	= {}
-globals.coll	= undefined
-globals.path	= undefined
+var globals  = {}
+globals.coll = undefined
+globals.path = undefined
 
 var getData = function() {
 	return fetchData().then(parseData)

@@ -1,17 +1,17 @@
 "use strict";
 
-var fs				= require("fs")
-var path			= require("path")
+var fs              = require("fs")
+var path            = require("path")
 
-var config			= require("../config")
-var logger			= require("./logger")
-var wait			= require("wait.for")
-var deasync			= require("deasync")
-var extend			= require("extend")
+var config          = require("../config")
+var logger          = require("./logger")
+var wait            = require("wait.for")
+var deasync         = require("deasync")
+var extend          = require("extend")
 
-var TEMPLATES_DIR	= path.join(config.paths.client, "/hbs/")
+var TEMPLATES_DIR   = path.join(config.paths.client, "/hbs/")
 
-var RENDER_ROOT_STR	= "@"
+var RENDER_ROOT_STR = "@"
 
 var getTags
 var getPosts

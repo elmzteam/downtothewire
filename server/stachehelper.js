@@ -1,14 +1,14 @@
 "use strict";
 
-var sprintf		= require("sprintf")
-var deasync		= require("deasync")
-var moment		= require("moment")
-var path		= require("path")
-var marked		= require("marked")
-var fs			= require("fs")
-var highlight	= require("node-syntaxhighlighter")
-var RSS			= require("rss")
-var config		= require("../config")
+var sprintf     = require("sprintf")
+var deasync     = require("deasync")
+var moment      = require("moment")
+var path        = require("path")
+var marked      = require("marked")
+var fs          = require("fs")
+var highlight   = require("node-syntaxhighlighter")
+var RSS         = require("rss")
+var config      = require("../config")
 
 marked.setOptions({
 	gfm: true,

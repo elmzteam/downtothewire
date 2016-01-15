@@ -1,11 +1,11 @@
 "use strict";
 
-var SRC		= "client"
-var BUILD	= "build"
+var SRC     = "client"
+var BUILD   = "build"
 
-var gulp	= require("gulp")
-var path	= require("path")
-var $		= require("gulp-load-plugins")()
+var gulp    = require("gulp")
+var path    = require("path")
+var $       = require("gulp-load-plugins")()
 
 gulp.task("watch", function(){
 	gulp.watch(path.join(SRC, "scss/**/*"), ["sass"])

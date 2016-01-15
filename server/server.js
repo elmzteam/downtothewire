@@ -3,32 +3,32 @@ module.exports = function(__dirname) {
 	  * Imports and Initializations 
 	**/
 	
-	var path		= require("path");
-	var config		= require("../config")
+	var path        = require("path");
+	var config      = require("../config")
 	
-	var mongojs		= require("mongojs")
-	var db			= mongojs("mongodb://localhost/bydesign",["authors", "posts"])
+	var mongojs     = require("mongojs")
+	var db          = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
-	var handlebars	= require("handlebars")
-	    handlebars	= require("./stachehelper")(handlebars, db, config.paths.client)
+	var handlebars  = require("handlebars")
+	    handlebars  = require("./stachehelper")(handlebars, db, config.paths.client)
 		
-	var insert		= require("./insertPost")(db, config.paths.client)
-	var renderer	= require("./renderer")(__dirname, handlebars, db)
-	var api			= require("./api")(db)
+	var insert      = require("./insertPost")(db, config.paths.client)
+	var renderer    = require("./renderer")(__dirname, handlebars, db)
+	var api         = require("./api")(db)
 
-	var express		= require("express")
-	var app			= express()
+	var express     = require("express")
+	var app         = express()
 
-	var cookie		= require("cookie-parser")
-	var body		= require("body-parser")
-	var session		= require("express-session")
-	var MongoStore	= require("connect-mongo")(session)
+	var cookie      = require("cookie-parser")
+	var body        = require("body-parser")
+	var session     = require("express-session")
+	var MongoStore  = require("connect-mongo")(session)
 
-	var Google		= require('passport-google-oauth').OAuth2Strategy
-	var passport	= require("passport")
+	var Google      = require('passport-google-oauth').OAuth2Strategy
+	var passport    = require("passport")
 	
-	var logger		= require("./logger")
-	var morgan		= require("morgan")
+	var logger      = require("./logger")
+	var morgan      = require("morgan")
 
 	/**
 	  * Middleware Initialization
