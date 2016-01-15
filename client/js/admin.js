@@ -8,6 +8,7 @@ $(function() {
 	}
 
 	$("#submit").click(submit)
+	$(".status-bar").click(visible)
 
 	$("#theme-switcher").click(function() {
 		localStorage.useDarkTheme = $("html").toggleClass("dark").hasClass("dark")
@@ -62,3 +63,22 @@ var submit = function() {
 		visible: visible
 	}))
 };
+
+var visible = function() {
+	var XHR = new XMLHttpRequest()
+	XHR.open("POST", "/visible")
+	XHR.setRequestHeader("Content-Type", "application/json")
+	
+	var el = $(this)
+	XHR.onload = function() {
+		var res = JSON.parse(XHR.response)
+		el.removeClass("hidden")
+		el.removeClass("visible")
+		el.addClass(res.state)
+		el.attr("visible", res.visible)
+	}
+	XHR.send(JSON.stringify({
+		page: el.attr("post"),
+		state: !JSON.parse(el.attr("visible"))
+	}))
+}

@@ -67,24 +67,25 @@ module.exports = function(__dirname, settings) {
 		res.sendFile(req.params.FILE, {root: path+"images"})
 	})
 
-	app.get("/hide/:PAGE", function(req, res) {
+	app.post("/visible", function(req, res) {
 		if (req.user) { 
-			handleVisibility(true, req.params.PAGE).
-				then(renderer.reload).
-				catch(logger.error)
-			res.send("Ok")
-		} else {
-			req.status(403)
-			res.send("Please Log In first")
-		}
-	})
-
-	app.get("/show/:PAGE", function(req, res) {
-		if (req.user) { 
-			handleVisibility(false, req.params.PAGE).
-				then(renderer.reload).
-				catch(logger.error)
-			res.send("Ok")
+			handleVisibility(req.body.state, req.body.page).
+				then(function() {
+					res.status(200)
+					res.send({
+						"state": req.body.state ? "visible" : "hidden",
+						"visible": req.body.state
+					})
+					renderer.reload()
+				}).
+				catch(function(err) {
+					res.status(500)
+					res.send({
+						"state": !req.body.state ? "visible" : "hidden",
+						"visible": !req.body.state
+					})
+					logger.error(err)
+				})
 		} else {
 			req.status(403)
 			res.send("Please Log In first")
