@@ -43,6 +43,13 @@ var compileRoutes = function(db) {
 			groups: ["post"],
 			single: true
 		},
+		"^/preview/([0-9]{13})$": {
+			page: "page.hbs",
+			cache: false,
+			groups: ["post"],
+			single: true,
+			restricted: true,
+		},
 		"^/raw/([0-9]{13})$": {
 			page: "raw.hbs",
 			cache: true,
@@ -86,7 +93,10 @@ module.exports = function(__dirname, handlebars, db) {
 			cl.handle(req, res, next)
 		},
 		reload: function() {
-			cl.renderAll()
+			cl.clearCache().then(function() {
+				console.log("Here!")
+				cl.renderAll()
+			}).catch(crash)
 		}
 	}
 }
@@ -110,6 +120,22 @@ var renderer = function(__dirname, handlebars, db) {
 renderer.prototype = {
 	renderPath:function(context) {
 		return this.compiled[context.page](context)
+	},
+	clearCache: function() {
+		var that = this
+		return denodeify(fs.readdir, [Path.join(that.__dirname,render)]).then(function(files) {
+			var regex = /^ROOT\./
+			var promises = []
+			for (var i = 0; i < files.length; i++) {
+				if (files[i].match(regex)) {
+					logger.info("[render] Clearing "+files[i])
+					promises.push(
+						denodeify(fs.unlink, [Path.join(that.__dirname, render, files[i])])
+					)
+				}
+			}
+			return Promise.all(promises)
+		})
 	},
 	compileAll: function() {
 		var that = this
@@ -226,7 +252,7 @@ renderer.prototype = {
 }
 
 var crash = function(err) {
-	logger.error(err.stack)
+	logger.error(err.stack || err)
 }
 
 var promiseFile = function(path, filename) {
@@ -242,7 +268,7 @@ var promiseFile = function(path, filename) {
 var denodeify = function(fn, args) {
 	return new Promise(function(resolve, reject) {
 		args[args.length] = (function(err, data) {
-			if (err || data == undefined) reject(err || "No Data")
+			if (err) reject(err || "No Data")
 			else resolve(data)
 		})
 		fn.apply(fn,args)
@@ -257,9 +283,11 @@ var getTags = function(db) {
 	})()
 }
 
-var getPosts = function(db) {
+var getPosts = function(db, all) {
 	return deasync(function(cb) {
-		db.posts.distinct("timestamp", {}, function(err, data) {
+		var query = {}
+		if (!all) query.visible = true
+		db.posts.distinct("timestamp", query, function(err, data) {
 			cb(err, data)
 		})
 	})()
