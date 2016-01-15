@@ -5,6 +5,8 @@ var Path		= require("path")
 var marked		= require("marked")
 var fs			= require("fs")
 var highlight	= require("node-syntaxhighlighter")
+var RSS			= require("rss");
+var config		= require("../config") 
 
 
 marked.setOptions({
@@ -48,10 +50,10 @@ module.exports = function(handlebars, db, root) {
 		})
 	}
 
-	function getPosts(start, end, tag, del, cb) {
+	function getPosts(start, end, tag, all, cb) {
 		var query = {}
 		if (tag) query.tags = tag
-		if (!del) query.visible = true
+		if (!all) query.visible = true
 		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, cb)
 	}
 
@@ -103,6 +105,7 @@ module.exports = function(handlebars, db, root) {
 			return "Error"
 		}
 	})
+	
 	handlebars.registerHelper("tags", function() {
 		return deasync(getTags)();	
 	})
@@ -115,6 +118,7 @@ module.exports = function(handlebars, db, root) {
 			return "Error"
 		}
 	})
+	
 	handlebars.registerHelper("fetchpost", function(id) {
 		var out = deasync(getPost)(id)
 		if (out) {
@@ -123,6 +127,7 @@ module.exports = function(handlebars, db, root) {
 			return null;
 		}
 	})
+	
 	handlebars.registerHelper("getAuthorInfo", function(id) {
 		return deasync(getUser)(id)._json
 	})
@@ -133,9 +138,28 @@ module.exports = function(handlebars, db, root) {
 	})
 
 	handlebars.registerHelper("allPosts", function() {
-		return deasync(getPosts)(0,0, undefined, true);
+		return deasync(getPosts)(0,0, undefined, true)
 	})
 
+	handlebars.registerHelper("rss", function() {
+		var posts = deasync(getPosts)(0, 20, undefined, false)
+		var feed = new RSS(config.rssInfo)
+		
+		for(var i = 0; i < posts.length; i++){
+			feed.item({
+				title: posts[i].title.text,
+				description: deasync(getContent)(posts[i].timestamp),
+				url: posts[i].title.url,
+				guid: posts[i].timestamp,
+				categories: posts[i].tags,
+				author: deasync(getUser)(posts[i].author)._json.displayName,
+				date: posts[i].timestamp
+			})
+		}
+		
+		return feed.xml()
+	})
+	
 	//Content Access (This is still gross)
 	handlebars.registerHelper("sidebar", function() {
 		return [{

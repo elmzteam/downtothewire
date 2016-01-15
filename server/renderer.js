@@ -58,7 +58,11 @@ var compileRoutes = function(db) {
 		"^/admin/?$": {
 			page: "admin.hbs",
 			cache: false,
-		}
+		},
+		"^/rss/?": {
+			page: "rss.hbs",
+			cache: true,
+		},
 	}
 	obj.prerender = [
 		{path: "/", options: null},
@@ -81,7 +85,14 @@ var compileRoutes = function(db) {
 			{
 				each: getPosts(db)
 			}
-		]}}
+		]}},
+		{path: "/rss{0}", options: {groups: [
+			{
+				each: ["","/"]
+			}
+		],
+			mime: "text/xml"
+		}},
 	]
 	return obj
 }
