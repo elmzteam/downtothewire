@@ -40,6 +40,7 @@
     "passport": "^0.3.2",
     "passport-google-oauth": "^0.2.0",
     "prompt": "^0.2.14",
+    "rss": "^1.2.1",
     "sprintf": "^0.1.5",
     "wait.for": "^0.6.6"
   }
