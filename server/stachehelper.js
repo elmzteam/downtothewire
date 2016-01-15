@@ -1,23 +1,23 @@
-var sprintf		= require("sprintf")
-var deasync		= require("deasync")
-var moment		= require("moment")
-var Path		= require("path")
-var marked		= require("marked")
-var fs			= require("fs")
-var highlight	= require("node-syntaxhighlighter")
-var RSS			= require("rss");
-var config		= require("../config") 
+"use strict";
 
+var sprintf     = require("sprintf")
+var deasync     = require("deasync")
+var moment      = require("moment")
+var path        = require("path")
+var marked      = require("marked")
+var fs          = require("fs")
+var highlight   = require("node-syntaxhighlighter")
+var RSS         = require("rss")
+var config      = require("../config")
 
 marked.setOptions({
 	gfm: true,
 	highlight: function(code, lang){
-		return highlight.highlight(code, highlight.getLanguage(lang ? lang : "text"));
+		return highlight.highlight(code, highlight.getLanguage(lang ? lang : "text"))
 	},
 })
 
 module.exports = function(handlebars, db, root) {
-
 	handlebars.registerHelper("noop", function(options) {
 		return ""
 	})
@@ -28,26 +28,24 @@ module.exports = function(handlebars, db, root) {
 
 	//String Manipulation Methods 
 	function djb2(str){
-		var hash = 0xc0ffee;
+		var hash = 0xc0ffee
 		for (var i = 0; i < str.length; i++) {
-			hash = ((hash << 5) + hash) + str.charCodeAt(i); /* hash * 33 + c */
+			hash = ((hash << 5) + hash) + str.charCodeAt(i) /* hash * 33 + c */
 		}
-		return hash;
+		return hash
 	}
 
 	function hashStringToColor(str) {
-		var hash = djb2(str);
-		var r = (hash & 0xFF0000) >> 16;
-		var g = (hash & 0x00FF00) >> 8;
-		var b = hash & 0x0000FF;
-		return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2);
+		var hash = djb2(str)
+		var r = (hash & 0xFF0000) >> 16
+		var g = (hash & 0x00FF00) >> 8
+		var b = hash & 0x0000FF
+		return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2)
 	}
 
 	//Database Access Functions
 	function getUser(id, cb) {
-		db.authors.findOne({id: id}, function(err, data) {
-			cb(err,data);
-		})
+		db.authors.findOne({id: id}, cb)
 	}
 
 	function getPosts(start, end, tag, all, cb) {
@@ -59,13 +57,13 @@ module.exports = function(handlebars, db, root) {
 
 	function getTags(cb) {
 		db.posts.distinct("tags", {visible: true}, function(err, data){
-			data.sort();
-			cb(err, data);
+			data.sort()
+			cb(err, data)
 		})
 	}
 
 	function getContent(id, cb) {
-		fs.readFile(Path.join(root, "posts", id+".md"), cb)
+		fs.readFile(path.join(config.paths.posts, id+".md"), cb)
 	}
 
 	function getSize(cb) {
@@ -80,7 +78,7 @@ module.exports = function(handlebars, db, root) {
 
 	//String Manipulation Helpers
 	handlebars.registerHelper("expand", function(id) {
-		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>");
+		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>")
 	})
 	handlebars.registerHelper("abbreviate", function(content) {
 		return content.split("<more>")[0]
@@ -93,21 +91,21 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("tag", function(tag, options) {
 		return new handlebars.SafeString(
 			sprintf("<a class='tag' href='/tags/%s' style='background-color: %s;'>%s</a>", tag, hashStringToColor(tag), tag)
-		);
+		)
 	})
 
 	//Database Access and Manipulation
 	handlebars.registerHelper("loadcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {
-			return marked(out.toString());
+			return marked(out.toString())
 		} else {
 			return "Error"
 		}
 	})
 	
 	handlebars.registerHelper("tags", function() {
-		return deasync(getTags)();	
+		return deasync(getTags)();
 	})
 
 	handlebars.registerHelper("fetchcontent", function(id) {
@@ -122,9 +120,9 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("fetchpost", function(id) {
 		var out = deasync(getPost)(id)
 		if (out) {
-			return out;
+			return out
 		} else {
-			return null;
+			return null
 		}
 	})
 	
@@ -182,27 +180,27 @@ module.exports = function(handlebars, db, root) {
 	})
 
 	handlebars.registerHelper("inc", function(ind) {
-		return parseInt(ind) + 1;
+		return parseInt(ind) + 1
 	})
 
 	handlebars.registerHelper("dec", function(ind) {
-		return parseInt(ind) - 1; 
+		return parseInt(ind) - 1
 	})
 
 	handlebars.registerHelper("atBottom", function(ind) {
-		return parseInt(ind) >= Math.ceil(deasync(getSize)()/5)-1;
+		return parseInt(ind) >= Math.ceil(deasync(getSize)()/5)-1
 	})
 
 	handlebars.registerHelper("atTop", function(ind) {
-		return parseInt(ind) <= 0;
+		return parseInt(ind) <= 0
 	})
 
 	handlebars.registerHelper("notBottom", function(ind) {
-		return parseInt(ind) <  Math.ceil(deasync(getSize)()/5)-1;
+		return parseInt(ind) <  Math.ceil(deasync(getSize)()/5)-1
 	})
 
 	handlebars.registerHelper("notTop", function(ind) {
-		return parseInt(ind) > 0;
+		return parseInt(ind) > 0
 	})
 
 	return handlebars

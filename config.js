@@ -15,4 +15,9 @@ module.exports = {
 		feed_url: "http://jsby.design/rss",
 		language: "en",
 	},
+	paths: {
+		posts: "posts",
+		client: "client",
+		render: "render"
+	}
 }

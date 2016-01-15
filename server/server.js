@@ -1,52 +1,49 @@
-module.exports = function(__dirname, settings) {
-	/**
-	  * Constants and other globals
-	**/
-
-	var path = __dirname+"/client/"
-
+module.exports = function(__dirname) {
 	/**
 	  * Imports and Initializations 
 	**/
 	
-	var mongojs    = require("mongojs")
-	var db         = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
-
-	var handlebars = require("handlebars")
-	    handlebars = require("./stachehelper")(handlebars, db, path)
-	var insert     = require("./insertPost")(db, path)
-	var renderer   = require("./renderer")(__dirname, handlebars, db)
-	var api        = require("./api")(db)
-
-	var express    = require("express")
-	var app        = express()
-
-	var cookie     = require("cookie-parser")
-	var body       = require("body-parser")
-	var session    = require("express-session")
-	var MongoStore = require("connect-mongo")(session)
-
-	var Google     = require('passport-google-oauth').OAuth2Strategy
-	var passport   = require("passport")
+	var path        = require("path");
+	var config      = require("../config")
 	
-	var logger     = require("./logger")
-	var morgan     = require("morgan")
+	var mongojs     = require("mongojs")
+	var db          = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
+	var handlebars  = require("handlebars")
+	    handlebars  = require("./stachehelper")(handlebars, db, config.paths.client)
+		
+	var insert      = require("./insertPost")(db, config.paths.client)
+	var renderer    = require("./renderer")(__dirname, handlebars, db)
+	var api         = require("./api")(db)
+
+	var express     = require("express")
+	var app         = express()
+
+	var cookie      = require("cookie-parser")
+	var body        = require("body-parser")
+	var session     = require("express-session")
+	var MongoStore  = require("connect-mongo")(session)
+
+	var Google      = require('passport-google-oauth').OAuth2Strategy
+	var passport    = require("passport")
+	
+	var logger      = require("./logger")
+	var morgan      = require("morgan")
 
 	/**
 	  * Middleware Initialization
 	**/
 
-	app.use(cookie());
-	app.use(body.json());
+	app.use(cookie())
+	app.use(body.json())
 	app.use(session({ secret: 'temporarysecret', store: new MongoStore({
 		url: "mongodb://localhost/bydesign"		
 	}),
 		resave: true,
 		saveUninitialized: true,
-	}));
-	app.use(passport.initialize());
-	app.use(passport.session());
+	}))
+	app.use(passport.initialize())
+	app.use(passport.session())
 	app.use(morgan("dev"))
 	app.use(renderer.handle)
 	app.use(api)
@@ -54,18 +51,8 @@ module.exports = function(__dirname, settings) {
 	/**
 	  * App routing
 	**/
-
-	app.get("/css/:FILE", function (req, res) {
-		res.sendFile(req.params.FILE, {root: path+"build/css"})
-	})
-
-	app.get("/js/:FILE", function (req, res) {
-		res.sendFile(req.params.FILE, {root: path+"js"})
-	})
-
-	app.get("/images/:FILE", function (req, res) {
-		res.sendFile(req.params.FILE, {root: path+"images"})
-	})
+	
+	app.use(express.static("build"))
 
 	app.post("/visible", function(req, res) {
 		if (req.user) { 
@@ -143,7 +130,7 @@ module.exports = function(__dirname, settings) {
 
 	var handleVisibility = function(visible, page) {
 		return new Promise(function(resolve, reject) {
-			var id = parseInt(page);
+			var id = parseInt(page)
 			if (isNaN(id)) {
 				reject("Bad Id")
 				return
@@ -167,7 +154,7 @@ module.exports = function(__dirname, settings) {
 			db.authors.findOne({"gid": id}, function(err, val) {
 				if (err || !val) {
 					reject(err || "Nonexistent author")
-					return;
+					return
 				}
 				resolve(val)
 			})
@@ -181,21 +168,21 @@ module.exports = function(__dirname, settings) {
 	passport.serializeUser(function(user, done) {
 		db.authors.find({"id": user.id}, function(err, data) {
 			if (!err && data.length > 0) {
-				user._json.image.url = user._json.image.url.replace(/sz=50^/, "sz=576");
+				user._json.image.url = user._json.image.url.replace(/sz=50^/, "sz=576")
 				db.authors.update({"id": user.id}, user, function(err) {
-					done(err, JSON.stringify(user));
+					done(err, JSON.stringify(user))
 				})
 			} else {
 				db.authors.insert(user, function(err) {
-					done(err, JSON.stringify(user));	
-				});
+					done(err, JSON.stringify(user))	
+				})
 			}
 		})
 	})
 
 	passport.deserializeUser(function(user, done) {
 		done(null, JSON.parse(user))
-	});
+	})
 
 	if (process.env.AUTH_SECRET) {
 		passport.use(new Google({
@@ -205,24 +192,24 @@ module.exports = function(__dirname, settings) {
 			},
 			function(accessToken, refreshToken, profile, done) {
 				for (var i = 0; i < profile.emails.length; i++) {
-					if (settings.admins.indexOf(profile.emails[i].value) >= 0) {
+					if (config.admins.indexOf(profile.emails[i].value) >= 0) {
 						done(null, profile)
-						return;
+						return
 					}
 				}
 				done("Non Admin")
 			}
-		));
+		))
 
 		app.get('/google/login',
-			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/userinfo.email' }));
+			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/userinfo.email' }))
 
 		app.get('/google/auth',
 			passport.authenticate('google', { failureRedirect: '/google/login' }),
 			function(req, res) {
 				// Successful authentication, redirect home.
 				res.redirect('/')
-			});
+			})
 	} else {
 		logger.warn("Missing authentication variable. Authentication will be unavailable.")
 	}
@@ -237,7 +224,7 @@ module.exports = function(__dirname, settings) {
 	  * Start Server
 	**/
 
-	app.listen(3000);
+	app.listen(3000)
 
-	return app;
+	return app
 }

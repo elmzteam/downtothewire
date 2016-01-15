@@ -72,12 +72,11 @@ build/Release
 node_modules
 
 # Built resources
-client/build
-client/render
-client/tmp/render
-client/.sass-cache
-client/posts
-.sass-cache
+build
+render
+
+# Post information
+posts
 
 # Mongo Data
 data

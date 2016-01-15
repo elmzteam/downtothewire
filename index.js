@@ -1,4 +1,9 @@
-var app  = require("./server/server")
-var conf = require("./config") 
+var app		= require("./server/server")
+var config	= require("./config")
+var mkdirp	= require("mkdirp")
 
-app(__dirname, conf)
+// Make sure the render directory exists
+mkdirp(config.paths.render)
+
+// Start the server
+app(__dirname)

@@ -1,4 +1,6 @@
-var editor;
+"use strict";
+
+var editor
 
 $(function() {
 	if($("#editor").length > 0){
@@ -27,7 +29,7 @@ $(function() {
 		$("#theme-switcher").trigger("click")
 		$("html").removeClass("force-no-animation")
 	}
-});
+})
 
 var submit = function() {
 	var content = editor.getValue()
@@ -53,7 +55,7 @@ var submit = function() {
 						break
 				}
 			}
-		}(this), 200);
+		}(this), 200)
 	}
 
 	XHR.send(JSON.stringify({
@@ -62,7 +64,7 @@ var submit = function() {
 		title: title,
 		visible: visible
 	}))
-};
+}
 
 var visible = function() {
 	var XHR = new XMLHttpRequest()
