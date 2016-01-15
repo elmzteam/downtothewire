@@ -1,4 +1,5 @@
 <html class="admin">
+	{{#if user}}
 	{{set this "admin" true}}
 	{{> head.hbs}}
 
@@ -8,7 +9,6 @@
 		<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
 	</header>
 
-	{{#if user}}
 	<main>
 		{{#each (allPosts)}}
 		<div class="post">
