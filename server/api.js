@@ -18,7 +18,7 @@ apiHandler.prototype = {
 	function(req, res, next) {
 		var match = req.originalUrl.match(/\/api\/([a-z0-9]+)\/([a-z0-9]+)/)
 		if (match) {
-			var out;
+			var out
 			if (match[1] == "get") {
 				out = this.meta(match[2]).then(prep(res))
 			} else if (match[1] == "recent") {

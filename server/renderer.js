@@ -15,8 +15,8 @@ var extend			= require("extend")
 
 var RENDER_ROOT_STR	= "@"
 
-var getTags;
-var getPosts;
+var getTags
+var getPosts
 
 var compileRoutes = function(db) {
 	var obj = {}
@@ -123,7 +123,7 @@ var renderer = function(__dirname, handlebars, db) {
 	this.templates = {}
 	this.compiled = {}
 	this.rendered = {}
-	var that = this;
+	var that = this
 	var comp = function() {
 		that.compileAll().then(function(a) {
 			return that.renderAll() 
@@ -139,7 +139,7 @@ renderer.prototype = {
 	clearCache: function() {
 		var that = this
 		return denodeify(fs.readdir, [path.join(that.__dirname,render)]).then(function(files) {
-			var regex = new RegExp("^" + RENDER_ROOT_STR + ".*$");
+			var regex = new RegExp("^" + RENDER_ROOT_STR + ".*$")
 			var promises = []
 			for (var i = 0; i < files.length; i++) {
 				if (files[i].match(regex)) {
@@ -218,7 +218,7 @@ renderer.prototype = {
 		return Promise.all(promises)
 	},
 	renderPage: function(url) {
-		logger.info("[render]", "Rendering", url);
+		logger.info("[render]", "Rendering", url)
 		var loc = path.join(this.__dirname, render)
 		for (var i in this.routes) {
 			var m = url.match(i)
@@ -248,7 +248,7 @@ renderer.prototype = {
 					var written = RENDER_ROOT_STR + req.originalUrl.replace(/\//g,".")
 					res.type(context.mime || "html")
 					res.sendFile(written, {root: path.join(this.__dirname, render)})
-					return;
+					return
 				} else {
 					for (var ind = 1; ind < m.length; ind++) {
 						if (context.groups && (ind-1) < context.groups.length) {
@@ -258,7 +258,7 @@ renderer.prototype = {
 					if (req.user) context.user = req.user
 					var out = this.renderPath(context)
 					res.send(out)
-					return;
+					return
 				}
 			}
 		}
