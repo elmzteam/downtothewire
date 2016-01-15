@@ -56,7 +56,10 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getTags(cb) {
-		db.posts.distinct("tags", {}, cb)
+		db.posts.distinct("tags", {visible: true}, function(err, data){
+			data.sort();
+			cb(err, data);
+		})
 	}
 
 	function getContent(id, cb) {
