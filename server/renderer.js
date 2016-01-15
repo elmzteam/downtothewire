@@ -27,10 +27,10 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["index"]
 		},
-		"^/editor(/[0-9]*)?$": {
+		"^/editor(/([0-9]*))?$": {
 			page: "editor.hbs",
 			cache: false,
-			groups: ["content"]
+			groups: ["null", "content"]
 		},
 		"^/tags/([a-z0-9\-]{1,16})$": {
 			page: "page.hbs",
