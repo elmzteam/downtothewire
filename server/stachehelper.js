@@ -1,3 +1,5 @@
+"use strict";
+
 var sprintf		= require("sprintf")
 var deasync		= require("deasync")
 var moment		= require("moment")

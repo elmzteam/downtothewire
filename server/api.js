@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(db) {
 	var handle = new apiHandler(db)
 	return (function(handle) {

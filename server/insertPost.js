@@ -1,6 +1,9 @@
 #!/usr/bin/env node
+
+"use strict";
+
 var fs = require("fs")
-var Path = require("path")
+var path = require("path")
 
 var prompt;
 var globals  = {};
@@ -39,14 +42,14 @@ var parseData = function(data) {
 }
 
 var getFile = function(data) {
-	return denodeify(fs.readFile, [Path.join(process.cwd(),data.content.address)], function(content) {
+	return denodeify(fs.readFile, [path.join(process.cwd(),data.content.address)], function(content) {
 		data.content.value = content.toString();
 		return data
 	})
 }
 
 var writeFile = function(data) {
-	return denodeify(fs.writeFile, [Path.join(globals.path, "/posts/", data.db.timestamp+".md"), data.content.value], function() {
+	return denodeify(fs.writeFile, [path.join(globals.path, "/posts/", data.db.timestamp+".md"), data.content.value], function() {
 		return data;
 	})
 }
@@ -120,7 +123,7 @@ if (!module.parent) {
 	prompt.colors = false
 	var mongojs = require("mongojs")
 	var db      = mongojs("mongodb://localhost/bydesign",["posts"])	
-	fetchData().then(parseData, crash).then(getFile, crash).then(module.exports(db, __dirname+"/../client"), crash).then(function() {
+	fetchData().then(parseData, crash).then(getFile, crash).then(module.exports(db, path.join(__dirname, "..", "client")), crash).then(function() {
 		console.log("Finished")
 		return Promise.resolve("done")
 	}).catch(crash);

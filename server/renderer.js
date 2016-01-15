@@ -1,15 +1,19 @@
-var fs     = require("fs")
-var Path   = require("path")
+"use strict";
 
-var DEBUG  = process.env.DEBUG ? true : false
-var root   = DEBUG ? "/client/tmp/" : "/client/"
-var path   = Path.join(root, "/hbs/")
-var render = Path.join(root, "/render/")
+var fs				= require("fs")
+var path			= require("path")
 
-var logger = require("./logger")
-var wait   = require("wait.for")
-var deasync= require("deasync")
-var extend = require("extend")
+var DEBUG			= process.env.DEBUG ? true : false
+var root			= DEBUG ? "/client/tmp/" : "/client/"
+var templatesPath	= path.join(root, "/hbs/")
+var render			= path.join(root, "/render/")
+
+var logger			= require("./logger")
+var wait			= require("wait.for")
+var deasync			= require("deasync")
+var extend			= require("extend")
+
+var RENDER_ROOT_STR	= "@"
 
 var getTags;
 var getPosts;
@@ -134,14 +138,14 @@ renderer.prototype = {
 	},
 	clearCache: function() {
 		var that = this
-		return denodeify(fs.readdir, [Path.join(that.__dirname,render)]).then(function(files) {
-			var regex = /^ROOT\./
+		return denodeify(fs.readdir, [path.join(that.__dirname,render)]).then(function(files) {
+			var regex = new RegExp("^" + RENDER_ROOT_STR + ".*$");
 			var promises = []
 			for (var i = 0; i < files.length; i++) {
 				if (files[i].match(regex)) {
 					logger.info("[render] Clearing "+files[i])
 					promises.push(
-						denodeify(fs.unlink, [Path.join(that.__dirname, render, files[i])])
+						denodeify(fs.unlink, [path.join(that.__dirname, render, files[i])])
 					)
 				}
 			}
@@ -170,14 +174,14 @@ renderer.prototype = {
 	readFiles: function() {
 		var that = this
 		return new Promise(function(resolve, reject) {
-			fs.readdir(Path.join(that.__dirname,path),  function(err, files) {
+			fs.readdir(path.join(that.__dirname,templatesPath),  function(err, files) {
 				if (err) {
 					crash(err)
 					return
 				}
 				var promises = []
 				for (var i = 0; i < files.length; i++) {
-					promises.push(promiseFile(that.__dirname+path, files[i]))
+					promises.push(promiseFile(path.join(that.__dirname, templatesPath), files[i]))
 				}
 				Promise.all(promises).then(resolve, reject)
 			})
@@ -215,7 +219,7 @@ renderer.prototype = {
 	},
 	renderPage: function(url) {
 		logger.info("[render]", "Rendering", url);
-		var loc = Path.join(this.__dirname, render)
+		var loc = path.join(this.__dirname, render)
 		for (var i in this.routes) {
 			var m = url.match(i)
 			if (m) {
@@ -229,9 +233,9 @@ renderer.prototype = {
 					}
 				}
 				var out = this.renderPath(context)
-				var written = "ROOT"+url.replace(/\//g,".")
+				var written = RENDER_ROOT_STR + url.replace(/\//g,".")
 				logger.info("[render]", "Caching", url)
-				return denodeify(fs.writeFile, [Path.join(loc, written), out])
+				return denodeify(fs.writeFile, [path.join(loc, written), out])
 			}
 		}
 	},
@@ -241,9 +245,9 @@ renderer.prototype = {
 			if (m && req.method == "GET") {
 				var context = extend(true, {}, this.routes[i])
 				if (context.cache === true) {
-					var written = "ROOT"+req.originalUrl.replace(/\//g,".")
+					var written = RENDER_ROOT_STR + req.originalUrl.replace(/\//g,".")
 					res.type(context.mime || "html")
-					res.sendFile(written, {root: Path.join(this.__dirname, render)})
+					res.sendFile(written, {root: path.join(this.__dirname, render)})
 					return;
 				} else {
 					for (var ind = 1; ind < m.length; ind++) {
@@ -269,7 +273,7 @@ var crash = function(err) {
 var promiseFile = function(path, filename) {
 	logger.info("[file-request]", path, filename)
 	return new Promise(function(res, rej) {
-		fs.readFile(Path.join(path,filename), function(err, file) {
+		fs.readFile(path.join(path,filename), function(err, file) {
 			if (err) rej(err)
 			else res({name: filename, data: file.toString()})
 		})
