@@ -2,14 +2,14 @@
 
 "use strict";
 
-var fs = require("fs")
-var path = require("path")
+var fs			= require("fs")
+var path		= require("path")
+var config		= require("../config")
 
 var prompt
-var globals  = {}
-globals.coll = undefined
-globals.path = undefined
-
+var globals 	= {}
+globals.coll	= undefined
+globals.path	= undefined
 
 var getData = function() {
 	return fetchData().then(parseData)
@@ -49,7 +49,7 @@ var getFile = function(data) {
 }
 
 var writeFile = function(data) {
-	return denodeify(fs.writeFile, [path.join(globals.path, "/posts/", data.db.timestamp+".md"), data.content.value], function() {
+	return denodeify(fs.writeFile, [path.join(config.paths.posts, data.db.timestamp+".md"), data.content.value], function() {
 		return data
 	})
 }

@@ -1,28 +1,18 @@
-module.exports = function(__dirname, settings) {
-	/**
-	  * Major imports
-	**/
-	
-	var path		= require("path")
-	
-	/**
-	  * Constants and other globals
-	**/
-
-	var CLIENT_SRC	= path.join(__dirname, "client")
-	var BUILD_PATH	= path.join(__dirname, "build")
-	
+module.exports = function(__dirname) {
 	/**
 	  * Imports and Initializations 
 	**/
+	
+	var path		= require("path");
+	var config		= require("../config")
 	
 	var mongojs		= require("mongojs")
 	var db			= mongojs("mongodb://localhost/bydesign",["authors", "posts"])
 
 	var handlebars	= require("handlebars")
-	    handlebars	= require("./stachehelper")(handlebars, db, CLIENT_SRC)
+	    handlebars	= require("./stachehelper")(handlebars, db, config.paths.client)
 		
-	var insert		= require("./insertPost")(db, CLIENT_SRC)
+	var insert		= require("./insertPost")(db, config.paths.client)
 	var renderer	= require("./renderer")(__dirname, handlebars, db)
 	var api			= require("./api")(db)
 
@@ -202,7 +192,7 @@ module.exports = function(__dirname, settings) {
 			},
 			function(accessToken, refreshToken, profile, done) {
 				for (var i = 0; i < profile.emails.length; i++) {
-					if (settings.admins.indexOf(profile.emails[i].value) >= 0) {
+					if (config.admins.indexOf(profile.emails[i].value) >= 0) {
 						done(null, profile)
 						return
 					}

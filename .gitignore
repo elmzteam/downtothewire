@@ -76,7 +76,7 @@ build
 render
 
 # Post information
-client/posts
+posts
 
 # Mongo Data
 data

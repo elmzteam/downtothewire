@@ -3,15 +3,13 @@
 var fs				= require("fs")
 var path			= require("path")
 
-var DEBUG			= process.env.DEBUG ? true : false
-var root			= DEBUG ? "/client/tmp/" : "/client/"
-var templatesPath	= path.join(root, "/hbs/")
-var render			= path.join(root, "/render/")
-
+var config			= require("../config")
 var logger			= require("./logger")
 var wait			= require("wait.for")
 var deasync			= require("deasync")
 var extend			= require("extend")
+
+var TEMPLATES_DIR	= path.join(config.paths.client, "/hbs/")
 
 var RENDER_ROOT_STR	= "@"
 
@@ -138,14 +136,14 @@ renderer.prototype = {
 	},
 	clearCache: function() {
 		var that = this
-		return denodeify(fs.readdir, [path.join(that.__dirname,render)]).then(function(files) {
+		return denodeify(fs.readdir, [path.join(that.__dirname,config.paths.render)]).then(function(files) {
 			var regex = new RegExp("^" + RENDER_ROOT_STR + ".*$")
 			var promises = []
 			for (var i = 0; i < files.length; i++) {
 				if (files[i].match(regex)) {
 					logger.info("[render] Clearing "+files[i])
 					promises.push(
-						denodeify(fs.unlink, [path.join(that.__dirname, render, files[i])])
+						denodeify(fs.unlink, [path.join(that.__dirname, config.paths.render, files[i])])
 					)
 				}
 			}
@@ -174,14 +172,14 @@ renderer.prototype = {
 	readFiles: function() {
 		var that = this
 		return new Promise(function(resolve, reject) {
-			fs.readdir(path.join(that.__dirname,templatesPath),  function(err, files) {
+			fs.readdir(path.join(that.__dirname,TEMPLATES_DIR),  function(err, files) {
 				if (err) {
 					crash(err)
 					return
 				}
 				var promises = []
 				for (var i = 0; i < files.length; i++) {
-					promises.push(promiseFile(path.join(that.__dirname, templatesPath), files[i]))
+					promises.push(promiseFile(path.join(that.__dirname, TEMPLATES_DIR), files[i]))
 				}
 				Promise.all(promises).then(resolve, reject)
 			})
@@ -219,7 +217,7 @@ renderer.prototype = {
 	},
 	renderPage: function(url) {
 		logger.info("[render]", "Rendering", url)
-		var loc = path.join(this.__dirname, render)
+		var loc = path.join(this.__dirname, config.paths.render)
 		for (var i in this.routes) {
 			var m = url.match(i)
 			if (m) {
@@ -247,7 +245,7 @@ renderer.prototype = {
 				if (context.cache === true) {
 					var written = RENDER_ROOT_STR + req.originalUrl.replace(/\//g,".")
 					res.type(context.mime || "html")
-					res.sendFile(written, {root: path.join(this.__dirname, render)})
+					res.sendFile(written, {root: path.join(this.__dirname, config.paths.render)})
 					return
 				} else {
 					for (var ind = 1; ind < m.length; ind++) {
@@ -270,10 +268,10 @@ var crash = function(err) {
 	logger.error(err.stack || err)
 }
 
-var promiseFile = function(path, filename) {
-	logger.info("[file-request]", path, filename)
+var promiseFile = function(dir, filename) {
+	logger.info("[file-request]", dir, filename)
 	return new Promise(function(res, rej) {
-		fs.readFile(path.join(path,filename), function(err, file) {
+		fs.readFile(path.join(dir, filename), function(err, file) {
 			if (err) rej(err)
 			else res({name: filename, data: file.toString()})
 		})

@@ -8,8 +8,7 @@ var marked		= require("marked")
 var fs			= require("fs")
 var highlight	= require("node-syntaxhighlighter")
 var RSS			= require("rss")
-var config		= require("../config") 
-
+var config		= require("../config")
 
 marked.setOptions({
 	gfm: true,
@@ -64,7 +63,7 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getContent(id, cb) {
-		fs.readFile(path.join(root, "posts", id+".md"), cb)
+		fs.readFile(path.join(config.paths.posts, id+".md"), cb)
 	}
 
 	function getSize(cb) {
