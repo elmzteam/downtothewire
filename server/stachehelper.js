@@ -148,8 +148,8 @@ module.exports = function(handlebars, db, root) {
 		for(var i = 0; i < posts.length; i++){
 			feed.item({
 				title: posts[i].title.text,
-				description: deasync(getContent)(posts[i].timestamp),
-				url: posts[i].title.url,
+				description: marked(deasync(getContent)(posts[i].timestamp).toString()),
+				url: config.rssInfo.site_url + posts[i].title.url,
 				guid: posts[i].timestamp,
 				categories: posts[i].tags,
 				author: deasync(getUser)(posts[i].author)._json.displayName,
