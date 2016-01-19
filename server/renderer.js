@@ -61,10 +61,20 @@ var compileRoutes = function(db) {
 			page: "admin.hbs",
 			cache: false,
 		},
-		"^/rss/?": {
+		"^/rss/?$": {
 			page: "rss.hbs",
 			cache: true,
 			mime: "text/xml"
+		},
+		"^/contact/?$":  {
+			page: "single.hbs",
+			cache: true,
+			contact: true
+		},
+		"^/about/?$":  {
+			page: "single.hbs",
+			cache: true,
+			about: true
 		},
 	}
 	obj.prerender = [
@@ -95,6 +105,18 @@ var compileRoutes = function(db) {
 			}
 		],
 		}},
+		{path: "/contact{0}", options: {groups: [
+			{
+				each: ["","/"]
+			}
+		],
+		}},
+		{path: "/about{0}", options: {groups: [
+			{
+				each: ["","/"]
+			}
+		],
+		}},
 	]
 	return obj
 }
@@ -107,7 +129,6 @@ module.exports = function(__dirname, handlebars, db) {
 		},
 		reload: function() {
 			cl.clearCache().then(function() {
-				console.log("Here!")
 				cl.renderAll()
 			}).catch(crash)
 		}
