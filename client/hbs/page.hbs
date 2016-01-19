@@ -1,4 +1,7 @@
 <html>
+	{{#if restricted}}
+		{{> no-admin.hbs}}
+	{{else}}
 	{{> head.hbs}}
 	<body>
 		{{> header.hbs}}
@@ -47,4 +50,5 @@
 			</aside>
 		</content-row>
 	</body>
+	{{/if}}
 </html>
