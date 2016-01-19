@@ -103,6 +103,9 @@ module.exports = function(__dirname) {
 			res.send("Please Log In first")
 		}
 	})
+
+	//Default Case: 404
+	app.use(renderer.fourohfour)
 	
 	/**
 	  * Upload Handling

@@ -10,6 +10,9 @@
 			{{#if contact}}
 				{{> contact.hbs}}
 			{{/if}}
+			{{#if fourohfour}}
+				{{> not-found.hbs}}
+			{{/if}}
 			</main>
 			<aside>
 				{{#each (sidebar)}}

@@ -76,6 +76,11 @@ var compileRoutes = function(db) {
 			cache: true,
 			about: true
 		},
+		"^/404$": {
+			page: "single.hbs",
+			cache: true,
+			fourohfour: true
+		}
 	}
 	obj.prerender = [
 		{path: "/", options: null},
@@ -117,6 +122,7 @@ var compileRoutes = function(db) {
 			}
 		],
 		}},
+		{path: "/404", options: null}
 	]
 	return obj
 }
@@ -131,6 +137,9 @@ module.exports = function(__dirname, handlebars, db) {
 			cl.clearCache().then(function() {
 				cl.renderAll()
 			}).catch(crash)
+		},
+		fourohfour: function(req, res, next) {
+			cl.fourohfour(req, res, next)
 		}
 	}
 }
@@ -259,15 +268,20 @@ renderer.prototype = {
 		}
 	},
 	handle: function(req, res, next) {
+		var that = this;
 		for (var i in this.routes) {
 			var m = req.originalUrl.match(i)
 			if (m && req.method == "GET") {
 				var context = extend(true, {}, this.routes[i])
 				if (context.cache === true) {
 					var written = RENDER_ROOT_STR + req.originalUrl.replace(/\//g,".")
-					res.type(context.mime || "html")
-					res.sendFile(written, {root: path.join(this.__dirname, config.paths.render)})
-					return
+					res.type(context.mime || "text/html")
+					promiseFile(path.join(this.__dirname, config.paths.render), written).then(function(val) {
+						res.send(val.data)
+					}, function(err) {
+						that.fourohfour(req, res, next)
+					}).catch(crash)
+					return 
 				} else {
 					for (var ind = 1; ind < m.length; ind++) {
 						if (context.groups && (ind-1) < context.groups.length) {
@@ -282,6 +296,18 @@ renderer.prototype = {
 			}
 		}
 		next()
+	},
+	fourohfour: function(req, res, next) {
+		var loc = path.join(this.__dirname, config.paths.render)
+		//Inelegent, but best I could come up with in my tired state
+		promiseFile(loc, RENDER_ROOT_STR+".404").then(function(file) {
+			res.status(404)
+			res.send(file.data)
+		}).catch(function(err) {
+			res.status(666)
+			logger.error("[error]", "Error:", err)
+			res.send("Error Recursion too deep. Please brace for the apocalypse.")
+		}).catch(crash)
 	}
 }
 
@@ -291,10 +317,14 @@ var crash = function(err) {
 
 var promiseFile = function(dir, filename) {
 	logger.info("[file-request]", dir, filename)
-	return new Promise(function(res, rej) {
+	return new Promise(function(resolve, reject) {
 		fs.readFile(path.join(dir, filename), function(err, file) {
-			if (err) rej(err)
-			else res({name: filename, data: file.toString()})
+			if (err) {
+				console.log("error")
+				reject(err)
+			} else {
+				resolve({name: filename, data: file.toString()})
+			}
 		})
 	})
 }
