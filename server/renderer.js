@@ -238,6 +238,7 @@ renderer.prototype = {
 		}
 	},
 	handle: function(req, res, next) {
+		var loc = path.join(this.__dirname, config.paths.render)
 		for (var i in this.routes) {
 			var m = req.originalUrl.match(i)
 			if (m && req.method == "GET") {
@@ -245,7 +246,11 @@ renderer.prototype = {
 				if (context.cache === true) {
 					var written = RENDER_ROOT_STR + req.originalUrl.replace(/\//g,".")
 					res.type(context.mime || "html")
-					res.sendFile(written, {root: path.join(this.__dirname, config.paths.render)})
+					promiseFile(path.join(this.__dirname, config.paths.render), written).then(function(val) {
+						res.send(val)
+					}, function(err) {
+						this.fourohfour(req, res, next)
+					}
 					return
 				} else {
 					for (var ind = 1; ind < m.length; ind++) {
@@ -261,6 +266,17 @@ renderer.prototype = {
 			}
 		}
 		next()
+	},
+	fourohfour: function(req, res, next) {
+		//Inelegent, but best I could come up with in my tired state
+		promiseFile(loc, RENDER_ROOT_STR+"404")}).then(function(file) {
+			res.status(404)
+			res.send(file)
+		}, function(err) {
+			res.status(666)
+			logger.error("[error]", "Error:", err)
+			res.send("Error Recursion too deep. Please brace for the apocalypse.")
+		}
 	}
 }
 
