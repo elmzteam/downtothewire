@@ -103,9 +103,6 @@ module.exports = function(__dirname) {
 			res.send("Please Log In first")
 		}
 	})
-
-	//Default Case: 404
-	app.use(renderer.fourohfour)
 	
 	/**
 	  * Upload Handling
@@ -216,6 +213,9 @@ module.exports = function(__dirname) {
 	} else {
 		logger.warn("Missing authentication variable. Authentication will be unavailable.")
 	}
+	
+	// Default Case: 404
+	app.use(renderer.fourohfour)
 
 	/**
 	  * API Access

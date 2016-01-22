@@ -304,7 +304,7 @@ renderer.prototype = {
 			res.status(404)
 			res.send(file.data)
 		}).catch(function(err) {
-			res.status(666)
+			res.status(666) // this is not a valid http code.  please resubmit.
 			logger.error("[error]", "Error:", err)
 			res.send("Error Recursion too deep. Please brace for the apocalypse.")
 		}).catch(crash)
