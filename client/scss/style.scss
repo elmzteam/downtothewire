@@ -128,7 +128,7 @@ content-row {
 		article {
 			@extend %shadowed;
 			
-			padding: 1em 1em .4em;
+			padding: 1em 1em .6em;
 			background: $color-content-background;
 			margin-bottom: 2em;
 
@@ -274,9 +274,10 @@ content-row {
 				position: relative;
 				z-index: 1;
 			}
+			
 			footer {
 				background: $color-tag-line;
-				margin: 1 / .8 * 1em -1 / .8 * 1em -1 / .8 * 1em;
+				margin: 0px -1 / .8 * 1em -.6 / .8 * 1em;
 				padding: .6em .4em;
 				font-size: .8em;
 
@@ -292,6 +293,10 @@ content-row {
 
 			.expand {
 				text-align: right;
+				
+				& + footer {
+					margin-top: .6 / .8 * 1em;
+				}
 			}
 
 			.disqus {
