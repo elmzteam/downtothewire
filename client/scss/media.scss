@@ -1,9 +1,10 @@
+@import "vars";
 @media (max-width: $width-small) {
 	content-row aside {
 		display: none;
 	}
 
-	header {
+	html:not(.admin) header {
 		flex-direction: column;
 
 		&>* {
