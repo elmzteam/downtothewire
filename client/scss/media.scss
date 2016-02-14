@@ -3,6 +3,10 @@
 	content-row aside {
 		display: none;
 	}
+	content-row {
+		display: block;
+		overflow-wrap: break-word;
+	}
 
 	html:not(.admin) header {
 		flex-direction: column;
