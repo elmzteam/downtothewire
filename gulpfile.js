@@ -16,7 +16,7 @@ gulp.task("watch", function(){
 gulp.task("build", ["sass", "js", "images"])
 
 gulp.task("sass", function() {
-	return gulp.src(path.join(SRC, "scss/{style.scss,admin.scss}"))
+	return gulp.src(path.join(SRC, "scss/{style.scss,admin.scss,*.css}"))
 		.pipe($.sass({outputStyle: "compressed"}))
 		.pipe($.autoprefixer({
 		browsers: ["last 2 versions", "> 1%"],
