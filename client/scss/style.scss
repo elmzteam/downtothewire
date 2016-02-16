@@ -312,6 +312,9 @@ content-row {
 		flex-grow: 0;
 		margin-right: 1em;
 
+		h1 a {
+			color: #FFFFFF;
+		}
 		article {
 			@extend %shadowed;
 			
@@ -457,6 +460,50 @@ input[type=text] {
 dttw-icon.material-icons {
 	font-size: 1em;
 	vertical-align: bottom;
+}
+
+table {
+	border-collapse: collapse;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	
+	&:not(.profile) {
+		tr:not(:last-child) {
+			border-bottom: 1px solid #AAA;
+		}
+
+		tr {
+			margin-bottom: 6px;
+
+			td:last-child {
+				text-align: right;
+			}
+
+			td {
+				padding-bottom: 5px;
+				padding-top: 5px;
+			}
+		}
+	}
+
+	&.profile {
+		tr:not(:last-child) td:last-child {
+				border-bottom: 1px solid #AAA;
+		}
+	}
+}
+
+.single {
+	font-size: 18px;	
+	& .bio {
+		font-size: 18px;
+		padding-left: 10px;
+	}
+	& .author-image {
+		width: 96px;
+		height: 96px;
+		border-radius: 96px;
+	}
 }
 
 // don't touch this

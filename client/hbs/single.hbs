@@ -4,15 +4,17 @@
 		{{> header.hbs}}
 		<content-row>
 			<main>
-			{{#if about}}
-				{{> about.hbs}}
-			{{/if}}
-			{{#if contact}}
-				{{> contact.hbs}}
-			{{/if}}
-			{{#if fourohfour}}
-				{{> not-found.hbs}}
-			{{/if}}
+				<div class="single">
+				{{#if about}}
+					{{> about.hbs}}
+				{{/if}}
+				{{#if contact}}
+					{{> contact.hbs}}
+				{{/if}}
+				{{#if fourohfour}}
+					{{> not-found.hbs}}
+				{{/if}}
+				</div>
 			</main>
 			<aside>
 				{{#each (sidebar)}}

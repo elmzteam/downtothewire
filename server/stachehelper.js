@@ -161,12 +161,45 @@ module.exports = function(handlebars, db, root) {
 	//Content Access (This is still gross)
 	handlebars.registerHelper("sidebar", function() {
 		return [{
-			title: "About",
-			content: "By Design is blog about the latest and greatest in development tools."
+			title: (new handlebars.SafeString("<a href='/about'>About</a>")),
+			content: "Down to the Wire is blog about the latest and greatest in development tools."
 		}, {
-			title: "Who",
+			title: (new handlebars.SafeString("<a href='/contact'>Who</a>")),
 			content: (new handlebars.SafeString("Contributors include <a href='zwad3.com'>Zachary Wade</a>, Matthew Savage, and others."))
 		}]
+	})
+
+	handlebars.registerHelper("profiles", function() {
+		return [{
+				name: "Ben Zhang",
+				email: "ben"
+			},{
+				name: "Danial Hussein",
+				image: "danial.jpg",
+				email: "danial",
+				bio: (new handlebars.SafeString("Danial is a self-proclaimed superhero guru who is training to become Batman. Currently studying computer science and biomedical engineering at the University of Virginia, Danial does applied medical research and organizes volunteer programs with Madison House. In his free time, he reads comics, jams to rap music, and is working through iMDB’s top 250 movies of all time."))
+			},{
+				name: "David Lanman",
+				email: "david"
+			},{
+				name: "Ellis Tsung",
+				email: "ellis"
+			},{
+				name: "Kyle Herndon",
+				email: "kyle"
+			},{
+				name: "Lucas Lin",
+				email: "lucas"
+			},{
+				name: "Matthew Savage",
+				email: "matt"
+			},{
+				name: "Zach Wade",
+				image: "zach.jpg",
+				email: "zach",
+				bio: (new handlebars.SafeString("Zach is a student of Computer Science at Carnegie Mellon University. He likes hacking, game development, and has an unhealthy love for javascript. He loves competitinos, and frequently participates in hackathons and ctfs. "))
+			}
+		]
 	})
 	
 	//Handlebars Utilities
