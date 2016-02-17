@@ -28,7 +28,7 @@ module.exports = {
 			gid: "none",
 		},
 		"danial": {
-			name: "Danial Hussein",
+			name: "Danial Hussain",
 			image: "danial.jpg",
 			handle: "danial",
 			bio: ("Danial is a self-proclaimed superhero guru who is training to become Batman. Currently studying computer science and biomedical engineering at the University of Virginia, Danial does applied medical research and organizes volunteer programs with Madison House. In his free time, he reads comics, jams to rap music, and is working through iMDB’s top 250 movies of all time."),
