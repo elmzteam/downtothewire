@@ -7,6 +7,7 @@ module.exports = {
 		"bzhang.2003@gmail.com",
 		"lee123456771@gmail.com",
 		"kyle.w.herndon@gmail.com",
+		"dhussain101@gmail.com",
 	],
 	rssInfo: {
 		title: "Down to the Wire",
