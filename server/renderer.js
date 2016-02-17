@@ -39,6 +39,11 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["currtag"]
 		},
+		"^/author/([a-zA-Z]{1,16})$": {
+			page: "page.hbs",
+			cache: true,
+			groups: ["activename"]
+		},
 		"^/posts/([0-9]{13})$": {
 			page: "page.hbs",
 			cache: true,
@@ -92,6 +97,17 @@ var compileRoutes = function(db) {
 		{path: "/tags/{0}", options: {groups: [
 			{
 				each: getTags(db) 
+			}
+		]}},
+		{path: "/author/{0}", options: {groups: [
+			{
+				each: ((function() {
+					var out = []
+					for (var i in config.adminInfo) {
+						out.push(config.adminInfo[i].handle)
+					}
+					return out 
+				})())
 			}
 		]}},
 		{path: "/posts/{0}", options: {groups: [
