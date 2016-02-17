@@ -477,6 +477,9 @@ table {
 
 			td:last-child {
 				text-align: right;
+				&.left {
+					text-align: left;
+				}
 			}
 
 			td {
@@ -485,7 +488,15 @@ table {
 			}
 		}
 	}
-
+	& .author-image {
+		width: 96px;
+		height: 96px;
+		&.large {
+			width: 192px;
+			height: 192px;
+		}
+		border-radius: 192px;
+	}
 	&.profile {
 		tr:not(:last-child) td:last-child {
 				border-bottom: 1px solid #AAA;
@@ -499,11 +510,7 @@ table {
 		font-size: 18px;
 		padding-left: 10px;
 	}
-	& .author-image {
-		width: 96px;
-		height: 96px;
-		border-radius: 96px;
-	}
+	
 }
 
 // don't touch this

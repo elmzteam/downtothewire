@@ -48,9 +48,10 @@ module.exports = function(handlebars, db, root) {
 		db.authors.findOne({id: id}, cb)
 	}
 
-	function getPosts(start, end, tag, all, cb) {
+	function getPosts(start, end, tag, author, all, cb) {
 		var query = {}
 		if (tag) query.tags = tag
+		if (author) query.author = author
 		if (!all) query.visible = true
 		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, cb)
 	}
@@ -130,17 +131,17 @@ module.exports = function(handlebars, db, root) {
 		return deasync(getUser)(id)._json
 	})
 
-	handlebars.registerHelper("posts", function(page, tag) {
+	handlebars.registerHelper("posts", function(page, tag, author) {
 		var val = parseInt(page)
-		return deasync(getPosts)(val*5, (val+1)*5, tag, false)
+		return deasync(getPosts)(val*5, (val+1)*5, tag, config.adminInfo[author] ? config.adminInfo[author].gid : undefined, false)
 	})
 
 	handlebars.registerHelper("allPosts", function() {
-		return deasync(getPosts)(0,0, undefined, true)
+		return deasync(getPosts)(0,0, undefined, undefined, true)
 	})
 
 	handlebars.registerHelper("rss", function() {
-		var posts = deasync(getPosts)(0, 20, undefined, false)
+		var posts = deasync(getPosts)(0, 20, undefined, undefined, false)
 		var feed = new RSS(config.rssInfo)
 		
 		for(var i = 0; i < posts.length; i++){
@@ -170,36 +171,7 @@ module.exports = function(handlebars, db, root) {
 	})
 
 	handlebars.registerHelper("profiles", function() {
-		return [{
-				name: "Ben Zhang",
-				email: "ben"
-			},{
-				name: "Danial Hussein",
-				image: "danial.jpg",
-				email: "danial",
-				bio: (new handlebars.SafeString("Danial is a self-proclaimed superhero guru who is training to become Batman. Currently studying computer science and biomedical engineering at the University of Virginia, Danial does applied medical research and organizes volunteer programs with Madison House. In his free time, he reads comics, jams to rap music, and is working through iMDB’s top 250 movies of all time."))
-			},{
-				name: "David Lanman",
-				email: "david"
-			},{
-				name: "Ellis Tsung",
-				email: "ellis"
-			},{
-				name: "Kyle Herndon",
-				email: "kyle"
-			},{
-				name: "Lucas Lin",
-				email: "lucas"
-			},{
-				name: "Matthew Savage",
-				email: "matt"
-			},{
-				name: "Zach Wade",
-				image: "zach.jpg",
-				email: "zach",
-				bio: (new handlebars.SafeString("Zach is a student of Computer Science at Carnegie Mellon University. He likes hacking, game development, and has an unhealthy love for javascript. He loves competitinos, and frequently participates in hackathons and ctfs. "))
-			}
-		]
+		return config.adminInfo
 	})
 	
 	//Handlebars Utilities
@@ -234,6 +206,10 @@ module.exports = function(handlebars, db, root) {
 
 	handlebars.registerHelper("notTop", function(ind) {
 		return parseInt(ind) > 0
+	})
+
+	handlebars.registerHelper("subscript", function(obj, key) {
+		return obj[key]
 	})
 
 	return handlebars

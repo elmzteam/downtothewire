@@ -10,7 +10,15 @@
 				{{#if currtag}}
 				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
 				{{/if}}
-				
+				{{#if activename}}
+				{{#with (subscript (profiles) activename)}}				
+				<table><tr>
+					<td><img class="author-image large" src="/images/{{#if image}}{{image}}{{else}}default.png{{/if}}"/></td>
+					<td class="left">{{bio}}</td>
+				</tr></table>
+				<div class="tagged">Posts by {{name}}</div>
+				{{/with}}
+				{{/if}}
 				{{#if single}}
 				
 				{{#with (fetchpost post)}}
@@ -22,7 +30,7 @@
 				
 				{{else}}
 				
-				{{#each (posts index currtag)}}
+				{{#each (posts index currtag activename)}}
 				{{> post.hbs}}
 				{{/each}}
 				
@@ -30,8 +38,11 @@
 				
 				{{#if currtag}}
 				{{else}}
+				{{#if activename}}
+				{{else}}
 				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="pagination left {{#if (atTop index)}}disabled{{/if}}"><dttw-icon class="material-icons">arrow_back</dttw-icon></button>{{#if (notTop index)}}</a>{{/if}}
 				{{#if (notBottom index)}}<a href="/page/{{inc index}}">{{/if}}<button class="pagination right {{#if (atBottom index)}}disabled{{/if}}"><dttw-icon class="material-icons">arrow_forward</dttw-icon></button>{{#if (notBottom index)}}</a>{{/if}}
+				{{/if}}
 				{{/if}}
 			</main>
 			<aside>
