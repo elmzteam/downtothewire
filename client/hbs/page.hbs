@@ -38,8 +38,11 @@
 				
 				{{#if currtag}}
 				{{else}}
+				{{#if activename}}
+				{{else}}
 				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="pagination left {{#if (atTop index)}}disabled{{/if}}"><dttw-icon class="material-icons">arrow_back</dttw-icon></button>{{#if (notTop index)}}</a>{{/if}}
 				{{#if (notBottom index)}}<a href="/page/{{inc index}}">{{/if}}<button class="pagination right {{#if (atBottom index)}}disabled{{/if}}"><dttw-icon class="material-icons">arrow_forward</dttw-icon></button>{{#if (notBottom index)}}</a>{{/if}}
+				{{/if}}
 				{{/if}}
 			</main>
 			<aside>
