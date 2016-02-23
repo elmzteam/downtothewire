@@ -159,15 +159,9 @@ module.exports = function(handlebars, db, root) {
 		return feed.xml()
 	})
 	
-	//Content Access (This is still gross)
+	//Content Access
 	handlebars.registerHelper("sidebar", function() {
-		return [{
-			title: (new handlebars.SafeString("<a href='/about'>About</a>")),
-			content: "Down to the Wire is blog about the latest and greatest in development tools."
-		}, {
-			title: (new handlebars.SafeString("<a href='/contact'>Who</a>")),
-			content: (new handlebars.SafeString("Contributors include <a href='zwad3.com'>Zachary Wade</a>, Matthew Savage, and others."))
-		}]
+		return 	config.sidebar
 	})
 
 	handlebars.registerHelper("profiles", function() {
@@ -210,6 +204,15 @@ module.exports = function(handlebars, db, root) {
 
 	handlebars.registerHelper("subscript", function(obj, key) {
 		return obj[key]
+	})
+
+	handlebars.registerHelper("tail", function(obj) {
+		if (!(obj instanceof Array)) {
+			obj = Object.keys(obj).map(function(e) {
+				return obj[e]
+			})
+		}
+		return {head: obj.slice(0,-1), tail: obj.slice(-1)[0]}
 	})
 
 	return handlebars
