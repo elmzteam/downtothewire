@@ -42,6 +42,7 @@ module.exports = {
 		"ellis": {
 			name: "Ellis Tsung",
 			handle: "ellis",
+			image: "ellis.png",
 			gid: "103641117311445875167",
 		},
 		"kyle": {
