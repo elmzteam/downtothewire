@@ -1,11 +1,10 @@
-<!--strong>Down to the Wire</strong> is a collective blog hosted by a number of students around the country, covering a wide range of topics from hardware to software to security. Many posts relate to current projects and endeavors, or simply new technologies that catch our interest.--> 
 <strong>Down to the Wire</strong> is a collaborative project hosted by a group of students across the country. Since we share many common interests, we decided to merge all of our individual blogs and technical writings into a single website, where all of us can contribute. Since each author has different interests and personal projects, topics range from hardware to software to security.  
 <div class="profiles">
 <table class="profile">
 {{#each (profiles)}}
 {{#if this.bio}}
 	<tr>
-		<td><img class="author-image" src="/images/{{#if this.image}}{{this.image}}{{else}}default.png{{/if}}"/></td>
+		<td><a href="/author/{{this.handle}}"><img class="author-image" src="/images/{{#if this.image}}{{this.image}}{{else}}default.png{{/if}}"/></a></td>
 		<td><p class="bio">{{this.bio}}</p></td>
 	</tr>
 {{/if}}

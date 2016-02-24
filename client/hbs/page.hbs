@@ -45,20 +45,7 @@
 				{{/if}}
 				{{/if}}
 			</main>
-			<aside>
-				{{#each (sidebar)}}
-				<article>
-					<h1>{{title}}</h1>
-					{{content}}
-				</article>
-				{{/each}}
-				<article>
-					<h1>Tags</h1>
-					{{#each (tags)}}
-						{{tag this}}
-					{{/each}}
-				</article>
-			</aside>
+			{{> sidebar.hbs}}
 		</content-row>
 	</body>
 	{{/if}}
