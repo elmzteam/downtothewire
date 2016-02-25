@@ -85,6 +85,11 @@ var compileRoutes = function(db) {
 			page: "single.hbs",
 			cache: true,
 			fourohfour: true
+		},
+		"^/manifest.json$": {
+			page: "manifest.json",
+			cache: true,
+			mime: "application/json"
 		}
 	}
 	obj.prerender = [
@@ -138,7 +143,8 @@ var compileRoutes = function(db) {
 			}
 		],
 		}},
-		{path: "/404", options: null}
+		{path: "/404", options: null},
+		{path: "/manifest.json", options: null}
 	]
 	return obj
 }
