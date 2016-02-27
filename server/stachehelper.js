@@ -85,6 +85,12 @@ module.exports = function(handlebars, db, root) {
 		return content.split("<more>")[0]
 	})
 
+	handlebars.registerHelper("generateDesc", function(id) {
+		var out = marked(deasync(getContent)(id).toString()).split("<more>")[0].replace(/(<.*?>)|(<.*?script.*?>.*?<\/script>)|(<.*?style.*?>.*?<\/style>)/g,"")
+		out     = out.replace(/[\n\t\ ]+/g," ")
+		return out
+	})
+
 	handlebars.registerHelper("longtime", function(time) {
 		return new handlebars.SafeString(moment(time).format("MMMM Do, YYYY"))
 	})
