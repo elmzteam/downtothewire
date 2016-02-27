@@ -8,7 +8,7 @@ module.exports = {
 		"bzhang.2003@gmail.com",
 		"lee123456771@gmail.com",
 		"kyle.w.herndon@gmail.com",
-		"dhussain101@gmail.com",
+		"dh4dt@virginia.edu",
 	],
 	rssInfo: {
 		title: "Down to the Wire",
@@ -27,7 +27,7 @@ module.exports = {
 			name: "Ben Zhang",
 			handle: "ben",
 			bio: (new handlebars.SafeString("<b>Ben</b> has failed to submit a bio")),
-			gid: "none",
+			gid: "113621138779294945004",
 			fid: "lexical.enumeration",
 		},
 		"danial": {
