@@ -2,6 +2,9 @@
 	{{#if restricted}}
 		{{> no-admin.hbs}}
 	{{else}}
+	{{#if single}}
+		{{set this "desc" (generateDesc post)}}
+	{{/if}}
 	{{> head.hbs}}
 	<body>
 		{{> header.hbs}}
