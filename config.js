@@ -13,8 +13,8 @@ module.exports = {
 	rssInfo: {
 		title: "Down to the Wire",
 		description: "Technology and design only as serious as it needs to be",
-		site_url: "http://jsby.design",
-		feed_url: "http://jsby.design/rss",
+		site_url: "http://dttw.tech",
+		feed_url: "http://dttw.tech/rss",
 		language: "en",
 	},
 	paths: {
