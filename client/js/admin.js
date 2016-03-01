@@ -29,6 +29,13 @@ $(function() {
 		$("#theme-switcher").trigger("click")
 		$("html").removeClass("force-no-animation")
 	}
+	$(window).keydown(function (e){
+		if ((e.metaKey || e.ctrlKey) && e.keyCode == 83) { /*ctrl+s or command+s*/
+			submit()
+			e.preventDefault();
+			return false;
+		}
+	});
 })
 
 var submit = function() {
@@ -49,8 +56,13 @@ var submit = function() {
 				switch(that.status){
 					case 200:
 						$("#status").text("Update succesful.")
+						var res = JSON.parse(that.responseText)
+						if (res.id) {
+							history.pushState({}, "Editor", "/editor/"+res.id)
+							$("#submit").text("Update")
+						}
 						break
-						default:
+					default:
 						$("#status").text("Error: " + that.responseText)
 						break
 				}

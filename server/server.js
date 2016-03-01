@@ -82,10 +82,11 @@ module.exports = function(__dirname) {
 	app.post("/editor/", function(req, res) {
 		if (req.user) {
 			uploadPost(null, req.body, req.user.id).
-				then(renderer.reload).
+				then(function (id) {
+					renderer.reload()
+					res.send({msg: "Ok", id: id})
+				}).
 				catch(logger.error)
-
-			res.send("Ok")
 		} else {
 			req.status(403)
 			res.send("Please Log In first")
@@ -97,7 +98,7 @@ module.exports = function(__dirname) {
 			uploadPost(req.params.MOD, req.body, req.user.id).
 				then(renderer.reload).
 				catch(logger.error)
-			res.send("Ok")
+			res.send({msg: "Ok"})
 		} else {
 			req.status(403)
 			res.send("Please Log In first")
@@ -125,7 +126,9 @@ module.exports = function(__dirname) {
 			}
 		}
 		if (!modify) data.db.author = author
-		return insert(data, modify ? true : false)
+		return insert(data, modify ? true : false).then(function() {
+			return time
+		})
 	}
 
 	var handleVisibility = function(visible, page) {
