@@ -3,7 +3,7 @@ module.exports = {
 	admins: [
 		"zacharywade@gmail.com",
 		"matthew.damon.savage@gmail.com",
-		//"dhlanm@gmail.com",
+		"dhlanm@gmail.com",
 		"ellisstsung@gmail.com",
 		"bzhang.2003@gmail.com",
 		"lee123456771@gmail.com",
@@ -37,14 +37,14 @@ module.exports = {
 			bio: (new handlebars.SafeString("<b>Danial</b> is a self-proclaimed superhero guru who is training to become Batman. Currently studying computer science and biomedical engineering at the University of Virginia, Danial does applied medical research and organizes volunteer programs with Madison House. In his free time, he reads comics, jams to rap music, and is working through iMDB’s top 250 movies of all time.")),
 			gid: "115007751350960800869",
 			fid: "dhussain101",
-		},/**
+		},
 		"david": {
 			name: "David Lanman",
 			handle: "david",
 			gid: "116292267178665003696",
-			bio: (new handlebars.SafeString("Once upon a time, David was called upon from on high to write a bio. having no ideas, he wrote this instead. Being that he'll probably be too lazy to write anything ever, this was not widely regarded as an issue.")),
+			bio: (new handlebars.SafeString("<b>David</b> is a student at the University of Washington and a Software Development Intern at <a href='https://www.peachd.com'>Peach</a>. He wastes far too much time trying to get good at an illegal mod for a party game, and lets Stack Overflow do his coding for him.")),
 			fid: "david.lanman.3",
-		},**/
+		},
 		"ellis": {
 			name: "Ellis Tsung",
 			handle: "ellis",
