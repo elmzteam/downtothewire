@@ -175,6 +175,15 @@ module.exports = function(handlebars, db, root) {
 	})
 	
 	//Handlebars Utilities
+	handlebars.registerHelper("and", function(b1, b2) {
+		return b1 && b2
+	})
+	handlebars.registerHelper("not", function(b1) {
+		return !b1
+	})
+	handlebars.registerHelper("or", function(b1, b2) {
+		return b1 || b2
+	})
 	handlebars.registerHelper("set", function(obj, key, val){
 		obj[key] = val
 	})

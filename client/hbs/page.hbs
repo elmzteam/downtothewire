@@ -1,5 +1,5 @@
 <html>
-	{{#if restricted}}
+	{{#if (and restricted (not user))}}
 		{{> no-admin.hbs}}
 	{{else}}
 	{{#if single}}
