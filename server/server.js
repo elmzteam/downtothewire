@@ -211,7 +211,7 @@ module.exports = function(__dirname) {
 			passport.authenticate('google', { failureRedirect: '/google/login' }),
 			function(req, res) {
 				// Successful authentication, redirect home.
-				res.redirect('/')
+				res.redirect('/admin')
 			})
 	} else {
 		logger.warn("Missing authentication variable. Authentication will be unavailable.")
