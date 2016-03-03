@@ -7,6 +7,7 @@ $(function() {
 		editor = ace.edit("editor")
 		editor.setTheme("ace/theme/chrome")
 		editor.getSession().setMode("ace/mode/markdown")
+		editor.getSession().setUseWrapMode(true)
 	}
 
 	$("#submit").click(submit)
