@@ -3,6 +3,7 @@
 		{{> no-admin.hbs}}
 	{{else}}
 	{{#if single}}
+		{{set this "postinf" (fetchpost post)}}
 		{{set this "desc" (generateDesc post)}}
 	{{/if}}
 	{{> head.hbs}}

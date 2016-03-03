@@ -3,7 +3,7 @@
 	<meta name="theme-color" content="#E53935">
 	<meta name="msapplication-TileColor" content="#E53935">
 	<meta property="og:image" content="http://dttw.tech/images/icon_large.jpg">
-	<meta property="og:title" content="Down to the Wire{{#if this.text}}: {{this.text}}{{/if}}">
+	<meta property="og:title" content="{{#if postinf.title.text}}{{postinf.title.text}}{{else}}Down to the Wire{{/if}}">
 	<meta property="og:description" content="{{#if this.desc}}{{this.desc}}{{else}}Down to the Wire is a collaborative project hosted by a group of students across the country. Topics range from hardware to software to security.{{/if}}"> 
 	<meta property="og:type" content="article">
 	<!--meta property="article:author" content="100006401946800"--> <!-- Waiting until I get everyone's gid and approval -->
@@ -52,5 +52,5 @@
 	<script src="/js/admin.js"></script>
 	{{/if}}
 
-	<title>Down to the Wire{{#if this.text}}: {{this.text}}{{/if}}</title>
+	<title>DttW{{#if postinf.title.text}}: {{postinf.title.text}}{{/if}}</title>
 </head>
