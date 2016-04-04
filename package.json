@@ -1,23 +1,24 @@
 {
-  "name": "jsbydesign",
-  "version": "0.1.0",
-  "description": "Code for the jsby.design blog",
+  "name": "bydesign",
+  "version": "0.2.0",
+  "description": "Open Source Blogging Framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/elmzteam/bydesign.git"
+    "url": "https://github.com/zwade/bydesign.git"
   },
-  "author": "",
+  "author": "zwade, bluepichu, el1t",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/elmzteam/bydesign/issues"
+    "url": "https://github.com/zwade/bydesign/issues"
   },
   "scripts":
-    {"postinstall": "/bin/sh bin/startup.sh $(pwd)"},
-  "homepage": "https://github.com/elmzteam/bydesign",
+    {"postinstall": "/bin/sh bin/startup.sh $(pwd)",
+     "start": "node index.js"},
+  "homepage": "https://github.com/zwade/bydesign",
   "dependencies": {
     "body-parser": "^1.14.1",
     "colors": "^1.1.2",
