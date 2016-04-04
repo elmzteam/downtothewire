@@ -16,7 +16,7 @@
     "url": "https://github.com/elmzteam/bydesign/issues"
   },
   "scripts":
-    {"preinstall": "bin/startup.sh"},
+    {"postinstall": "/bin/sh bin/startup.sh $(pwd)"},
   "homepage": "https://github.com/elmzteam/bydesign",
   "dependencies": {
     "body-parser": "^1.14.1",
@@ -45,6 +45,6 @@
     "passport-google-oauth": "^0.2.0",
     "prompt": "^0.2.14",
     "rss": "^1.2.1",
-    "sprintf": "^0.1.5",
+    "sprintf": "^0.1.5"
   }
 }
