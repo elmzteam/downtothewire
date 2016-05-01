@@ -1,7 +1,12 @@
 For comments or questions related to individual posts, please use the Disqus comment system. If you want to reach an individual author, you can reach them at
-<table>
+
+<table class="row-divided">
 	{{#each (profiles)}}
-	<tr><td>{{this.name}}</td><td><a href="mailto:{{this.handle}}@dttw.tech">{{this.handle}}@dttw.tech</a></td></tr>
+	<tr>
+		<td>{{this.name}}</td>
+		<td><a href="mailto:{{this.handle}}@dttw.tech">{{this.handle}}@dttw.tech</a></td>
+	</tr>
 	{{/each}}
 </table>
+
 For other questions or comments, please let us know at <a href="mailto:contact@dttw.tech">contact@dttw.tech</a>.

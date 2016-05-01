@@ -124,10 +124,10 @@ content-row {
 			font-weight: bold;
 			margin-bottom: 10px;
 		}
-		
+
 		article {
 			@extend %shadowed;
-			
+
 			padding: 1em 1em .6em;
 			background: $color-content-background;
 			margin-bottom: 2em;
@@ -274,7 +274,7 @@ content-row {
 				position: relative;
 				z-index: 1;
 			}
-			
+
 			footer {
 				background: $color-tag-line;
 				margin: 0px -1 / .8 * 1em -.6 / .8 * 1em;
@@ -293,7 +293,7 @@ content-row {
 
 			.expand {
 				text-align: right;
-				
+
 				& + footer {
 					margin-top: .6 / .8 * 1em;
 				}
@@ -317,7 +317,7 @@ content-row {
 		}
 		article {
 			@extend %shadowed;
-			
+
 			padding: 1em 1em .4em;
 			background: $color-content-background;
 			margin-bottom: 1em;
@@ -369,7 +369,14 @@ content-row {
 		width: 48px;
 		height: 48px;
 		border-radius: 24px;
-		border: 3px solid $color-text-main;
+		border: 48/72*4px solid $color-text-main;
+	}
+	
+	&.large {
+		width: 96;
+		height: 96px;
+		border-radius: 48px;
+		border: 96/72*4px solid $color-text-main;
 	}
 }
 
@@ -464,53 +471,54 @@ dttw-icon.material-icons {
 
 table {
 	border-collapse: collapse;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	
-	&:not(.profile) {
-		tr:not(:last-child) {
-			border-bottom: 1px solid #AAA;
-		}
+	margin: 1em auto;
 
+	&.row-divided {
 		tr {
-			margin-bottom: 6px;
-
-			td:last-child {
-				text-align: right;
-				&.left {
-					text-align: left;
-				}
-			}
-
+			th,
 			td {
-				padding-bottom: 5px;
-				padding-top: 5px;
+				padding: .4em 0px;
+			}
+
+			td:not(:last-child),
+			th:not(:last-child) {
+				padding-right: .4em;
+			}
+
+			&:not(:last-child) td {
+				border-bottom: 1px solid $color-text-secondary;
 			}
 		}
 	}
-	& .author-image {
-		width: 96px;
-		height: 96px;
-		&.large {
-			width: 192px;
-			height: 192px;
-		}
-		border-radius: 192px;
-	}
-	&.profile {
-		tr:not(:last-child) td:last-child {
-				border-bottom: 1px solid #AAA;
+	
+	&#profiles {
+		td {
+			padding: .8em 0px;
+			padding-left: 1em;
+			
+			.bio {
+				
+			}
+			
+			.contact {
+				display: flex;
+				flex-direction: row;
+			}
 		}
 	}
 }
 
-.single {
-	font-size: 18px;	
-	& .bio {
-		font-size: 18px;
-		padding-left: 10px;
+.author-bio {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 1em;
+
+	.bio {
+		flex-basis: 0px;
+		flex-grow: 1;
+		margin-left: .8em;
 	}
-	
 }
 
 // don't touch this
