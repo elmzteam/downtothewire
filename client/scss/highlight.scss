@@ -1,0 +1,96 @@
+/* Adapted from Base16 Eighties Dark Theme */
+$hl-color-black: #2d2d2d;
+$hl-color-white: #d3d0c8;
+$hl-color-gray: #a09f93;
+$hl-color-red: #f2777a;
+$hl-color-orange: #f99157;
+$hl-color-yellow: #ffcc66;
+$hl-color-green: #99cc99;
+$hl-color-aqua: #66cccc;
+$hl-color-blue: #6699cc;
+$hl-color-purple: #cc99cc;
+
+
+.hljs-comment,
+.hljs-title {
+	color: $hl-color-gray;
+}
+
+.hljs-prompt,
+.hljs-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-regexp,
+// .hljs-params,
+.ruby .hljs-constant,
+.xml .hljs-tag .hljs-title,
+.xml .hljs-pi,
+.xml .hljs-doctype,
+.html .hljs-doctype,
+.css .hljs-id,
+.css .hljs-class,
+.css .hljs-pseudo {
+	color: $hl-color-red;
+}
+
+.hljs-number,
+.hljs-preprocessor,
+.hljs-built_in,
+.hljs-literal,
+.hljs-constant {
+	color: $hl-color-orange;
+}
+
+.ruby .hljs-class .hljs-title,
+.css .hljs-rules .hljs-attribute {
+	color: $hl-color-yellow;
+}
+
+.hljs-string,
+.hljs-value,
+.hljs-inheritance,
+.hljs-header,
+.ruby .hljs-symbol,
+.xml .hljs-cdata {
+	color: $hl-color-green;
+}
+
+.css .hljs-hexcolor {
+	color: $hl-color-aqua;
+}
+
+.python .hljs-decorator,
+.python .hljs-title,
+.ruby .hljs-function .hljs-title,
+.ruby .hljs-title .hljs-keyword,
+.perl .hljs-sub,
+.javascript .hljs-title,
+.typescript .hljs-title,
+.coffeescript .hljs-title {
+	color: $hl-color-blue;
+}
+
+.hljs-keyword {
+	color: $hl-color-purple;
+}
+
+.hljs {
+	display: block;
+	background: $hl-color-black;
+	color: $hl-color-white;
+	padding: 0.5em;
+
+	code {
+		color: $hl-color-white;
+	}
+}
+
+.coffeescript .javascript,
+.javascript .xml,
+.tex .hljs-formula,
+.xml .javascript,
+.xml .vbscript,
+.xml .css,
+.xml .hljs-cdata {
+	opacity: 0.5;
+}
