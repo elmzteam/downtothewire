@@ -24,7 +24,13 @@ marked.setOptions({
 	gfm: true,
 	highlight: function(code, lang){
 		if (lang !== undefined) {
-			return "<span>" + highlight.highlight(lang, code).value + "</span>" // u wot m8
+			let highlighted = highlight.highlight(lang, code).value
+
+			if (lang === "bash") {
+				highlighted = highlighted.replace(/(^|\n)\$/g, "$1<span class='hljs-prompt'>$</span>") // highlight the fake prompts
+			}
+
+			return "<span>" + highlighted + "</span>" // stop trying to be tricky, handlebars
 		} else {
 			return highlight.highlightAuto(code).value
 		}
