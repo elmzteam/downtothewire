@@ -290,6 +290,22 @@ content-row {
 				}
 			}
 
+			h2, h3, h4, h5, h6 {
+				font-family: $font-header;
+			}
+
+			h2 {
+				font-size: 2em;
+				font-family: $font-header;
+				border-bottom: 2px solid $color-text-secondary;
+				padding-left: .6em;
+			}
+
+			h3 {
+				font-size: 1.4em;
+				margin-left: 1em;
+			}
+
 			.expand {
 				text-align: right;
 
@@ -590,9 +606,7 @@ h2.zero,
 h2.one {
 	display: flex;
 	align-items: center;
-	font-size: 2em;
-	font-family: $font-header;
-	border-bottom: 2px solid $color-text-secondary;
+	padding-left: 0px;
 
 	&:before {
 		font-family: $font-header;
