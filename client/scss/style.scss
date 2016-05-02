@@ -1,6 +1,6 @@
 @import "vars";
 @import "mixins";
-@import "hljs-base16-eighties-dark.css";
+@import "highlight.scss";
 
 *,
 *:before,
@@ -10,7 +10,7 @@
 
 html {
 	box-sizing: border-box;
-	font-family: "Exo 2", sans-serif;
+	font-family: $font-body;
 	background: $color-page-background;
 	color: $color-text-main;
 	margin: 0px;
@@ -43,7 +43,7 @@ html:not(.admin)>body>header {
 		height: 6em;
 
 		h1 {
-			font-family: Khand, sans-serif;
+			font-family: $font-header;
 			text-transform: uppercase;
 			display: flex;
 			justify-content: flex-end;
@@ -98,7 +98,7 @@ html:not(.admin)>body>header {
 			@extend .no-line;
 
 			.nav-item {
-				font-family: Khand, sans-serif;
+				font-family: $font-header;
 				padding-right: 1em;
 				font-size: 1.4em;
 			}
@@ -530,7 +530,7 @@ dttw-code {
 		position: relative;
 		background: $color-primary;
 		color: $color-white;
-		font-family: Khand, sans-serif;
+		font-family: $font-header;
 		font-size: 1.2em;
 		padding: .1em .1em 0px 1em;
 
@@ -579,6 +579,47 @@ dttw-code {
 		text-indent: 2em hanging each-line;
 		margin-top: 0px;
 		width: 100%;
+	}
+}
+
+code {
+	font-family: $font-mono;
+}
+
+h2.zero,
+h2.one {
+	display: flex;
+	align-items: center;
+	font-size: 2em;
+	font-family: $font-header;
+	border-bottom: 2px solid $color-text-secondary;
+
+	&:before {
+		font-family: $font-header;
+		font-size: 1.4em;
+		width: 1.4em;
+		height: 1.4em;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		color: $color-white;
+		margin-right: .6em;
+		padding-top: .1em;
+		padding-left: .05em;
+	}
+}
+
+h2.zero {
+	&:before {
+		content: "0";
+		background: $color-text-main;
+	}
+}
+
+h2.one{
+	&:before {
+		content: "1";
+		background: $color-primary;
 	}
 }
 

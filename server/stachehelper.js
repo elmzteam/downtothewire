@@ -16,7 +16,8 @@ var renderer    = new marked.Renderer()
 var langs = {
 	"js": "JavaScript",
 	"ts": "TypeScript",
-	"bash": "Bash"
+	"bash": "Bash",
+	"json": "JSON"
 }
 
 marked.setOptions({
@@ -48,12 +49,34 @@ renderer.code = function(code, lang, escaped) {
 	return '<dttw-code><header><span class="lang">'
 		+ escape((lang in langs ? langs[lang] : lang), true)
 		+ '</span><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span></header><pre class="hljs"><code class="'
-		+ this.options.langPrefix
-		+ escape(lang, true)
+		+ escape((lang in langs ? langs[lang].toLowerCase() : lang), true)
 		+ '">'
 		+ (escaped ? code : escape(code, true))
 		+ '\n</code></pre></dttw-code>\n'
 }
+
+renderer.heading = function(text, level, raw) {
+	let classname = "";
+
+	if(text.charAt(0) == "{"){
+		let split = text.split("}");
+		classname = split[0].substring(1);
+		text = split.slice(1).join("}");
+	}
+
+	return '<h'
+		+ level
+		+ ' id="'
+		+ this.options.headerPrefix
+		+ raw.toLowerCase().replace(/[^\w]+/g, '-')
+		+ '" class="'
+		+ classname
+		+ '">'
+		+ text
+		+ '</h'
+		+ level
+		+ '>\n';
+};
 
 module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("noop", function(options) {
