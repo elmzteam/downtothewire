@@ -24,6 +24,8 @@ marked.setOptions({
 	gfm: true,
 	highlight: function(code, lang){
 		if (lang !== undefined) {
+			lang = lang.split("{")[0]
+
 			let highlighted = highlight.highlight(lang, code).value
 
 			if (lang === "bash") {
@@ -46,15 +48,28 @@ renderer.code = function(code, lang, escaped) {
 		}
 	}
 
+	lang = lang || "";
+	let filename = undefined;
+	let parts = lang.split("{")
+
+	if(parts.length > 1){
+		filename = parts[1].substring(0, parts[1].length - 1)
+		lang = parts[0]
+	}
+
 	if (!lang) {
-		return '<dttw-code><header><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span></header><pre class="hljs"><code>'
+		return '<dttw-code><header><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span>'
+			+ (filename !== undefined ? "<span class='filename'>" + filename + "</span>" : "")
+			+ '</header><pre class="hljs"><code>'
 			+ (escaped ? code : escape(code, true))
 			+ '\n</code></pre></dttw-code>\n'
 	}
 
 	return '<dttw-code><header><span class="lang">'
 		+ escape((lang in langs ? langs[lang] : lang), true)
-		+ '</span><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span></header><pre class="hljs"><code class="'
+		+ '</span><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span>'
+		+ (filename !== undefined ? "<span class='filename'>" + filename + "</span>" : "")
+		+ '</header><pre class="hljs"><code class="'
 		+ escape((lang in langs ? langs[lang].toLowerCase() : lang), true)
 		+ '">'
 		+ (escaped ? code : escape(code, true))

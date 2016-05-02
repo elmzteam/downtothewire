@@ -548,7 +548,7 @@ dttw-code {
 		color: $color-white;
 		font-family: $font-header;
 		font-size: 1.2em;
-		padding: .1em .1em 0px 1em;
+		padding: .1em 0px 0px 1em;
 
 		&:before {
 			content: "";
@@ -587,6 +587,11 @@ dttw-code {
 				opacity: 1;
 				bottom: 50%;
 			}
+		}
+
+		.filename {
+			padding: .1em .4em 0px;
+			background: $color-primary-dark;
 		}
 	}
 
