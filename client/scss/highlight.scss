@@ -13,7 +13,7 @@ $hl-color-purple: #cc99cc;
 
 .hljs-comment,
 .hljs-title {
-  color: $hl-color-gray;
+	color: $hl-color-gray;
 }
 
 .hljs-variable,
@@ -29,7 +29,7 @@ $hl-color-purple: #cc99cc;
 .css .hljs-id,
 .css .hljs-class,
 .css .hljs-pseudo {
-  color: $hl-color-red;
+	color: $hl-color-red;
 }
 
 .hljs-number,
@@ -37,12 +37,12 @@ $hl-color-purple: #cc99cc;
 .hljs-built_in,
 .hljs-literal,
 .hljs-constant {
-  color: $hl-color-orange;
+	color: $hl-color-orange;
 }
 
 .ruby .hljs-class .hljs-title,
 .css .hljs-rules .hljs-attribute {
-  color: $hl-color-yellow;
+	color: $hl-color-yellow;
 }
 
 .hljs-string,
@@ -51,11 +51,11 @@ $hl-color-purple: #cc99cc;
 .hljs-header,
 .ruby .hljs-symbol,
 .xml .hljs-cdata {
-  color: $hl-color-green;
+	color: $hl-color-green;
 }
 
 .css .hljs-hexcolor {
-  color: $hl-color-aqua;
+	color: $hl-color-aqua;
 }
 
 .python .hljs-decorator,
@@ -66,18 +66,22 @@ $hl-color-purple: #cc99cc;
 .javascript .hljs-title,
 .typescript .hljs-title,
 .coffeescript .hljs-title {
-  color: $hl-color-blue;
+	color: $hl-color-blue;
 }
 
 .hljs-keyword {
-  color: $hl-color-purple;
+	color: $hl-color-purple;
 }
 
 .hljs {
-  display: block;
-  background: $hl-color-black;
-  color: $hl-color-white;
-  padding: 0.5em;
+	display: block;
+	background: $hl-color-black;
+	color: $hl-color-white;
+	padding: 0.5em;
+
+	code {
+		color: $hl-color-white;
+	}
 }
 
 .coffeescript .javascript,
@@ -87,5 +91,5 @@ $hl-color-purple: #cc99cc;
 .xml .vbscript,
 .xml .css,
 .xml .hljs-cdata {
-  opacity: 0.5;
+	opacity: 0.5;
 }
