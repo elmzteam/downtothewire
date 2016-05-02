@@ -1,7 +1,6 @@
 @import "vars";
 @import "mixins";
-@import "shCoreMonokai.css";
-@import "shThemeMonokai.css";
+@import "hljs-base16-eighties-dark.css";
 
 *,
 *:before,
@@ -23,7 +22,7 @@ body {
 	padding: 0px;
 }
 
-html:not(.admin) header {
+html:not(.admin)>body>header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -518,6 +517,68 @@ table {
 		flex-basis: 0px;
 		flex-grow: 1;
 		margin-left: .8em;
+	}
+}
+
+dttw-code {
+	display: flex;
+	align-items: flex-end;
+	flex-direction: column;
+
+	header {
+		display: inline-block;
+		position: relative;
+		background: $color-primary;
+		color: $color-white;
+		font-family: Khand, sans-serif;
+		font-size: 1.2em;
+		padding: .1em .1em 0px 1em;
+
+		&:before {
+			content: "";
+			width: 0px;
+			height: calc(1.2em);
+			border: .6em solid transparent;
+			position: absolute;
+			top: calc(-.6em);
+			left: 0px;
+			border-left-color: $color-content-background;
+		}
+
+		.copy {
+			position: relative;
+			top: -.25em;
+			margin: 0px .4em;
+			cursor: pointer;
+			position: relative;
+
+			&:after {
+				content: "Copied";
+				position: absolute;
+				background: $color-text-main;
+				color: $color-white;
+				font-size: .8em;
+				padding: .1em .4em;
+				left: 50%;
+				transform: translateX(-50%);
+				transition: 600ms opacity, 600ms bottom;
+				opacity: 0;
+				bottom: 100%;
+			}
+
+			&.copied:after {
+				transition: 0ms opacity, 0ms bottom;
+				opacity: 1;
+				bottom: 50%;
+			}
+		}
+	}
+
+	pre.hljs {
+		white-space: pre-wrap;
+		text-indent: 2em hanging each-line;
+		margin-top: 0px;
+		width: 100%;
 	}
 }
 

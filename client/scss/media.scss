@@ -8,7 +8,7 @@
 		overflow-wrap: break-word;
 	}
 
-	html:not(.admin) header {
+	html:not(.admin)>body>header {
 		flex-direction: column;
 
 		&>* {
