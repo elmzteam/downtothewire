@@ -3,6 +3,7 @@
 		{{> no-admin.hbs}}
 	{{else}}
 	{{#if single}}
+		{{set this "postinf" (fetchpost post)}}
 		{{set this "desc" (generateDesc post)}}
 	{{/if}}
 	{{> head.hbs}}
@@ -14,12 +15,12 @@
 				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
 				{{/if}}
 				{{#if activename}}
-				{{#with (subscript (profiles) activename)}}				
-				<table><tr>
-					<td><img class="author-image large" src="/images/{{#if image}}{{image}}{{else}}default.png{{/if}}"/></td>
-					<td class="left">{{bio}}</td>
-				</tr></table>
-				<div class="tagged">Posts by {{name}}</div>
+				{{#with (subscript (profiles) activename)}}
+					<div class="author-bio">
+						<img class="author-image large" src="/images/{{#if image}}{{image}}{{else}}default.png{{/if}}"/>
+						<div class="bio">{{bio}}</div>
+					</div>
+					<div class="tagged">Posts by {{name}}</div>
 				{{/with}}
 				{{/if}}
 				{{#if single}}

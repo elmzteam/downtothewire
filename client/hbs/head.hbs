@@ -3,7 +3,7 @@
 	<meta name="theme-color" content="#E53935">
 	<meta name="msapplication-TileColor" content="#E53935">
 	<meta property="og:image" content="http://dttw.tech/images/icon_large.jpg">
-	<meta property="og:title" content="Down to the Wire{{#if this.text}}: {{this.text}}{{/if}}">
+	<meta property="og:title" content="{{#if postinf.title.text}}{{postinf.title.text}}{{else}}Down to the Wire{{/if}}">
 	<meta property="og:description" content="{{#if this.desc}}{{this.desc}}{{else}}Down to the Wire is a collaborative project hosted by a group of students across the country. Topics range from hardware to software to security.{{/if}}"> 
 	<meta property="og:type" content="article">
 	<!--meta property="article:author" content="100006401946800"--> <!-- Waiting until I get everyone's gid and approval -->
@@ -29,16 +29,46 @@
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-								})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 		ga('create', 'UA-72198191-1', 'auto');
 		ga('send', 'pageview');
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+
+	<script>
+		$(document).ready(function(){
+			if (document.queryCommandSupported("copy")) {
+				$(".copy").click(function(event){
+					let elmt = $(this).parent().parent().children("pre.hljs")
+
+					if (elmt.length) {
+						let range = document.createRange()
+						range.selectNode(elmt[0])
+						
+						let selection = window.getSelection()
+						selection.removeAllRanges()
+						selection.addRange(range)
+
+						document.execCommand("copy")
+
+						selection.removeAllRanges()
+
+						$(this).addClass("copied")
+						$(this).outerWidth() // force a redraw
+						$(this).removeClass("copied")
+					}
+				});
+			}
+		});
 	</script>
 
 	<!-- FONTS -->
 	<link href='https://fonts.googleapis.com/css?family=Exo+2:300,400,600,400italic,600italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link href='https://fonts.googleapis.com/css?family=Khand' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="/css/style.css" />
@@ -52,5 +82,5 @@
 	<script src="/js/admin.js"></script>
 	{{/if}}
 
-	<title>Down to the Wire{{#if this.text}}: {{this.text}}{{/if}}</title>
+	<title>DttW{{#if postinf.title.text}}: {{postinf.title.text}}{{/if}}</title>
 </head>

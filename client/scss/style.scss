@@ -1,7 +1,6 @@
 @import "vars";
 @import "mixins";
-@import "shCoreMonokai.css";
-@import "shThemeMonokai.css";
+@import "highlight.scss";
 
 *,
 *:before,
@@ -11,7 +10,7 @@
 
 html {
 	box-sizing: border-box;
-	font-family: "Exo 2", sans-serif;
+	font-family: $font-body;
 	background: $color-page-background;
 	color: $color-text-main;
 	margin: 0px;
@@ -23,7 +22,7 @@ body {
 	padding: 0px;
 }
 
-html:not(.admin) header {
+html:not(.admin)>body>header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -44,7 +43,7 @@ html:not(.admin) header {
 		height: 6em;
 
 		h1 {
-			font-family: Khand, sans-serif;
+			font-family: $font-header;
 			text-transform: uppercase;
 			display: flex;
 			justify-content: flex-end;
@@ -99,7 +98,7 @@ html:not(.admin) header {
 			@extend .no-line;
 
 			.nav-item {
-				font-family: Khand, sans-serif;
+				font-family: $font-header;
 				padding-right: 1em;
 				font-size: 1.4em;
 			}
@@ -124,10 +123,10 @@ content-row {
 			font-weight: bold;
 			margin-bottom: 10px;
 		}
-		
+
 		article {
 			@extend %shadowed;
-			
+
 			padding: 1em 1em .6em;
 			background: $color-content-background;
 			margin-bottom: 2em;
@@ -185,7 +184,7 @@ content-row {
 				@extend %shadowed;
 
 				display: inline-block;
-				margin: 0px -1 / .8 * 1em .6em;
+				margin: 0px -1 / .8 * 1em 1.6em;
 				padding: .6em 1.6em 0em;
 				font-size: .8em;
 				background: $color-primary-dark;
@@ -274,7 +273,7 @@ content-row {
 				position: relative;
 				z-index: 1;
 			}
-			
+
 			footer {
 				background: $color-tag-line;
 				margin: 0px -1 / .8 * 1em -.6 / .8 * 1em;
@@ -291,9 +290,25 @@ content-row {
 				}
 			}
 
+			h2, h3, h4, h5, h6 {
+				font-family: $font-header;
+			}
+
+			h2 {
+				font-size: 2em;
+				font-family: $font-header;
+				border-bottom: 2px solid $color-text-secondary;
+				padding-left: .6em;
+			}
+
+			h3 {
+				font-size: 1.4em;
+				margin-left: 1em;
+			}
+
 			.expand {
 				text-align: right;
-				
+
 				& + footer {
 					margin-top: .6 / .8 * 1em;
 				}
@@ -317,7 +332,7 @@ content-row {
 		}
 		article {
 			@extend %shadowed;
-			
+
 			padding: 1em 1em .4em;
 			background: $color-content-background;
 			margin-bottom: 1em;
@@ -369,7 +384,14 @@ content-row {
 		width: 48px;
 		height: 48px;
 		border-radius: 24px;
-		border: 3px solid $color-text-main;
+		border: 48/72*4px solid $color-text-main;
+	}
+	
+	&.large {
+		width: 96;
+		height: 96px;
+		border-radius: 48px;
+		border: 96/72*4px solid $color-text-main;
 	}
 }
 
@@ -464,53 +486,161 @@ dttw-icon.material-icons {
 
 table {
 	border-collapse: collapse;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	
-	&:not(.profile) {
-		tr:not(:last-child) {
-			border-bottom: 1px solid #AAA;
-		}
+	margin: 1em auto;
 
+	&.row-divided {
 		tr {
-			margin-bottom: 6px;
-
-			td:last-child {
-				text-align: right;
-				&.left {
-					text-align: left;
-				}
-			}
-
+			th,
 			td {
-				padding-bottom: 5px;
-				padding-top: 5px;
+				padding: .4em 0px;
+			}
+
+			td:not(:last-child),
+			th:not(:last-child) {
+				padding-right: .4em;
+			}
+
+			&:not(:last-child) td {
+				border-bottom: 1px solid $color-text-secondary;
 			}
 		}
 	}
-	& .author-image {
-		width: 96px;
-		height: 96px;
-		&.large {
-			width: 192px;
-			height: 192px;
-		}
-		border-radius: 192px;
-	}
-	&.profile {
-		tr:not(:last-child) td:last-child {
-				border-bottom: 1px solid #AAA;
+	
+	&#profiles {
+		td {
+			padding: .8em 0px;
+			padding-left: 1em;
+			
+			.bio {
+				
+			}
+			
+			.contact {
+				display: flex;
+				flex-direction: row;
+			}
 		}
 	}
 }
 
-.single {
-	font-size: 18px;	
-	& .bio {
-		font-size: 18px;
-		padding-left: 10px;
+.author-bio {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 1em;
+
+	.bio {
+		flex-basis: 0px;
+		flex-grow: 1;
+		margin-left: .8em;
 	}
-	
+}
+
+dttw-code {
+	display: flex;
+	align-items: flex-end;
+	flex-direction: column;
+
+	header {
+		display: inline-block;
+		position: relative;
+		background: $color-primary;
+		color: $color-white;
+		font-family: $font-header;
+		font-size: 1.2em;
+		padding: .1em 0px 0px 1em;
+
+		&:before {
+			content: "";
+			width: 0px;
+			height: calc(1.2em);
+			border: .6em solid transparent;
+			position: absolute;
+			top: calc(-.6em);
+			left: 0px;
+			border-left-color: $color-content-background;
+		}
+
+		.copy {
+			position: relative;
+			top: -.25em;
+			margin: 0px .4em;
+			cursor: pointer;
+			position: relative;
+
+			&:after {
+				content: "Copied";
+				position: absolute;
+				background: $color-text-main;
+				color: $color-white;
+				font-size: .8em;
+				padding: .1em .4em;
+				left: 50%;
+				transform: translateX(-50%);
+				transition: 600ms opacity, 600ms bottom;
+				opacity: 0;
+				bottom: 100%;
+			}
+
+			&.copied:after {
+				transition: 0ms opacity, 0ms bottom;
+				opacity: 1;
+				bottom: 50%;
+			}
+		}
+
+		.filename {
+			padding: .1em .4em 0px;
+			background: $color-primary-dark;
+		}
+	}
+
+	pre.hljs {
+		white-space: pre-wrap;
+		text-indent: 2em hanging each-line;
+		margin-top: 0px;
+		width: 100%;
+	}
+}
+
+code {
+	font-family: $font-mono;
+	color: $color-primary;
+}
+
+h2.zero,
+h2.one {
+	display: flex;
+	align-items: center;
+	padding-left: 0px;
+
+	&:before {
+		font-family: $font-header;
+		font-size: 1.4em;
+		width: 1.4em;
+		height: 1.4em;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		color: $color-white;
+		margin-right: .6em;
+		padding-top: .1em;
+		padding-left: .05em;
+	}
+}
+
+h2.zero {
+	&:before {
+		content: "0";
+		background: $color-text-main;
+	}
+}
+
+h2.one{
+	&:before {
+		content: "1";
+		background: $color-primary;
+	}
 }
 
 // don't touch this
