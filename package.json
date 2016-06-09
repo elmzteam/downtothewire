@@ -16,6 +16,10 @@
     "url": "https://github.com/elmzteam/bydesign/issues"
   },
   "homepage": "https://github.com/elmzteam/bydesign",
+  "scripts":
+    {"postinstall": "/bin/sh bin/startup.sh $(pwd)",
+     "start": "node index.js"},
+  "homepage": "https://github.com/zwade/bydesign",
   "dependencies": {
     "body-parser": "^1.14.1",
     "colors": "^1.1.2",
@@ -43,7 +47,6 @@
     "passport-google-oauth": "^0.2.0",
     "prompt": "^0.2.14",
     "rss": "^1.2.1",
-    "sprintf": "^0.1.5",
-    "wait.for": "^0.6.6"
+    "sprintf": "^0.1.5"
   }
 }
