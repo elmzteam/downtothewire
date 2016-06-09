@@ -5,7 +5,6 @@ var path            = require("path")
 
 var config          = require("../config")
 var logger          = require("./logger")
-var wait            = require("wait.for")
 var deasync         = require("deasync")
 var extend          = require("extend")
 
