@@ -33,12 +33,16 @@ var md = markdownIt({
 	typographer: true,
 	highlight: (code, description) => {
 		try {
-			let [lang, filename] = description.split("|")
+			let [lang, filename] = description.split(/\|/)
 
-			if (lang) {
+			try {
 				var {value: highlighted, language} = highlight.highlight(lang, code)
-			} else {
+			} catch(e) {
 				var {value: highlighted, language} =  highlight.highlightAuto(code).value
+
+				if (highlighted == undefined) {
+					var [highlighted, language] = [code, lang]
+				}
 			}
 
 			if (language === "bash") {
