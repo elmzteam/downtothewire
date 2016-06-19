@@ -4,6 +4,9 @@ var markdownIt  = require("markdown-it")
 var logger      = require("./logger")
 var highlight   = require("highlight.js")
 
+var mdiAnchor   = require("markdown-it-anchor");
+var mdiAttrs    = require("markdown-it-attrs");
+
 const LANGS = {
 	"js": "JavaScript",
 	"ts": "TypeScript",
@@ -50,50 +53,8 @@ var md = markdownIt({
 	}
 });
 
-md.block.ruler.at("heading", (state, startLine, endLine, silent) => {
-	var ch, level, tmp, token,
-		pos = state.bMarks[startLine] + state.tShift[startLine],
-		max = state.eMarks[startLine];
-
-	ch  = state.src.charCodeAt(pos);
-
-	if (ch !== 0x23/* # */ || pos >= max) { return false; }
-
-	// count heading level
-	level = 1;
-	ch = state.src.charCodeAt(++pos);
-	while (ch === 0x23/* # */ && pos < max && level <= 6) {
-		level++;
-		ch = state.src.charCodeAt(++pos);
-	}
-
-	if (level > 6 || (pos < max && ch !== 0x20/* space */)) { return false; }
-
-	if (silent) { return true; }
-
-	// Let's cut tails like '    ###  ' from the end of string
-
-	max = state.skipSpacesBack(max, pos);
-	tmp = state.skipCharsBack(max, 0x23, pos); // #
-	if (tmp > pos && md.utils.isSpace(state.src.charCodeAt(tmp - 1))) {
-		max = tmp;
-	}
-
-	state.line = startLine + 1;
-
-	token        = state.push('heading', 'h' + String(level), 1);
-	token.markup = '########'.slice(0, level);
-	token.content = state.src.slice(pos, max).trim();
-	token.map    = [ startLine, state.line ];
-
-	if (token.content.charAt(0) == "{") {
-		token.content = token.content.substring(1);
-		[token.classname, ...token.content] = token.content.split("}");
-		token.content = token.content.join("}");
-	}
-
-	return true;
-});
+md.use(mdiAnchor)
+md.use(mdiAttrs)
 
 md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
 	var token = tokens[idx]
