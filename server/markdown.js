@@ -63,14 +63,9 @@ md.use(mdiAttrs)
 md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
 	var token = tokens[idx]
 	var info = token.info ? md.utils.unescapeAll(token.info.trim()) : ''
-	var langName = ''
-
-	if (info) {
-		langName = info.split(/\s+/g)[0]
-	}
 
 	// highlight function is now required, but output is not wrapped
-	return options.highlight(token.content, langName) || escapeHtml(token.content)
+	return options.highlight(token.content, info) || escapeHtml(token.content)
 }
 
 md.renderer.rules.heading = (tokens, idx, options, env, slf) => {
