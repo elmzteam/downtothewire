@@ -89,7 +89,7 @@ renderer.heading = function(text, level, raw) {
 		+ level
 		+ ' id="'
 		+ this.options.headerPrefix
-		+ raw.toLowerCase().replace(/[^\w]+/g, '-')
+		+ text.toLowerCase().replace(/[^\w]+/g, '-')
 		+ '" class="'
 		+ classname
 		+ '">'
