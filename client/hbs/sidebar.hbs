@@ -1,4 +1,5 @@
 <aside>
+	{{#if (not single)}}
 	{{#each (sidebar)}}
 	<article>
 		<h1>{{title}}</h1>
@@ -25,5 +26,6 @@
 			{{tag this}}
 		{{/each}}
 	</article>
+	{{/if}}
 </aside>
 
