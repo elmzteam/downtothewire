@@ -41,7 +41,7 @@
     "marked": "^0.3.5",
     "mkdirp": "^0.5.1",
     "moment": "^2.10.6",
-    "mongojs": "^1.4.1",
+    "mongojs": "^2.4.0",
     "morgan": "^1.6.1",
     "passport": "^0.3.2",
     "passport-google-oauth": "^0.2.0",

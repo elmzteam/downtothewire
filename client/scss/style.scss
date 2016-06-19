@@ -320,7 +320,7 @@ content-row {
 		}
 	}
 
-	aside {
+	&>aside {
 		float: right;
 		width: 240px;
 		flex-basis: 240px;
@@ -597,7 +597,7 @@ dttw-code {
 
 	pre.hljs {
 		white-space: pre-wrap;
-		text-indent: 2em hanging each-line;
+		text-indent: 1em hanging each-line;
 		margin-top: 0px;
 		width: 100%;
 	}
@@ -640,6 +640,65 @@ h2.one{
 	&:before {
 		content: "1";
 		background: $color-primary;
+	}
+}
+
+aside.short {
+	float: right;
+	width: 40%;
+	padding: .4em;
+	margin: .4em;
+	background: $color-page-background;
+
+	h4 {
+		margin: 0px 0px 0px .4em;
+		font-size: 1.2em;
+
+		&:before {
+			content: "\bb";
+			margin-right: .1em;
+		}
+	}
+
+	ul.zero-one {
+		list-style-type: none;
+		font-family: $font-header;
+		padding: 0px;
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+			border-bottom: 1px solid $color-text-secondary;
+			padding: 0px;
+
+
+			&:before {
+				color: $color-white;
+				width: 1.6em;
+				height: 1.6em;
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+				margin-right: .6em;
+				padding-top: .1em;
+				padding-left: .05em;
+			}
+		}
+
+		li.zero:before {
+			content: "0";
+			background-color: $color-text-main;
+		}
+
+		li.one:before {
+			content: "1";
+			background-color: $color-primary;
+		}
 	}
 }
 
