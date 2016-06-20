@@ -1,11 +1,13 @@
 "use strict";
 
-var markdownIt  = require("markdown-it")
-var logger      = require("./logger")
-var highlight   = require("highlight.js")
+var markdownIt   = require("markdown-it")
+var logger       = require("./logger")
+var highlight    = require("highlight.js")
 
-var mdiAnchor   = require("markdown-it-anchor");
-var mdiAttrs    = require("markdown-it-attrs");
+var mdiAnchor    = require("markdown-it-anchor");
+var mdiAttrs     = require("markdown-it-attrs");
+var mdiContainer = require("markdown-it-container");
+var mdiMark      = require("markdown-it-mark");
 
 const LANGS = {
 	"js": "JavaScript",
@@ -55,6 +57,13 @@ var md = markdownIt({
 
 md.use(mdiAnchor)
 md.use(mdiAttrs)
+md.use(mdiContainer, "aside", {
+	validate: (params) => params.trim() === "aside",
+	render: (tokens, idx) => tokens[idx].nesting === 1
+		? `<aside><div class="border">`
+		: `</div></aside>`
+});
+md.use(mdiMark);
 
 md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
 	var token = tokens[idx]
