@@ -589,9 +589,14 @@ dttw-code {
 			}
 		}
 
+		.filename:empty {
+			display: none;
+		}
+
 		.filename {
 			padding: .1em .4em 0px;
 			background: $color-primary-dark;
+			margin-right: .2em;
 		}
 	}
 
