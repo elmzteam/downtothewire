@@ -4,7 +4,7 @@
 {{#each (profiles)}}
 {{#if this.bio}}
 	<tr>
-		<th><a href="/author/{{this.handle}}"><img class="author-image large" src="/images/{{#if this.image}}{{this.image}}{{else}}default.png{{/if}}"/></a></th>
+		<th><a href="/author/{{this.handle}}" name="{{this.handle}}"><img class="author-image large" src="/images/{{#if this.image}}{{this.image}}{{else}}default.png{{/if}}"/></a></th>
 		<td>
 			<div class="bio">{{this.bio}}</div>
 			<div class="contact">

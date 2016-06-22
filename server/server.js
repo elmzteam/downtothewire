@@ -171,7 +171,7 @@ module.exports = function(__dirname) {
 	passport.serializeUser(function(user, done) {
 		db.authors.find({"id": user.id}, function(err, data) {
 			if (!err && data.length > 0) {
-				user._json.image.url = user._json.image.url.replace(/sz=50^/, "sz=576")
+				user._json.image.url = user._json.image.url.replace(/sz=50$/, "sz=576")
 				db.authors.update({"id": user.id}, user, function(err) {
 					done(err, JSON.stringify(user))
 				})

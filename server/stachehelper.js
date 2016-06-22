@@ -4,100 +4,11 @@ var sprintf     = require("sprintf")
 var deasync     = require("deasync")
 var moment      = require("moment")
 var path        = require("path")
-var marked      = require("marked")
 var fs          = require("fs")
-var highlight   = require("highlight.js")
 var RSS         = require("rss")
 var config      = require("../config")
-var logger      = require("./logger");
-
-var renderer    = new marked.Renderer()
-
-var langs = {
-	"js": "JavaScript",
-	"ts": "TypeScript",
-	"bash": "Bash",
-	"json": "JSON"
-}
-
-marked.setOptions({
-	gfm: true,
-	highlight: function(code, lang){
-		if (lang !== undefined) {
-			lang = lang.split("{")[0]
-
-			let highlighted = highlight.highlight(lang, code).value
-
-			if (lang === "bash") {
-				highlighted = highlighted.replace(/(^|\n)\$/g, "$1<span class='hljs-prompt'>$</span>") // highlight the fake prompts
-			}
-
-			return "<span>" + highlighted + "</span>" // stop trying to be tricky, handlebars
-		} else {
-			return highlight.highlightAuto(code).value
-		}
-	},
-})
-
-renderer.code = function(code, lang, escaped) {
-	if (this.options.highlight) {
-		var out = this.options.highlight(code, lang)
-		if (out != null && out !== code) {
-			escaped = true
-			code = out
-		}
-	}
-
-	lang = lang || "";
-	let filename = undefined;
-	let parts = lang.split("{")
-
-	if(parts.length > 1){
-		filename = parts[1].substring(0, parts[1].length - 1)
-		lang = parts[0]
-	}
-
-	if (!lang) {
-		return '<dttw-code><header><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span>'
-			+ (filename !== undefined ? "<span class='filename'>" + filename + "</span>" : "")
-			+ '</header><pre class="hljs"><code>'
-			+ (escaped ? code : escape(code, true))
-			+ '\n</code></pre></dttw-code>\n'
-	}
-
-	return '<dttw-code><header><span class="lang">'
-		+ escape((lang in langs ? langs[lang] : lang), true)
-		+ '</span><span class="copy"><dttw-icon class="material-icons">content_copy</dttw-icon></span>'
-		+ (filename !== undefined ? "<span class='filename'>" + filename + "</span>" : "")
-		+ '</header><pre class="hljs"><code class="'
-		+ escape((lang in langs ? langs[lang].toLowerCase() : lang), true)
-		+ '">'
-		+ (escaped ? code : escape(code, true))
-		+ '\n</code></pre></dttw-code>\n'
-}
-
-renderer.heading = function(text, level, raw) {
-	let classname = "";
-
-	if(text.charAt(0) == "{"){
-		let split = text.split("}");
-		classname = split[0].substring(1);
-		text = split.slice(1).join("}");
-	}
-
-	return '<h'
-		+ level
-		+ ' id="'
-		+ this.options.headerPrefix
-		+ raw.toLowerCase().replace(/[^\w]+/g, '-')
-		+ '" class="'
-		+ classname
-		+ '">'
-		+ text
-		+ '</h'
-		+ level
-		+ '>\n';
-};
+var logger      = require("./logger")
+var md          = require("./markdown")
 
 module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("noop", function(options) {
@@ -168,8 +79,10 @@ module.exports = function(handlebars, db, root) {
 	})
 
 	handlebars.registerHelper("generateDesc", function(id) {
-		var out = marked(deasync(getContent)(id).toString(), { renderer: renderer }).split("<more>")[0].replace(/(<.*?>)|(<.*?script.*?>.*?<\/script>)|(<.*?style.*?>.*?<\/style>)/g,"")
-		out     = out.replace(/[\n\t\ ]+/g," ")
+		var out = md.render(deasync(getContent)(id).toString())
+					.split("<more>")[0]
+					.replace(/(<.*?>)|(<.*?script.*?>.*?<\/script>)|(<.*?style.*?>.*?<\/style>)/g,"")
+					.replace(/[\n\t\ ]+/g," ")
 		return out
 	})
 
@@ -187,7 +100,7 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("loadcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {
-			return marked(out.toString(), { renderer: renderer })
+			return md.render(out.toString())
 		} else {
 			return "Error"
 		}
@@ -235,7 +148,7 @@ module.exports = function(handlebars, db, root) {
 		for(var i = 0; i < posts.length; i++){
 			feed.item({
 				title: posts[i].title.text,
-				description: marked(deasync(getContent)(posts[i].timestamp).toString(), { renderer: renderer }),
+				description: md.render(deasync(getContent)(posts[i].timestamp).toString()),
 				url: config.rssInfo.site_url + posts[i].title.url,
 				guid: posts[i].timestamp,
 				categories: posts[i].tags,

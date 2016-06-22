@@ -131,7 +131,7 @@ content-row {
 			background: $color-content-background;
 			margin-bottom: 2em;
 
-			&:last {
+			&:last-child {
 				margin-bottom: 0px;
 			}
 
@@ -284,8 +284,9 @@ content-row {
 
 			p {
 				margin-top: 0px;
+				line-height: 1.4;
 
-				&:last {
+				&:last-child {
 					margin-bottom: 0px;
 				}
 			}
@@ -317,10 +318,78 @@ content-row {
 			.disqus {
 				margin-top: 2em;
 			}
+
+			aside {
+				position: absolute;
+				left: calc(100% + 32px);
+				width: 240px;
+				background: $color-content-background;
+				padding: 8px;
+				border-bottom: 2px solid $color-drop-shadow;
+				transform: translateY(-50%);
+
+				.border {
+					padding: 8px;
+					border: 2px solid $color-primary;
+				}
+
+				&.toc {
+					h4 {
+						margin: 0px 0px 0px .4em;
+						font-size: 1.2em;
+
+						&:before {
+							content: "\bb";
+							margin-right: .1em;
+						}
+					}
+
+					ul.zero-one {
+						list-style-type: none;
+						font-family: $font-header;
+						padding: 0px;
+
+						a {
+							text-decoration: none;
+							color: inherit;
+						}
+
+						li {
+							display: flex;
+							align-items: center;
+							border-bottom: 1px solid $color-text-secondary;
+							padding: 0px;
+
+
+							&:before {
+								color: $color-white;
+								width: 1.6em;
+								height: 1.6em;
+								display: inline-flex;
+								justify-content: center;
+								align-items: center;
+								margin-right: .6em;
+								padding-top: .1em;
+								padding-left: .05em;
+							}
+						}
+
+						li.zero:before {
+							content: "0";
+							background-color: $color-text-main;
+						}
+
+						li.one:before {
+							content: "1";
+							background-color: $color-primary;
+						}
+					}
+				}
+			}
 		}
 	}
 
-	aside {
+	&>aside {
 		float: right;
 		width: 240px;
 		flex-basis: 240px;
@@ -589,15 +658,20 @@ dttw-code {
 			}
 		}
 
+		.filename:empty {
+			display: none;
+		}
+
 		.filename {
 			padding: .1em .4em 0px;
 			background: $color-primary-dark;
+			margin-right: .2em;
 		}
 	}
 
 	pre.hljs {
 		white-space: pre-wrap;
-		text-indent: 2em hanging each-line;
+		text-indent: 1em hanging each-line;
 		margin-top: 0px;
 		width: 100%;
 	}
@@ -641,6 +715,13 @@ h2.one{
 		content: "1";
 		background: $color-primary;
 	}
+}
+
+mark {
+	background: $color-primary-vlight;
+	background-blend-mode: darken;
+	border-bottom: 2px dashed $color-primary;
+	padding: 0px 2px;
 }
 
 // don't touch this
