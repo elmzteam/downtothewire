@@ -1,6 +1,7 @@
 "use strict";
 
 var editor
+var confirmed = false
 
 $(function() {
 	if($("#editor").length > 0){
@@ -43,6 +44,20 @@ var submit = function() {
 	var content = editor.getValue()
 	var tags = $("#tags").val().split(" ")
 	var title = $("#title").val()
+
+	var deleting = false
+
+	console.log(content, tags, title)
+
+	if (!(content || tags.length > 1 || tags[0] || title)) {
+		if (!confirmed) {
+			confirmed = true
+			$("#status").text("Warning: Submitting this will delete this post from the server. Hit submit again to send")
+			return
+		} else {
+			deleting = true
+		}
+	}
 	var visible = $("#visible").prop("checked")
 
 	$("#status").text("Uploading...")
@@ -61,6 +76,9 @@ var submit = function() {
 						if (res.id) {
 							history.pushState({}, "Editor", "/editor/"+res.id)
 							$("#submit").text("Update")
+						}
+						if (deleting) {
+							location.href = "/admin"
 						}
 						break
 					default:

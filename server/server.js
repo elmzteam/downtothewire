@@ -125,6 +125,18 @@ module.exports = function(__dirname) {
 				value: body.content
 			}
 		}
+		if (!(body.tags.length > 1 || body.tags[0] || body.title || body.content) && modify) {
+			return new Promise(function(resolve, reject) {
+				db.posts.remove({timestamp: parseInt(modify)}, function(e) {
+					if (e) {
+						reject(e)
+					} else {
+						logger.log(`Deleting post with id ${modify}`)
+						resolve()
+					}
+				})
+			})
+		}
 		if (!modify) data.db.author = author
 		return insert(data, modify ? true : false).then(function() {
 			return time
