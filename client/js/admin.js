@@ -47,8 +47,6 @@ var submit = function() {
 
 	var deleting = false
 
-	console.log(content, tags, title)
-
 	if (!(content || tags.length > 1 || tags[0] || title)) {
 		if (!confirmed) {
 			confirmed = true
