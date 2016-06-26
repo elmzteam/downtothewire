@@ -5,6 +5,9 @@
 var fs       = require("fs")
 var path     = require("path")
 var config   = require("../config")
+var shortid  = require("shortid")
+var utils    = require("./utils")
+var logger   = require("./logger")
 
 var prompt
 var globals  = {}
@@ -69,7 +72,11 @@ var insertPost = function(data, coll, path, update) {
 	globals.coll = coll
 	return writeFile(data).then(function(val) {
 		if (!update) {
-			return saveDatabase(val)
+			return utils.generateId(coll).then(function (id) {
+				data.db.guid = id
+				data.db.slug = utils.slugify(data.db.title.text)
+				return saveDatabase(val)
+			})
 		} else {
 			return updateDatabase(val)
 		}
@@ -102,7 +109,7 @@ module.exports = function(db, path) {
 }
 
 var crash = function(a) {
-	console.error(a)
+	logger.error(a)
 }
 
 var tagCheck = function(tags) {
