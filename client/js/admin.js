@@ -1,7 +1,7 @@
 "use strict";
 
 var editor
-var confirmed = false
+var confirmedDelete = false
 
 $(function() {
 	if($("#editor").length > 0){
@@ -42,15 +42,19 @@ $(function() {
 
 var submit = function() {
 	var content = editor.getValue()
-	var tags = $("#tags").val().split(" ")
+	var tags = $("#tags").val()
+		.strip()
+		.split(" ")
+		.filter((tag) => !tag.match(/^\s*$/))
+
 	var title = $("#title").val()
 
 	var deleting = false
 
-	if (!(content || tags.length > 1 || tags[0] || title)) {
-		if (!confirmed) {
-			confirmed = true
-			$("#status").text("Warning: Submitting this will delete this post from the server. Hit submit again to send")
+	if (!(content.match(/^\S*$/) || title.match(/^\S*$/) || tags.length > 1 )) {
+		if (!confirmedDelete) {
+			confirmedDelete = true
+			$("#status").text("Warning: Submitting this will delete this post from the server. Hit submit again to send.")
 			return
 		} else {
 			deleting = true

@@ -125,7 +125,7 @@ module.exports = function(__dirname) {
 				value: body.content
 			}
 		}
-		if (!(body.tags.length > 1 || body.tags[0] || body.title || body.content) && modify) {
+		if (!(body.tags.length > 1 || body.title.match(/^\S$/) || body.content.match(/^\S$/)) && modify) {
 			return new Promise(function(resolve, reject) {
 				db.posts.remove({timestamp: parseInt(modify)}, function(e) {
 					if (e) {
