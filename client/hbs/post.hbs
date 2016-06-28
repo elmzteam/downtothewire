@@ -31,9 +31,9 @@
 
 	<div class="body">
 		{{#if single}}
-		{{{loadcontent timestamp}}}
+		{{{loadcontent timestamp false}}}
 		{{else}}
-		{{{abbreviate (loadcontent timestamp)}}}
+		{{{loadcontent timestamp true}}}
 		{{/if}}
 	</div>
 
