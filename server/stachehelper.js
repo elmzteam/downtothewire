@@ -75,12 +75,12 @@ module.exports = function(handlebars, db, root) {
 		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>")
 	})
 	handlebars.registerHelper("abbreviate", function(content) {
-		return content.split("<more>")[0]
+		return content.split(/\^{3,}/)[0]
 	})
 
 	handlebars.registerHelper("generateDesc", function(id) {
 		var out = md.render(deasync(getContent)(id).toString())
-					.split("<more>")[0]
+					.split(/\^{3,}/)[0]
 					.replace(/(<.*?>)|(<.*?script.*?>.*?<\/script>)|(<.*?style.*?>.*?<\/style>)/g,"")
 					.replace(/[\n\t\ ]+/g," ")
 		return out
