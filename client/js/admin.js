@@ -43,7 +43,7 @@ $(function() {
 var submit = function() {
 	var content = editor.getValue()
 	var tags = $("#tags").val()
-		.strip()
+		.trim()
 		.split(" ")
 		.filter((tag) => !tag.match(/^\s*$/))
 
@@ -51,10 +51,10 @@ var submit = function() {
 
 	var deleting = false
 
-	if (!(content.match(/^\S*$/) || title.match(/^\S*$/) || tags.length > 1 )) {
+	if (content.match(/^\s*$/) && title.match(/^\s*$/) && tags.length == 0) {
 		if (!confirmedDelete) {
 			confirmedDelete = true
-			$("#status").text("Warning: Submitting this will delete this post from the server. Hit submit again to send.")
+			$("#status").text("Warning: this will delete this post from the server. Hit submit again to send.")
 			return
 		} else {
 			deleting = true
