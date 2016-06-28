@@ -372,7 +372,7 @@ var getPosts = function(db, all) {
 	return deasync(function(cb) {
 		var query = {}
 		if (!all) query.visible = true
-		db.posts.distinct("timestamp", query, function(err, data) {
+		db.posts.distinct("guid", query, function(err, data) {
 			cb(err, data)
 		})
 	})()

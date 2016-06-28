@@ -110,14 +110,12 @@ module.exports = function(__dirname) {
 	**/
 
 	var uploadPost = function(modify, body, author) {
-		var time = modify ? parseInt(modify) : Date.now()
 		data = {
 			db: {	
 				title: {
 					text: body.title,
 					url: "/posts/"+time
 				},
-				timestamp: time,
 				tags: body.tags,
 				visible: body.visible || false
 			},
@@ -126,6 +124,7 @@ module.exports = function(__dirname) {
 			}
 		}
 		if (!modify) data.db.author = author
+		if (modify) data.db.guid = modify
 		return insert(data, modify ? true : false).then(function() {
 			return time
 		})
@@ -133,12 +132,7 @@ module.exports = function(__dirname) {
 
 	var handleVisibility = function(visible, page) {
 		return new Promise(function(resolve, reject) {
-			var id = parseInt(page)
-			if (isNaN(id)) {
-				reject("Bad Id")
-				return
-			}
-			db.posts.update({timestamp: id}, {$set:{visible: visible}}, function(err, doc) {
+			db.posts.update({guid: page}, {$set:{visible: visible}}, function(err, doc) {
 				if (err) {
 					reject(err || "Bad Id")
 					return

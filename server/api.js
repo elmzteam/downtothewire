@@ -51,18 +51,16 @@ apiHandler.prototype = {
 		num = parseInt(num)
 		if (isNaN(num)) return Promise.reject("Not an Integer")
 		var cursor = this.db.posts.find({}, {"_id": 0}).sort({"timestamp":-1}).limit(num)
-		return denodeify(cursor.map, [function(doc) { return doc.timestamp }], JSON.stringify, cursor)
+		return denodeify(cursor.map, [function(doc) { return doc.guid }], JSON.stringify, cursor)
 	},
 	author:
 	function(author) {
 		var cursor = this.db.posts.find({author: author}, {"_id": 0}).sort({"timestamp":-1})
-		return denodeify(cursor.map, [function(doc) { return doc.timestamp }], JSON.stringify, cursor)
+		return denodeify(cursor.map, [function(doc) { return doc.guid }], JSON.stringify, cursor)
 	},
 	post:
 	function(id) {
-		id = parseInt(id)
-		if (isNaN(id)) return Promise.reject("Not an Integer")
-		return denodeify(this.db.posts.find, [{timestamp: id}, {"_id":0}], JSON.stringify, this.db.posts)
+		return denodeify(this.db.posts.find, [{guid: id}, {"_id":0}], JSON.stringify, this.db.posts)
 	}
 }
 

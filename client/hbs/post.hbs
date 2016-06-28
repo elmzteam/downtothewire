@@ -31,15 +31,15 @@
 
 	<div class="body">
 		{{#if single}}
-		{{{loadcontent timestamp}}}
+		{{{loadcontent guid}}}
 		{{else}}
-		{{{abbreviate (loadcontent timestamp)}}}
+		{{{abbreviate (loadcontent guid)}}}
 		{{/if}}
 	</div>
 
 	{{#if single}}
 	{{else}}
-	{{expand timestamp}}
+	{{expand guid}}
 	{{/if}}
 	
 	{{#if tags}}
@@ -49,7 +49,7 @@
 	{{/if}}
 	
 	{{#if single}}
-	{{> disqus.hbs timestamp}}
+	{{> disqus.hbs guid}}
 	{{/if}}
 	
 </article>

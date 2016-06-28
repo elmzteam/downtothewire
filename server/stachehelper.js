@@ -67,7 +67,7 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getPost(id, cb) {
-		db.posts.findOne({timestamp: parseInt(id)}, cb)
+		db.posts.findOne({guid: id}, cb)
 	}
 
 	//String Manipulation Helpers
@@ -148,9 +148,9 @@ module.exports = function(handlebars, db, root) {
 		for(var i = 0; i < posts.length; i++){
 			feed.item({
 				title: posts[i].title.text,
-				description: md.render(deasync(getContent)(posts[i].timestamp).toString()),
+				description: md.render(deasync(getContent)(posts[i].guid).toString()),
 				url: config.rssInfo.site_url + posts[i].title.url,
-				guid: posts[i].timestamp,
+				guid: posts[i].guid,
 				categories: posts[i].tags,
 				author: deasync(getUser)(posts[i].author)._json.displayName,
 				date: posts[i].timestamp
