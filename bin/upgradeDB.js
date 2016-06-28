@@ -18,6 +18,7 @@ upgradeDB = () => {
 					if (datum.guid) return resolve()
 					utils.generateId(db.posts).then(function(id) {
 						datum.guid = id
+						datum.title.url = `/posts/${id}`
 						db.posts.save(datum, function(e, d) {
 							console.log("Updating: ", datum.slug)
 							resolve(d)	

@@ -67,6 +67,7 @@ module.exports = function(handlebars, db, root) {
 	}
 
 	function getPost(id, cb) {
+		console.log(id)
 		db.posts.findOne({guid: id}, cb)
 	}
 

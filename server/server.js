@@ -114,7 +114,6 @@ module.exports = function(__dirname) {
 			db: {	
 				title: {
 					text: body.title,
-					url: "/posts/"+time
 				},
 				tags: body.tags,
 				visible: body.visible || false

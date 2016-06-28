@@ -74,6 +74,7 @@ var insertPost = function(data, coll, path, update) {
 		if (!update) {
 			return utils.generateId(coll).then(function (id) {
 				data.db.guid = id
+				data.db.title.url = `/posts/${id}`
 				data.db.slug = utils.slugify(data.db.title.text)
 				return saveDatabase(val)
 			})

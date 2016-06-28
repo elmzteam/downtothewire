@@ -43,20 +43,20 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["activename"]
 		},
-		"^/posts/([0-9]{13})$": {
+		"^/posts/([0-9a-zA-Z_-]{7,14})$": {
 			page: "page.hbs",
 			cache: true,
 			groups: ["post"],
 			single: true
 		},
-		"^/preview/([0-9]{13})$": {
+		"^/preview/([0-9a-zA-Z_-]{7,14})$": {
 			page: "page.hbs",
 			cache: false,
 			groups: ["post"],
 			single: true,
 			restricted: true,
 		},
-		"^/raw/([0-9]{13})$": {
+		"^/raw/([0-9a-zA-Z_-]{7,14})$": {
 			page: "raw.hbs",
 			cache: true,
 			groups: ["post"]
