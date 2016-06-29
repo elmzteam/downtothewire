@@ -52,7 +52,8 @@ var getFile = function(data) {
 }
 
 var writeFile = function(data) {
-	return denodeify(fs.writeFile, [path.join(config.paths.posts, data.db.timestamp+".md"), data.content.value], function() {
+	console.log(data.db.guid)
+	return denodeify(fs.writeFile, [path.join(config.paths.posts, data.db.guid+".md"), data.content.value], function() {
 		return data
 	})
 }
@@ -64,7 +65,7 @@ var saveDatabase = function(data) {
 
 var updateDatabase = function(data) {
 	data.db.tags = tagCheck(data.db.tags)	
-	return denodeify(globals.coll.update, [{timestamp: data.db.timestamp}, {$set: data.db}], undefined , globals.coll)
+	return denodeify(globals.coll.update, [{guid: data.db.guid}, {$set: data.db}], undefined , globals.coll)
 }
 
 var insertPost = function(data, coll, path, update) {
@@ -72,12 +73,7 @@ var insertPost = function(data, coll, path, update) {
 	globals.coll = coll
 	return writeFile(data).then(function(val) {
 		if (!update) {
-			return utils.generateId(coll).then(function (id) {
-				data.db.guid = id
-				data.db.title.url = `/posts/${id}`
-				data.db.slug = utils.slugify(data.db.title.text)
-				return saveDatabase(val)
-			})
+			return saveDatabase(val)
 		} else {
 			return updateDatabase(val)
 		}

@@ -29,6 +29,7 @@ module.exports = function(__dirname) {
 	
 	var logger      = require("./logger")
 	var morgan      = require("morgan")
+	var utils       = require("./utils")
 
 	/**
 	  * Middleware Initialization
@@ -111,22 +112,35 @@ module.exports = function(__dirname) {
 
 	var uploadPost = function(modify, body, author) {
 		data = {
-			db: {	
-				title: {
-					text: body.title,
-				},
-				tags: body.tags,
-				visible: body.visible || false
+			"db": {	
+				"tags": body.tags,
+				"visible": body.visible || false
 			},
-			content: {
-				value: body.content
+			"content": {
+				"value": body.content
 			}
 		}
-		if (!modify) data.db.author = author
-		if (modify) data.db.guid = modify
-		return insert(data, modify ? true : false).then(function() {
-			return time
-		})
+		if (!modify) {
+			data.db.author = author
+			return utils.generateId(db.posts).then(function (id) {
+				data.db.guid = id
+				data.db.title = {
+					text: body.title,
+					url: `posts/${id}`
+				}
+				data.db.slug = utils.slugify(data.db.title.text)
+				return id
+			}).then(function (id) {
+				return insert(data, false).then( () => id )
+			})
+		} else {
+			data.db.guid = modify
+			//Mongo weirdity
+			data.db["title.text"] = body.title
+			return insert(data, true).then(function() {
+				return modify
+			})
+		}
 	}
 
 	var handleVisibility = function(visible, page) {

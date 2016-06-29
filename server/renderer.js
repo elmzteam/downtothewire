@@ -28,7 +28,7 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["index"]
 		},
-		"^/editor(/([0-9]*))?$": {
+		"^/editor(/([0-9a-zA-Z_-]{7,14}))?$": {
 			page: "editor.hbs",
 			cache: false,
 			groups: ["null", "content"]
