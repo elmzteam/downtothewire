@@ -3,6 +3,7 @@
 var SRC     = "client"
 var BUILD   = "build"
 
+var es2015  = require("babel-preset-es2015");
 var gulp    = require("gulp")
 var path    = require("path")
 var $       = require("gulp-load-plugins")()
@@ -28,6 +29,7 @@ gulp.task("sass", function() {
 
 gulp.task("js", function() {
 	return gulp.src(path.join(SRC, "js/*.*"))
+		.pipe($.babel({ presets: [es2015] }))
 		.pipe($.uglify())
 		.pipe(gulp.dest(path.join(BUILD, "js")))
 })

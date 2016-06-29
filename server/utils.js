@@ -15,7 +15,6 @@ var generateId = function(db) {
 		var id = shortid.generate()
 		db.find({guid: id}, function(e, data) {
 			if (data.length != 0 || e) {
-				logger.error(arguments)
 				resolve(generateId(db))
 			} else {
 				resolve(id)

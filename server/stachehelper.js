@@ -10,6 +10,8 @@ var config      = require("../config")
 var logger      = require("./logger")
 var md          = require("./markdown")
 
+var POST_BREAK_REGEX = /\n\^{3,}\n/;
+
 module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("noop", function(options) {
 		return ""
@@ -74,13 +76,10 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("expand", function(id) {
 		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>")
 	})
-	handlebars.registerHelper("abbreviate", function(content) {
-		return content.split("<more>")[0]
-	})
 
 	handlebars.registerHelper("generateDesc", function(id) {
 		var out = md.render(deasync(getContent)(id).toString())
-					.split("<more>")[0]
+					.split(POST_BREAK_REGEX)[0]
 					.replace(/(<.*?>)|(<.*?script.*?>.*?<\/script>)|(<.*?style.*?>.*?<\/style>)/g,"")
 					.replace(/[\n\t\ ]+/g," ")
 		return out
@@ -97,10 +96,16 @@ module.exports = function(handlebars, db, root) {
 	})
 
 	//Database Access and Manipulation
-	handlebars.registerHelper("loadcontent", function(id) {
+	handlebars.registerHelper("loadcontent", function(id, abbreviate) {
 		var out = deasync(getContent)(id)
 		if (out) {
-			return md.render(out.toString())
+			out = out.toString()
+			if (abbreviate) {
+				out = out.split(POST_BREAK_REGEX)[0]
+			} else {
+				out = out.replace(POST_BREAK_REGEX, "")
+			}
+			return md.render(out)
 		} else {
 			return "Error"
 		}
@@ -113,7 +118,7 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("fetchcontent", function(id) {
 		var out = deasync(getContent)(id)
 		if (out) {
-			return out.toString()
+			return out.toString().replace(POST_BREAK_REGEX, "")
 		} else {
 			return "Error"
 		}
