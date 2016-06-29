@@ -2,10 +2,26 @@
 	{{#if (and restricted (not user))}}
 		{{> no-admin.hbs}}
 	{{else}}
-	{{#if single}}
-		{{set this "postinf" (fetchpost post)}}
-		{{set this "desc" (generateDesc post)}}
-	{{/if}}
+	{{!-- Set headers for all pages that use this template --}}
+	{{#with this as |ctx|}}
+		{{#if single}}
+			{{#with (fetchpost post)}}
+				{{set ctx "title" this.title.text}}
+			{{/with}}
+			{{set ctx "desc" (generateDesc post)}}
+		{{/if}}
+		{{#if currtag}}
+			{{set ctx "title" (concat "Posts tagged \"" currtag "\"")}}
+		{{/if}}
+		{{#if activename}}
+			{{#with (subscript (profiles) activename)}}
+				{{set ctx "title" (concat "Posts by " name)}}
+			{{/with}}
+		{{/if}}
+		{{#if restricted}}
+			{{set ctx "title" (concat "(Preview) " title)}}
+		{{/if}}
+	{{/with}}
 	{{> head.hbs}}
 	<body>
 		{{> header.hbs}}
