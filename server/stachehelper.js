@@ -221,6 +221,11 @@ module.exports = function(handlebars, db, root) {
 		return obj[key]
 	})
 
+	handlebars.registerHelper("concat", function(...strings) {
+		strings.splice(-1)
+		return strings.join("")
+	})
+
 	handlebars.registerHelper("tail", function(obj) {
 		if (!(obj instanceof Array)) {
 			obj = Object.keys(obj).map(function(e) {

@@ -1,12 +1,19 @@
 <html class="admin">
 	{{#if user}}
+
+	{{#if content}}
+		{{set this "info" (fetchpost content)}}
+	{{/if}}
+
 	{{set this "admin" true}}
+	{{#if info}}
+		{{set this "title" (concat "Editing: " info.title.text)}} 
+	{{else}}
+		{{!-- Will not update live with save --}}
+		{{set this "title" "Editing New Post"}}
+	{{/if}}
 	{{> head.hbs}}
 	<body>
-		{{#if content}}
-		{{set this "info" (fetchpost content)}}
-		{{/if}}
-
 		<header>
 			<a href="/admin"><dttw-icon id="back" class="material-icons">arrow_back</dttw-icon></a>
 			

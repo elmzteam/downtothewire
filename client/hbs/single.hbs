@@ -1,4 +1,13 @@
 <html>
+	{{#if about}}
+		{{set this "title" "About Us"}}
+	{{/if}}
+	{{#if contact}}
+		{{set this "title" "Contact Us"}}
+	{{/if}}
+	{{#if fourohfour}}
+		{{set this "title" "Page Not Found"}}
+	{{/if}}
 	{{> head.hbs}}
 	<body>
 		{{> header.hbs}}
