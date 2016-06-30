@@ -37,16 +37,18 @@
 		}
 	}
 	
-	content-row main article .author-image {
-		display: none;
-	}
+	content-row main article {
+		.author-image {
+			display: none;
+		}
 
-	content-row main article aside {
-		position: static;
-		transform: none;
-		width: auto;
-		margin-bottom: 1em;
-		background: transparent;
-		border-bottom: none;
+		aside {
+			position: static;
+			transform: none;
+			width: auto;
+			margin-bottom: 1em;
+			background: transparent;
+			border-bottom: none;
+		}
 	}
 }
