@@ -21,7 +21,7 @@
 
 		<main>
 			<input type="text" id="title" {{#if info}}value="{{info.title.text}}"{{/if}} placeholder="Post Title" autocomplete="off" />
-			<div id="editor">{{#if info}}{{fetchcontent info.timestamp}}{{/if}}</div>
+			<div id="editor">{{#if info}}{{fetchcontent info.guid}}{{/if}}</div>
 			<input type="text" id="tags" value="{{#if info}}{{#each info.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags"/>
 
 			<footer>

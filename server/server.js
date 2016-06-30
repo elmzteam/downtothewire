@@ -29,6 +29,7 @@ module.exports = function(__dirname) {
 	
 	var logger      = require("./logger")
 	var morgan      = require("morgan")
+	var utils       = require("./utils")
 
 	/**
 	  * Middleware Initialization
@@ -110,21 +111,16 @@ module.exports = function(__dirname) {
 	**/
 
 	var uploadPost = function(modify, body, author) {
-		var time = modify ? parseInt(modify) : Date.now()
 		data = {
-			db: {	
-				title: {
-					text: body.title,
-					url: "/posts/"+time
-				},
-				timestamp: time,
-				tags: body.tags,
-				visible: body.visible || false
+			"db": {	
+				"tags": body.tags,
+				"visible": body.visible || false
 			},
-			content: {
-				value: body.content
+			"content": {
+				"value": body.content
 			}
 		}
+
 		if (!(body.tags.length > 1 || body.title.match(/^\S$/) || body.content.match(/^\S$/)) && modify) {
 			return new Promise(function(resolve, reject) {
 				db.posts.remove({timestamp: parseInt(modify)}, function(e) {
@@ -137,20 +133,34 @@ module.exports = function(__dirname) {
 				})
 			})
 		}
-		if (!modify) data.db.author = author
-		return insert(data, modify ? true : false).then(function() {
-			return time
-		})
+
+		if (!modify) {
+			data.db.author = author
+			data.db.timestamp = Date.now()
+			return utils.generateId(db.posts).then(function (id) {
+				data.db.guid = id
+				data.db.title = {
+					text: body.title,
+					url: `posts/${id}`
+				}
+				data.db.slug = utils.slugify(data.db.title.text)
+				return id
+			}).then(function (id) {
+				return insert(data, false).then( () => id )
+			})
+		} else {
+			data.db.guid = modify
+			//Mongo weirdity
+			data.db["title.text"] = body.title
+			return insert(data, true).then(function() {
+				return modify
+			})
+		}
 	}
 
 	var handleVisibility = function(visible, page) {
 		return new Promise(function(resolve, reject) {
-			var id = parseInt(page)
-			if (isNaN(id)) {
-				reject("Bad Id")
-				return
-			}
-			db.posts.update({timestamp: id}, {$set:{visible: visible}}, function(err, doc) {
+			db.posts.update({guid: page}, {$set:{visible: visible}}, function(err, doc) {
 				if (err) {
 					reject(err || "Bad Id")
 					return

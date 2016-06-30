@@ -12,15 +12,15 @@
 	<main>
 		{{#each (allPosts)}}
 		<div class="post">
-			<span post="{{timestamp}}" visible="{{visible}}" class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
+			<span post="{{guid}}" visible="{{visible}}" class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
 
 			{{#with (getAuthorInfo author)}}
 			<img class="author-image small" src="{{image.url}}" />
 			{{/with}}
 
 			<span class="title">{{title.text}}</span>
-			<a href="/preview/{{timestamp}}"><dttw-icon class="material-icons" id="view">pageview</dttw-icon></a>
-			<a href="/editor/{{timestamp}}"><dttw-icon class="material-icons" id="edit">edit</dttw-icon></a>
+			<a href="/preview/{{guid}}"><dttw-icon class="material-icons" id="view">pageview</dttw-icon></a>
+			<a href="/editor/{{guid}}"><dttw-icon class="material-icons" id="edit">edit</dttw-icon></a>
 		</div>
 		{{/each}}
 	</main>

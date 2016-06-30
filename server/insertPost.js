@@ -5,6 +5,9 @@
 var fs       = require("fs")
 var path     = require("path")
 var config   = require("../config")
+var shortid  = require("shortid")
+var utils    = require("./utils")
+var logger   = require("./logger")
 
 var prompt
 var globals  = {}
@@ -49,7 +52,8 @@ var getFile = function(data) {
 }
 
 var writeFile = function(data) {
-	return denodeify(fs.writeFile, [path.join(config.paths.posts, data.db.timestamp+".md"), data.content.value], function() {
+	console.log(data.db.guid)
+	return denodeify(fs.writeFile, [path.join(config.paths.posts, data.db.guid+".md"), data.content.value], function() {
 		return data
 	})
 }
@@ -61,7 +65,7 @@ var saveDatabase = function(data) {
 
 var updateDatabase = function(data) {
 	data.db.tags = tagCheck(data.db.tags)	
-	return denodeify(globals.coll.update, [{timestamp: data.db.timestamp}, {$set: data.db}], undefined , globals.coll)
+	return denodeify(globals.coll.update, [{guid: data.db.guid}, {$set: data.db}], undefined , globals.coll)
 }
 
 var insertPost = function(data, coll, path, update) {
@@ -102,18 +106,16 @@ module.exports = function(db, path) {
 }
 
 var crash = function(a) {
-	console.error(a)
+	logger.error(a)
 }
 
 var tagCheck = function(tags) {
 	for (var t = 0; t < tags.length; t++) {
 		if (!tags[t].match(/^[a-z0-9\-]{1,16}$/)) {
 			tags.splice(t, 1)
-			console.log(t)
 			t--
 		}
 	}
-	console.log(tags)
 	return tags
 }
 

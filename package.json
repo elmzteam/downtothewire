@@ -51,6 +51,7 @@
     "passport-google-oauth": "^0.2.0",
     "prompt": "^0.2.14",
     "rss": "^1.2.1",
+    "shortid": "^2.2.6",
     "sprintf": "^0.1.5"
   }
 }

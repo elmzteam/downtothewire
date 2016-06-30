@@ -28,7 +28,7 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["index"]
 		},
-		"^/editor(/([0-9]*))?$": {
+		"^/editor(/([0-9a-zA-Z_-]{7,14}))?$": {
 			page: "editor.hbs",
 			cache: false,
 			groups: ["null", "content"]
@@ -43,20 +43,20 @@ var compileRoutes = function(db) {
 			cache: true,
 			groups: ["activename"]
 		},
-		"^/posts/([0-9]{13})$": {
+		"^/posts/([0-9a-zA-Z_-]{7,14})$": {
 			page: "page.hbs",
 			cache: true,
 			groups: ["post"],
 			single: true
 		},
-		"^/preview/([0-9]{13})$": {
+		"^/preview/([0-9a-zA-Z_-]{7,14})$": {
 			page: "page.hbs",
 			cache: false,
 			groups: ["post"],
 			single: true,
 			restricted: true,
 		},
-		"^/raw/([0-9]{13})$": {
+		"^/raw/([0-9a-zA-Z_-]{7,14})$": {
 			page: "raw.hbs",
 			cache: true,
 			groups: ["post"]
@@ -372,7 +372,7 @@ var getPosts = function(db, all) {
 	return deasync(function(cb) {
 		var query = {}
 		if (!all) query.visible = true
-		db.posts.distinct("timestamp", query, function(err, data) {
+		db.posts.distinct("guid", query, function(err, data) {
 			cb(err, data)
 		})
 	})()
