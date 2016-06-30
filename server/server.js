@@ -111,7 +111,6 @@ module.exports = function(__dirname) {
 	**/
 
 	var uploadPost = function(modify, body, author) {
-
 		data = {
 			"db": {	
 				"tags": body.tags,
@@ -124,7 +123,7 @@ module.exports = function(__dirname) {
 
 		if (body.tags.length == 0 && body.title.match(/^\s*$/) && body.content.match(/^\s*$/) && modify) {
 			return new Promise(function(resolve, reject) {
-				db.posts.remove({timestamp: parseInt(modify)}, function(e) {
+				db.posts.remove({guid: modify}, function(e) {
 					if (e) {
 						reject(e)
 					} else {
