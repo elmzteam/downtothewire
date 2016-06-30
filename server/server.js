@@ -136,6 +136,7 @@ module.exports = function(__dirname) {
 
 		if (!modify) {
 			data.db.author = author
+			data.db.timestamp = Date.now()
 			return utils.generateId(db.posts).then(function (id) {
 				data.db.guid = id
 				data.db.title = {
