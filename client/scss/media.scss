@@ -1,13 +1,5 @@
 @import "vars";
 @media (max-width: $width-small) {
-	content-row>aside {
-		display: none;
-	}
-	content-row {
-		display: block;
-		overflow-wrap: break-word;
-	}
-
 	html:not(.admin)>body>header {
 		flex-direction: column;
 
@@ -37,18 +29,27 @@
 		}
 	}
 	
-	content-row main article {
-		.author-image {
+	content-row {
+		display: block;
+		overflow-wrap: break-word;
+		
+		&>aside {
 			display: none;
 		}
 
-		aside {
-			position: static;
-			transform: none;
-			width: auto;
-			margin-bottom: 1em;
-			background: transparent;
-			border-bottom: none;
+		main article {
+			.author-image {
+				display: none;
+			}
+
+			aside {
+				position: static;
+				transform: none;
+				width: auto;
+				margin-bottom: 1em;
+				background: transparent;
+				border-bottom: none;
+			}
 		}
 	}
 }
