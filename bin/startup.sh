@@ -1,4 +1,5 @@
-pushd .
+export DIR=`pwd`
+
 if [ ! -e "package.json" ]; then
 	cd ..
 fi
@@ -13,10 +14,16 @@ if [ ! -e "package.json" ]; then
 	exit -1
 fi
 
-mkdir build
-mkdir posts
-mkdir render
+if [ ! -e ".init" ]; then
+	touch .init
 
-node_modules/gulp/bin/gulp.js build
+	mkdir build
+	mkdir posts
+	mkdir render
 
-popd
+	echo "db.createCollection('users')" | mongo bydesign
+	echo "db.createCollection('docs')"  | mongo bydesign
+	echo "db.createCollection('posts')" | mongo bydesign
+fi
+
+cd $DIR
