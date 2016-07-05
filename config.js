@@ -20,7 +20,8 @@ module.exports = {
 	paths: {
 		posts: "posts",
 		client: "client",
-		render: "render"
+		render: "render",
+		templates: "client/hbs"
 	},
 	adminInfo: require("./users.js"),	
 	sidebar: [{

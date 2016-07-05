@@ -1,9 +1,7 @@
 <html class="admin">
-	{{#if user}}
-	{{set this "admin" true}}
-	{{set this "title" "Admin Panel"}}
 	{{> head.hbs}}
 
+	{{#if user}}
 	<header>
 		<h1>Posts</h1>
 		<a href="/editor"><dttw-icon id="new" class="material-icons">note_add</dttw-icon></a>
@@ -11,11 +9,11 @@
 	</header>
 
 	<main>
-		{{#each (allPosts)}}
+		{{#each posts}}
 		<div class="post">
 			<span post="{{guid}}" visible="{{visible}}" class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
 
-			{{#with (getAuthorInfo author)}}
+			{{#with author}}
 			<img class="author-image small" src="{{image.url}}" />
 			{{/with}}
 
@@ -26,6 +24,6 @@
 		{{/each}}
 	</main>
 	{{else}}
-		{{> no-admin.hbs}}
+	{{> no-admin.hbs}}
 	{{/if}}
 </html>

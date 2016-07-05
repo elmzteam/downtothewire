@@ -1,12 +1,23 @@
-For comments or questions related to individual posts, please use the Disqus comment system. If you want to reach an individual author, you can reach them at
+<html>
+	{{> head.hbs}}
+	<body>
+		{{> header.hbs}}
+		<content-row>
+			<main>
+				For comments or questions related to individual posts, please use the Disqus comment system. If you want to reach an individual author, you can reach them at
 
-<table class="row-divided">
-	{{#each (profiles)}}
-	<tr>
-		<td>{{this.name}}</td>
-		<td><a href="mailto:{{this.handle}}@dttw.tech">{{this.handle}}@dttw.tech</a></td>
-	</tr>
-	{{/each}}
-</table>
+				<table class="row-divided">
+					{{#each (profiles)}}
+					<tr>
+						<td>{{this.name}}</td>
+						<td><a href="mailto:{{this.handle}}@dttw.tech">{{this.handle}}@dttw.tech</a></td>
+					</tr>
+					{{/each}}
+				</table>
 
-For other questions or comments, please let us know at <a href="mailto:contact@dttw.tech">contact@dttw.tech</a>.
+				For other questions or comments, please let us know at <a href="mailto:contact@dttw.tech">contact@dttw.tech</a>.
+			</main>
+			{{> sidebar.hbs}}
+		</content-row>
+	</body>
+</html>

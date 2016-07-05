@@ -7,40 +7,25 @@
 
 	<time>{{longtime timestamp}}</time>
 
-	{{!--
-	{{#if preview}}
-	<img class="preview-image" src="{{preview}}" />
-	{{/if}}
-	--}}
-
-	{{#with (getAuthorInfo author)}} 
-	
-	{{#if image.url}}
+	{{#with author}} 
 	<div class="author">
+		{{#if image.url}}
 		<img class="author-image" src="{{image.url}}" />
-		<div class="author-name">{{displayName}}</div>
-	</div>
-	{{else}}
-	<div class="author">
-		<img src="/images/default.png" />
-		<div class="author-name">{{displayName}}</div>
-	</div>
-	{{/if}}
-	
-	{{/with}}
-
-	<div class="body">
-		{{#if single}}
-		{{{loadcontent guid false}}}
 		{{else}}
-		{{{loadcontent guid true}}}
+		<img class="author-image" src="/images/default.png" />
+		{{/if}}
+
+		<div class="author-name">{{displayName}}</div>
+	</div>
+	{{/with}}
+	
+	<div class="body">
+		{{#if short}}
+		{{markdown (shorten content)}}
+		{{else}}
+		{{markdown content}}
 		{{/if}}
 	</div>
-
-	{{#if single}}
-	{{else}}
-	{{expand guid}}
-	{{/if}}
 	
 	{{#if tags}}
 	<footer>
@@ -48,8 +33,7 @@
 	</footer>
 	{{/if}}
 	
-	{{#if single}}
+	{{#if (and (not hideComments) (not short))}}
 	{{> disqus.hbs guid}}
 	{{/if}}
-	
 </article>

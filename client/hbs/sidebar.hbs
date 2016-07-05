@@ -1,31 +1,9 @@
 <aside>
-	{{#if (not single)}}
-	{{#each (sidebar)}}
+	{{#each sidebar}}
 	<article>
 		<h1>{{title}}</h1>
-		{{content}}
+		{{{content}}}
 	</article>
 	{{/each}}
-	<article>
-		<h1><a href="/about">Who</a></h1>
-		Contributers include:
-		{{#with (tail (profiles))}}
-		{{#each head}}
-			<a href="/author/{{handle}}">{{name}}</a>, 
-		{{/each}}
-		and 
-		{{#with tail}}
-			<a href="/author/{{handle}}">{{name}}</a>
-		{{/with}}
-			
-		{{/with}}
-	</article>
-	<article>
-		<h1>Tags</h1>
-		{{#each (tags)}}
-			{{tag this}}
-		{{/each}}
-	</article>
-	{{/if}}
 </aside>
 

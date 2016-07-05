@@ -6,14 +6,14 @@ module.exports = function(__dirname) {
 	var path        = require("path");
 	var config      = require("../config")
 	
-	var mongojs     = require("mongojs")
-	var db          = mongojs("mongodb://localhost/bydesign",["authors", "posts"])
+	var pm          = require("promised-mongo")
+	var db          = pm("mongodb://localhost/bydesign", ["authors", "posts"])
 
 	var handlebars  = require("handlebars")
-	    handlebars  = require("./stachehelper")(handlebars, db, config.paths.client)
+	    handlebars  = require("./stachehelper")(handlebars, config.paths.client)
 		
 	var insert      = require("./insertPost")(db, config.paths.client)
-	var renderer    = require("./renderer")(__dirname, handlebars, db)
+	var Renderer    = require("./renderer")
 	var api         = require("./api")(db)
 
 	var express     = require("express")
@@ -31,10 +31,13 @@ module.exports = function(__dirname) {
 	var morgan      = require("morgan")
 	var utils       = require("./utils")
 
+	var renderer = new Renderer(__dirname, db, handlebars);
+
 	/**
 	  * Middleware Initialization
 	**/
 
+	app.use(morgan("dev"))
 	app.use(cookie())
 	app.use(body.json())
 	app.use(session({ secret: 'temporarysecret', store: new MongoStore({
@@ -45,15 +48,16 @@ module.exports = function(__dirname) {
 	}))
 	app.use(passport.initialize())
 	app.use(passport.session())
-	app.use(morgan("dev"))
-	app.use(renderer.handle)
+	app.use(renderer.handle.bind(renderer))
 	app.use(api)
+	
 
 	/**
 	  * App routing
 	**/
 	
 	app.use(express.static("build"))
+	
 
 	app.post("/visible", function(req, res) {
 		if (req.user) { 
@@ -82,12 +86,12 @@ module.exports = function(__dirname) {
 
 	app.post("/editor/", function(req, res) {
 		if (req.user) {
-			uploadPost(null, req.body, req.user.id).
-				then(function (id) {
+			uploadPost(null, req.body, req.user.id)
+				.then(function (id) {
 					renderer.reload()
 					res.send({msg: "Ok", id: id})
-				}).
-				catch(logger.error)
+				})
+				.catch(logger.error)
 		} else {
 			req.status(403)
 			res.send("Please Log In first")
@@ -96,9 +100,9 @@ module.exports = function(__dirname) {
 
 	app.post("/editor/:MOD", function(req, res) {
 		if (req.user) {
-			uploadPost(req.params.MOD, req.body, req.user.id).
-				then(renderer.reload).
-				catch(logger.error)
+			uploadPost(req.params.MOD, req.body, req.user.id)
+				.then(renderer.reload.bind(renderer))
+				.catch(logger.error)
 			res.send({msg: "Ok"})
 		} else {
 			req.status(403)
@@ -110,80 +114,50 @@ module.exports = function(__dirname) {
 	  * Upload Handling
 	**/
 
-	var uploadPost = function(modify, body, author) {
-		data = {
-			"db": {	
-				"tags": body.tags,
-				"visible": body.visible || false
-			},
-			"content": {
-				"value": body.content
-			}
-		}
-
+	var uploadPost = function(guid, body, author) {
 		if (body.tags.length == 0 && body.title.match(/^\s*$/) && body.content.match(/^\s*$/) && modify) {
-			return new Promise(function(resolve, reject) {
-				db.posts.remove({guid: modify}, function(e) {
-					if (e) {
-						reject(e)
-					} else {
-						logger.log(`Deleting post with id ${modify}`)
-						resolve()
-					}
-				})
-			})
+			return db.posts.remove({ guid });
 		}
 
-		if (!modify) {
-			data.db.author = author
-			data.db.timestamp = Date.now()
-			return utils.generateId(db.posts).then(function (id) {
-				data.db.guid = id
-				data.db.title = {
-					text: body.title,
-					url: `posts/${id}`
-				}
-				data.db.slug = utils.slugify(data.db.title.text)
-				return id
-			}).then(function (id) {
-				return insert(data, false).then( () => id )
-			})
+		if (!guid) {
+			return utils.generateId(db.posts)
+				.then((id) =>
+					db.posts.insert({
+						tags: body.tags,
+						visible: !!body.visible,
+						author: author,
+						timestamp: Date.now(),
+						guid: id,
+						title: {
+							text: body.title,
+							url: `posts/${id}`
+						},
+						slug: utils.slugify(body.title),
+						content: body.content
+					}));
 		} else {
-			data.db.guid = modify
-			//Mongo weirdity
-			data.db["title.text"] = body.title
-			return insert(data, true).then(function() {
-				return modify
-			})
+			return db.posts.update({ guid }, {
+				$set: {
+					title: {
+						text: body.title
+					},
+					content: body.content,
+					tags: body.tags
+				}
+			});
 		}
 	}
 
-	var handleVisibility = function(visible, page) {
-		return new Promise(function(resolve, reject) {
-			db.posts.update({guid: page}, {$set:{visible: visible}}, function(err, doc) {
-				if (err) {
-					reject(err || "Bad Id")
-					return
-				}
-				resolve("A OK")
-			})
-		})
+	var handleVisibility = function(visible, guid) {
+		return db.posts.update({ guid }, { $set: { visible }});
 	}
 
 	/**
 	  * MongoDB access functions
 	**/
 	
-	var getAuthors = function(id) {
-		return new Promise(function(resolve, reject) { 
-			db.authors.findOne({"gid": id}, function(err, val) {
-				if (err || !val) {
-					reject(err || "Nonexistent author")
-					return
-				}
-				resolve(val)
-			})
-		})
+	var getAuthors = function(gid) {
+		return db.authors.findOne({ gid });
 	}
 
 	/**
@@ -191,18 +165,17 @@ module.exports = function(__dirname) {
 	**/
 	 
 	passport.serializeUser(function(user, done) {
-		db.authors.find({"id": user.id}, function(err, data) {
-			if (!err && data.length > 0) {
-				user._json.image.url = user._json.image.url.replace(/sz=50$/, "sz=576")
-				db.authors.update({"id": user.id}, user, function(err) {
-					done(err, JSON.stringify(user))
-				})
-			} else {
-				db.authors.insert(user, function(err) {
-					done(err, JSON.stringify(user))	
-				})
-			}
+		db.authors.findOne({"id": user.id})
+			.then((data) => {
+				console.log("here", data);
+				if (data !== undefined) {
+					user._json.image.url = user._json.image.url.replace(/sz=50$/, "sz=576");
+					return db.authors.update({"id": user.id}, user).then(() => done(undefined, JSON.stringify(user)));
+				} else {
+					return db.authors.insert(user, () => done(undefined, JSON.stringify(user)))
+				}
 		})
+			.catch((err) => done(err, JSON.stringify(user)))
 	})
 
 	passport.deserializeUser(function(user, done) {
@@ -229,7 +202,7 @@ module.exports = function(__dirname) {
 		app.get('/google/login',
 			passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/userinfo.email' }))
 
-		app.get('/google/auth',
+		app.get(/^\/google\/auth/,
 			passport.authenticate('google', { failureRedirect: '/google/login' }),
 			function(req, res) {
 				// Successful authentication, redirect home.
@@ -240,7 +213,7 @@ module.exports = function(__dirname) {
 	}
 	
 	// Default Case: 404
-	app.use(renderer.fourohfour)
+	app.use(renderer.fourohfour.bind(renderer))
 
 	/**
 	  * API Access
