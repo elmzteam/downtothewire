@@ -153,7 +153,13 @@ module.exports = class Renderer {
 
 	// Sends a 404
 	fourohfour(req, res, next) {
-		res.status(404).sendFile(this.getCachePath("/404"));
+		logger.error("404");
+		if (res !== undefined) {
+			logger.error("Sending");
+			res.status(404).sendFile(this.getCachePath("/404"));
+		} else if (next !== undefined) {
+			next();
+		}
 	}
 }
 

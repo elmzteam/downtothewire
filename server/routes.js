@@ -1,6 +1,7 @@
 var _fs             = require("fs")
 let denodeify       = require("denodeify")
 let config          = require("../config")
+let users           = require("../users")
 
 const fs = {
 	readFile: denodeify(_fs.readFile)
@@ -82,18 +83,25 @@ module.exports = [
 				}))
 	},
 	{
-		path:/^\/author\/([a-zA-Z]{1,16})$/,
+		path:/^\/author\/(matt|zach|ben|danial|david|ellis|kyle|thomas)$/, // sigh...
 		page: "page.hbs",
 		cache: true,
-		prerenderFIXME: Object.keys(config.adminInfo).map((author) => `/author/${author}`),
+		prerender: Object.keys(config.adminInfo).map((author) => `/author/${author}`),
 		context: ([_, author], db) =>
-			aggregatePosts(db, { $match: { author } }, { $sort: { timestamp: -1 } }) // FIXME
+			aggregatePosts(db, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
-				.then((posts) => ({
-					title: `Posts by ${author}`,
-					posts: posts,
-					sidebar: true
-				}))
+				.then((posts) => {
+					posts.forEach((post) => post.short = true);
+					return {
+						title: `Posts by ${author}`,
+						posts: posts,
+						sidebar: true,
+						filter: {
+							type: "author",
+							author: users[author]
+						}
+					};
+				})
 	},
 	{
 		path:/^\/posts\/([0-9a-zA-Z_-]{7,14})$/,
@@ -171,7 +179,10 @@ module.exports = [
 		path:/^\/404$/,
 		page: "single.hbs",
 		cache: true,
-		prerender: ["/404"]
+		prerender: ["/404"],
+		context: {
+			fourohfour: true
+		}
 	},
 	{
 		path:/^\/manifest.json$/,
