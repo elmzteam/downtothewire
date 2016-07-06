@@ -20,10 +20,10 @@ module.exports = [
 					posts.forEach((post) => post.short = true);
 					return {
 						title: "",
-						posts,
-						sidebar: true
+						posts
 					};
 				})
+				.then(fillDefaultSidebar(db))
 	},
 	{
 		path:/^\/archive\/([1-9][0-9]*)$/,
@@ -37,10 +37,10 @@ module.exports = [
 					posts.forEach((post) => post.short = true);
 					return {
 						title: `Archive, Page ${pageNumber}`,
-						posts,
-						sidebar: true
+						posts
 					};
 				})
+				.then(fillDefaultSidebar(db))
 	},
 	{
 		path:/^\/editor(\/([0-9a-zA-Z_-]{7,14}))?$/,
@@ -53,13 +53,11 @@ module.exports = [
 						return {
 							title: `Editing "${post.title}"`,
 							post,
-							sidebar: false,
 							admin: true
 						}
 					} else {
 						return {
 							title: `Editing New Post`,
-							sidebar: false,
 							admin: true
 						}
 					}
@@ -76,11 +74,14 @@ module.exports = [
 		context: ([_, tag], db) =>
 			aggregatePosts(db, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
-				.then((posts) => ({
-					title: `Tagged "${tag}"`,
-					posts: posts,
-					sidebar: true
-				}))
+				.then((posts) => {
+					posts.forEach((post) => post.short = true);
+					return {
+						title: `Tagged "${tag}"`,
+						posts: posts
+					};
+				})
+				.then(fillDefaultSidebar(db))
 	},
 	{
 		path:/^\/author\/(matt|zach|ben|danial|david|ellis|kyle|thomas)$/, // sigh...
@@ -95,13 +96,13 @@ module.exports = [
 					return {
 						title: `Posts by ${author}`,
 						posts: posts,
-						sidebar: true,
 						filter: {
 							type: "author",
 							author: users[author]
 						}
 					};
 				})
+				.then(fillDefaultSidebar(db))
 	},
 	{
 		path:/^\/posts\/([0-9a-zA-Z_-]{7,14})$/,
@@ -116,8 +117,7 @@ module.exports = [
 				.then(fillAuthorInfo(db))
 				.then((post) => ({
 						title: post.title.text,
-						posts: [post],
-						sidebar: false
+						posts: [post]
 					}))
 	},
 	{
@@ -131,8 +131,7 @@ module.exports = [
 					post.hideComments = true;
 					return {
 						title: post.title.text,
-						posts: [post],
-						sidebar: false
+						posts: [post]
 					};
 				})
 	},
@@ -221,4 +220,24 @@ function range(a, b) {
 	}
 
 	return Array.from(new Array(b - a), (_, i) => i);
+}
+
+function fillDefaultSidebar(db) {
+	return (context) =>
+		db.posts.distinct("tags")
+			.then((tags) => {
+				context.sidebar = [
+					{
+						title: "Authors",
+						type: "authors",
+						authors: Object.keys(users).map((name) => users[name])
+					},
+					{
+						title: "Tags",
+						type: "tags",
+						tags
+					}
+				];
+				return context;
+			})
 }

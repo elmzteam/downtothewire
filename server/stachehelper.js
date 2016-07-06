@@ -70,6 +70,9 @@ module.exports = function(handlebars, root) {
 	handlebars.registerHelper("or", function(b1, b2) {
 		return b1 || b2
 	})
+	handlebars.registerHelper("eq", function(a, b) {
+		return a === b
+	})
 
 	handlebars.registerHelper("log", function(val) {
 		console.log(val)

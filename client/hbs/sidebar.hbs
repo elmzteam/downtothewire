@@ -1,11 +1,25 @@
 <aside>
 	{{#each sidebar}}
-	{{#if false}}
 	<article>
 		<h1>{{title}}</h1>
-		{{{content}}}
+		{{#if (eq type "authors")}}
+			<ul class="author-list">
+				{{#each authors}}
+					<li><a href="/author/{{handle}}">{{name}}</a></li>
+				{{/each}}
+			</ul>
+
+		{{else if (eq type "tags")}}
+			{{#each tags}}
+				{{tag this}}
+			{{/each}}
+
+		{{else}}
+			{{{content}}}
+
+		{{/if}}
 	</article>
-	{{/if}}
+
 	{{/each}}
 </aside>
 
