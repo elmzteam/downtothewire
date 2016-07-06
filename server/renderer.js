@@ -146,7 +146,7 @@ module.exports = class Renderer {
 		logger.error(error.stack);
 	}
 
-	// Converts a path to its location in the cache 
+	// Converts a path to its location in the cache
 	getCachePath(path) {
 		return pathjoin(this.RENDER_DIR, "@" + path.replace(/\/$/, "").replace(/\//g, "."));
 	}
@@ -156,7 +156,7 @@ module.exports = class Renderer {
 		logger.error("404");
 		if (res !== undefined) {
 			logger.error("Sending");
-			res.status(404).sendFile(this.getCachePath("/404"));
+			res.status(404).type("text/html").sendFile(this.getCachePath("/404"));
 		} else if (next !== undefined) {
 			next();
 		}
