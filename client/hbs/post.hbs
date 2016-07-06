@@ -5,9 +5,9 @@
 	<h1>{{title.text}}</h1>
 	{{/if}}
 
-	<time>{{longtime timestamp}}</time>
+	<time>{{formatTime timestamp}}</time>
 
-	{{#with author}} 
+	{{#with author}}
 	<div class="author">
 		{{#if image.url}}
 		<img class="author-image" src="{{image.url}}" />
@@ -18,21 +18,27 @@
 		<div class="author-name">{{displayName}}</div>
 	</div>
 	{{/with}}
-	
+
 	<div class="body">
 		{{#if short}}
-		{{markdown (shorten content)}}
+		{{markdown (short content)}}
 		{{else}}
-		{{markdown content}}
+		{{markdown (full content)}}
 		{{/if}}
 	</div>
-	
+
+	{{#if short}}
+		<div class="expand">
+			<a class="no-line" href="/posts/{{guid}}">Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a>
+		</div>
+	{{/if}}
+
 	{{#if tags}}
 	<footer>
 		Tags: {{#each tags}}{{tag this}}{{/each}}
 	</footer>
 	{{/if}}
-	
+
 	{{#if (and (not hideComments) (not short))}}
 	{{> disqus.hbs guid}}
 	{{/if}}

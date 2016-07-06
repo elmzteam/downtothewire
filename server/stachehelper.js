@@ -38,11 +38,7 @@ module.exports = function(handlebars, root) {
 	}
 
 	//String Manipulation Helpers
-	handlebars.registerHelper("expand", function(id) {
-		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>")
-	})
-
-	handlebars.registerHelper("longtime", function(time) {
+	handlebars.registerHelper("formatTime", function(time) {
 		return new handlebars.SafeString(moment(time).format("MMMM Do, YYYY"))
 	})
 
@@ -56,18 +52,13 @@ module.exports = function(handlebars, root) {
 		return new handlebars.SafeString(md.render(content));
 	});
 
-	handlebars.registerHelper("shorten", function(content) {
+	handlebars.registerHelper("short", function(content) {
 		return content.split(POST_BREAK_REGEX)[0];
 	});
 
-	//Content Access
-	handlebars.registerHelper("sidebar", function() {
-		return 	config.sidebar
-	})
-
-	handlebars.registerHelper("profiles", function() {
-		return config.adminInfo
-	})
+	handlebars.registerHelper("full", function(content) {
+		return content.replace(POST_BREAK_REGEX, "");
+	});
 
 	//Handlebars Utilities
 	handlebars.registerHelper("and", function(b1, b2) {
@@ -79,48 +70,13 @@ module.exports = function(handlebars, root) {
 	handlebars.registerHelper("or", function(b1, b2) {
 		return b1 || b2
 	})
-	handlebars.registerHelper("set", function(obj, key, val){
-		obj[key] = val
-	})
 
 	handlebars.registerHelper("log", function(val) {
 		console.log(val)
 		return ""
 	})
 
-	handlebars.registerHelper("inc", function(ind) {
-		return parseInt(ind) + 1
-	})
 
-	handlebars.registerHelper("dec", function(ind) {
-		return parseInt(ind) - 1
-	})
-
-	handlebars.registerHelper("atTop", function(ind) {
-		return parseInt(ind) <= 0
-	})
-
-	handlebars.registerHelper("notTop", function(ind) {
-		return parseInt(ind) > 0
-	})
-
-	handlebars.registerHelper("subscript", function(obj, key) {
-		return obj[key]
-	})
-
-	handlebars.registerHelper("concat", function(...strings) {
-		strings.splice(-1)
-		return strings.join("")
-	})
-
-	handlebars.registerHelper("tail", function(obj) {
-		if (!(obj instanceof Array)) {
-			obj = Object.keys(obj).map(function(e) {
-				return obj[e]
-			})
-		}
-		return {head: obj.slice(0,-1), tail: obj.slice(-1)[0]}
-	})
 
 	return handlebars
 }
