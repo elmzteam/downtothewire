@@ -177,7 +177,7 @@ module.exports = [
 	},
 	{
 		path:/^\/404$/,
-		page: "single.hbs",
+		page: "not-found.hbs",
 		cache: true,
 		prerender: ["/404"],
 		context: {
