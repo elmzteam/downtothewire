@@ -1,17 +1,17 @@
 module.exports = function(__dirname) {
 	/**
-	  * Imports and Initializations 
+	  * Imports and Initializations
 	**/
-	
+
 	var path        = require("path");
 	var config      = require("../config")
-	
+
 	var pm          = require("promised-mongo")
 	var db          = pm("mongodb://localhost/bydesign", ["authors", "posts"])
 
 	var handlebars  = require("handlebars")
 	    handlebars  = require("./stachehelper")(handlebars, config.paths.client)
-		
+
 	var insert      = require("./insertPost")(db, config.paths.client)
 	var Renderer    = require("./renderer")
 	var api         = require("./api")(db)
@@ -26,7 +26,7 @@ module.exports = function(__dirname) {
 
 	var Google      = require('passport-google-oauth').OAuth2Strategy
 	var passport    = require("passport")
-	
+
 	var logger      = require("./logger")
 	var morgan      = require("morgan")
 	var utils       = require("./utils")
@@ -41,7 +41,7 @@ module.exports = function(__dirname) {
 	app.use(cookie())
 	app.use(body.json())
 	app.use(session({ secret: 'temporarysecret', store: new MongoStore({
-		url: "mongodb://localhost/bydesign"		
+		url: "mongodb://localhost/bydesign"
 	}),
 		resave: true,
 		saveUninitialized: true,
@@ -50,17 +50,17 @@ module.exports = function(__dirname) {
 	app.use(passport.session())
 	app.use(renderer.handle.bind(renderer))
 	app.use(api)
-	
+
 
 	/**
 	  * App routing
 	**/
-	
+
 	app.use(express.static("build"))
-	
+
 
 	app.post("/visible", function(req, res) {
-		if (req.user) { 
+		if (req.user) {
 			handleVisibility(req.body.state, req.body.page).
 				then(function() {
 					res.status(200)
@@ -109,7 +109,7 @@ module.exports = function(__dirname) {
 			res.send("Please Log In first")
 		}
 	})
-	
+
 	/**
 	  * Upload Handling
 	**/
@@ -155,7 +155,7 @@ module.exports = function(__dirname) {
 	/**
 	  * MongoDB access functions
 	**/
-	
+
 	var getAuthors = function(gid) {
 		return db.authors.findOne({ gid });
 	}
@@ -163,7 +163,7 @@ module.exports = function(__dirname) {
 	/**
 	  * Authentication using Passport OAuth
 	**/
-	 
+
 	passport.serializeUser(function(user, done) {
 		db.authors.findOne({"id": user.id})
 			.then((data) => {
@@ -211,7 +211,7 @@ module.exports = function(__dirname) {
 	} else {
 		logger.warn("Missing authentication variable. Authentication will be unavailable.")
 	}
-	
+
 	// Default Case: 404
 	app.use(renderer.fourohfour.bind(renderer))
 
@@ -219,7 +219,7 @@ module.exports = function(__dirname) {
 	  * API Access
 	**/
 
-	
+
 
 	/**
 	  * Start Server

@@ -15,12 +15,12 @@ module.exports = function(handlebars, root) {
 	handlebars.registerHelper("noop", function(options) {
 		return ""
 	})
-	
-	/** 
+
+	/**
 		* Helper Functions
 	**/
 
-	//String Manipulation Methods 
+	//String Manipulation Methods
 	function djb2(str){
 		var hash = 0xc0ffee
 		for (var i = 0; i < str.length; i++) {
@@ -59,7 +59,7 @@ module.exports = function(handlebars, root) {
 	handlebars.registerHelper("shorten", function(content) {
 		return content.split(POST_BREAK_REGEX)[0];
 	});
-	
+
 	//Content Access
 	handlebars.registerHelper("sidebar", function() {
 		return 	config.sidebar
@@ -68,7 +68,7 @@ module.exports = function(handlebars, root) {
 	handlebars.registerHelper("profiles", function() {
 		return config.adminInfo
 	})
-	
+
 	//Handlebars Utilities
 	handlebars.registerHelper("and", function(b1, b2) {
 		return b1 && b2

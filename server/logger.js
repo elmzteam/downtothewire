@@ -34,4 +34,4 @@ module.exports = {
 	warn: warn,
 	error: error,
 	ok: ok
-} 
+}
