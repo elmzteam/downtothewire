@@ -7,6 +7,22 @@
 				{{#each posts}}
 					{{> post.hbs}}
 				{{/each}}
+
+				{{#with pagination}}
+					{{#if left}}
+					<a href={{left}}>
+					<button class="pagination left">
+						<dttw-icon class="material-icons">arrow_back</dttw-icon>
+					</button>
+					{{/if}}
+
+					{{#if right}}
+					<a href={{right}}>
+					<button class="pagination right">
+						<dttw-icon class="material-icons">arrow_forward</dttw-icon>
+					</button>
+					{{/if}}
+				{{/with}}
 			</main>
 			{{> sidebar.hbs}}
 		</content-row>

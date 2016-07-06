@@ -18,10 +18,14 @@ module.exports = [
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
-					return {
-						title: "",
-						posts
-					};
+					return db.posts.count()
+						.then((count) => ({
+							title: "",
+							posts,
+							pagination: {
+								right: count > 5 ? "/archive/2" : undefined
+							}
+						}))
 				})
 				.then(fillDefaultSidebar(db))
 	},
@@ -30,17 +34,24 @@ module.exports = [
 		page: "page.hbs",
 		cache: true,
 		prerender: range(5).map((i) => `/archive/${i + 1}`),
-		context: ([_, pageNumber], db) =>
-			aggregatePosts(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
+		context: ([_, pageNumber], db) => {
+			pageNumber = parseInt(pageNumber);
+			return aggregatePosts(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
-					return {
-						title: `Archive, Page ${pageNumber}`,
-						posts
-					};
+					return db.posts.count()
+						.then((count) => ({
+							title: "",
+							posts,
+							pagination: {
+								left: pageNumber > 1 ? `/archive/${pageNumber - 1}` : undefined,
+								right: count > pageNumber * 5 ? `/archive/${pageNumber + 1}` : undefined
+							}
+						}))
 				})
 				.then(fillDefaultSidebar(db))
+		}
 	},
 	{
 		path:/^\/editor(\/([0-9a-zA-Z_-]{7,14}))?$/,
