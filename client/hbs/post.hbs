@@ -1,29 +1,29 @@
 <article>
 	{{#if title.url}}
-	<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
+		<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
 	{{else}}
-	<h1>{{title.text}}</h1>
+		<h1>{{title.text}}</h1>
 	{{/if}}
 
 	<time>{{formatTime timestamp}}</time>
 
 	{{#with author}}
-	<div class="author">
-		{{#if image.url}}
-		<img class="author-image" src="{{image.url}}" />
-		{{else}}
-		<img class="author-image" src="/images/default.png" />
-		{{/if}}
+		<div class="author">
+			{{#if image.url}}
+				<img class="author-image" src="{{image.url}}" />
+			{{else}}
+				<img class="author-image" src="/images/default.png" />
+			{{/if}}
 
-		<div class="author-name">{{displayName}}</div>
-	</div>
+			<div class="author-name">{{displayName}}</div>
+		</div>
 	{{/with}}
 
 	<div class="body">
 		{{#if short}}
-		{{markdown (short content)}}
+			{{markdown (short content)}}
 		{{else}}
-		{{markdown (full content)}}
+			{{markdown (full content)}}
 		{{/if}}
 	</div>
 
@@ -34,12 +34,13 @@
 	{{/if}}
 
 	{{#if tags}}
-	<footer>
-		Tags: {{#each tags}}{{tag this}}{{/each}}
-	</footer>
+		<footer>
+			Tags:
+			{{#each tags}}{{tag this}}{{/each}}
+		</footer>
 	{{/if}}
 
 	{{#if (and (not hideComments) (not short))}}
-	{{> disqus.hbs guid}}
+		{{> disqus.hbs guid}}
 	{{/if}}
 </article>

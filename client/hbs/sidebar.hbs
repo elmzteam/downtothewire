@@ -1,25 +1,24 @@
 <aside>
 	{{#each sidebar}}
-	<article>
-		<h1>{{title}}</h1>
-		{{#if (eq type "authors")}}
-			<ul class="author-list">
-				{{#each authors}}
-					<li><a href="/author/{{handle}}">{{name}}</a></li>
+		<article>
+			<h1>{{title}}</h1>
+			{{#if (eq type "authors")}}
+				<ul class="author-list">
+					{{#each authors}}
+						<li><a href="/author/{{handle}}">{{name}}</a></li>
+					{{/each}}
+				</ul>
+
+				{{else if (eq type "tags")}}
+				{{#each tags}}
+					{{tag this}}
 				{{/each}}
-			</ul>
 
-		{{else if (eq type "tags")}}
-			{{#each tags}}
-				{{tag this}}
-			{{/each}}
+			{{else}}
+				{{{content}}}
 
-		{{else}}
-			{{{content}}}
-
-		{{/if}}
-	</article>
+			{{/if}}
+		</article>
 
 	{{/each}}
 </aside>
-

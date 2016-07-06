@@ -1,36 +1,44 @@
 <html class="admin">
-	{{> head.hbs}}
+{{> head.hbs}}
 
-	{{#if user}}
+{{#if user}}
+
 	<body>
 		<header>
-			<a href="/admin"><dttw-icon id="back" class="material-icons">arrow_back</dttw-icon></a>
+			<a href="/admin">
+				<dttw-icon id="back" class="material-icons">arrow_back</dttw-icon>
+			</a>
 
 			{{log this}}
-			
+
 			{{#if post}}
-			<h1>Editing "{{post.title.text}}"</h1>
+				<h1>Editing "{{post.title.text}}"</h1>
 			{{else}}
-			<h1>Editing New Post</h1>
+				<h1>Editing New Post</h1>
 			{{/if}}
 
 			<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
 		</header>
 
 		<main>
-			<input type="text" id="title" {{#if post}}value="{{post.title.text}}"{{/if}} placeholder="Post Title" autocomplete="off" />
-			<div id="editor">{{#if post}}{{post.content}}{{/if}}</div>
-			<input type="text" id="tags" value="{{#if post}}{{#each post.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags"/>
+			<input type="text" id="title" {{#if post}} value="{{post.title.text}}" {{/if}} placeholder="Post Title" autocomplete="off" />
+			<div id="editor">
+				{{#if post}}{{post.content}}{{/if}}
+			</div>
+			<input type="text" id="tags" value="{{#if post}}{{#each post.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags" />
 
 			<footer>
 				<span id="status"></span>
-				<input id="visible" type="checkbox" {{#if post}}{{#if post.visible}}checked{{/if}}{{/if}} />
+				<input id="visible" type="checkbox" {{#if post}} {{#if post.visible}} checked {{/if}} {{/if}} />
 				<label for="visible">Visible</label>
-				<button id="submit">{{#if post}}Update{{else}}Save{{/if}}</button>
+				<button id="submit">
+					{{#if post}}Update{{else}}Save{{/if}}
+				</button>
 			</footer>
 		</main>
 	</body>
-	{{else}}
-		{{> no-admin.hbs}}
-	{{/if}}
+{{else}}
+	{{> no-admin.hbs}}
+{{/if}}
+
 </html>
