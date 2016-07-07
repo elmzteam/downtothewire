@@ -8,14 +8,14 @@
 			<strong>Down to the Wire</strong> is a collaborative project hosted by a group of students across the country. Since we share many common interests, we decided to merge all of our individual blogs and technical writings into a single website, where all of us can contribute. Since each author has different interests and personal projects, topics range from hardware to software to security.
 
 			<table id="profiles" class="row-divided">
-				{{#each (profiles)}}
+				{{#each users}}
 					{{#if this.bio}}
 						<tr>
 							<th>
 								<a href="/author/{{this.handle}}" name="{{this.handle}}"><img class="author-image large" src="/images/{{#if this.image}}{{this.image}}{{else}}default.png{{/if}}" /></a>
 							</th>
 							<td>
-								<div class="bio">{{this.bio}}</div>
+								<div class="bio">{{{this.bio}}}</div>
 								<div class="contact">
 									<address>
 										<a href="mailto:{{this.handle}}@dttw.tech">{{this.handle}}@dttw.tech</a>
