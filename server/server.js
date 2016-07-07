@@ -124,7 +124,7 @@ module.exports = function(__dirname) {
 				.then((id) =>
 					db.posts.insert({
 						tags: body.tags,
-						visible: !!body.visible,
+						visible: body.visible === true,
 						author: author,
 						timestamp: Date.now(),
 						guid: id,
