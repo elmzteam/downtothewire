@@ -89,7 +89,11 @@ module.exports = [
 					posts.forEach((post) => post.short = true);
 					return {
 						title: `Tagged "${tag}"`,
-						posts: posts
+						posts: posts,
+						filter: {
+							type: "tag",
+							tag: tag
+						}
 					};
 				})
 				.then(fillDefaultSidebar(db))
@@ -105,7 +109,7 @@ module.exports = [
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
 					return {
-						title: `Posts by ${author}`,
+						title: `Posts by ${users[author].name}`,
 						posts: posts,
 						filter: {
 							type: "author",

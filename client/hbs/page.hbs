@@ -5,6 +5,16 @@
 	{{> header.hbs}}
 	<content-row>
 		<main>
+			{{#if filter}}
+				{{#if (eq filter.type "author")}}
+					Posts by {{filter.author.name}}
+
+				{{else if (eq filter.type "tag")}}
+					Posts tagged "{{filter.tag}}"
+
+				{{/if}}
+			{{/if}}
+
 			{{#each posts}}
 				{{> post.hbs}}
 			{{/each}}
