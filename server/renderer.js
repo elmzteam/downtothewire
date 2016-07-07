@@ -116,12 +116,6 @@ module.exports = class Renderer {
 						context.user = user;
 						let content = this.renderPage(route.page, context);
 
-						if (route.cache) {
-							logger.ok(`Caching ${path}`);
-							return fs.writeFile(cachePath, content)
-								.then(() => content);
-						}
-
 						return content;
 					})
 					.then((content) => { // the render succeeded
@@ -129,6 +123,12 @@ module.exports = class Renderer {
 							logger.ok(`Sending ${path}`);
 							res.type("text/html"); // TODO
 							res.send(content);
+						}
+
+						if (route.cache) {
+							logger.ok(`Caching ${path}`);
+							return fs.writeFile(cachePath, content)
+								.then(() => content);
 						}
 					})
 
