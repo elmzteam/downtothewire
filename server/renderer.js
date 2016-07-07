@@ -102,7 +102,7 @@ module.exports = class Renderer {
 				let route = routes.find((route) => route.path.test(path));
 
 				if (route === undefined) {
-					logger.warn(path);
+					logger.error(`No route found for ${path}`);
 					this.fourohfour(undefined, res, undefined);
 					return;
 				}

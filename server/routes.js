@@ -95,7 +95,7 @@ module.exports = [
 				.then(fillDefaultSidebar(db))
 	},
 	{
-		path:/^\/author\/(matt|zach|ben|danial|david|ellis|kyle|thomas)$/, // sigh...
+		path: new RegExp(`^\\/author\\/(${Object.keys(users).join("|")})$`),
 		page: "page.hbs",
 		cache: true,
 		prerender: Object.keys(config.adminInfo).map((author) => `/author/${author}`),
