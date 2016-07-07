@@ -51,7 +51,7 @@ header {
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}
-	
+
 	a,
 	a:hover {
 		color: $color-white;
@@ -240,6 +240,15 @@ button {
 	body {
 		display: flex;
 		flex-flow: column nowrap;
+		&.static {
+			header {
+				position: static;
+				margin-bottom: 4px;
+			}
+			main {
+				margin: 0;
+			}
+		}
 	}
 
 	header {
@@ -277,6 +286,7 @@ button {
 	#editor {
 		flex-grow: 1;
 		height: auto;
+		min-height: 5rem;
 	}
 }
 
