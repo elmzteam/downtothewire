@@ -287,7 +287,7 @@ content-row {
 				line-height: 1.4;
 
 				&:last-child {
-					// margin-bottom: 0px;
+					margin-bottom: 0px;
 				}
 			}
 
@@ -455,7 +455,7 @@ content-row {
 		border-radius: 24px;
 		border: 48/72*4px solid $color-text-main;
 	}
-	
+
 	&.large {
 		width: 96;
 		height: 96px;
@@ -574,16 +574,16 @@ table {
 			}
 		}
 	}
-	
+
 	&#profiles {
 		td {
 			padding: .8em 0px;
 			padding-left: 1em;
-			
+
 			.bio {
-				
+
 			}
-			
+
 			.contact {
 				display: flex;
 				flex-direction: row;
