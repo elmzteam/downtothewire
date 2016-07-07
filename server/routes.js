@@ -179,7 +179,8 @@ module.exports = [
 		path:/^\/contact\/?$/,
 		page: "contact.hbs",
 		cache: true,
-		prerender: ["/contact"]
+		prerender: ["/contact"],
+		context: { users }
 	},
 	{
 		path:/^\/about\/?$/,
