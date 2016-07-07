@@ -167,7 +167,6 @@ module.exports = function(__dirname) {
 	passport.serializeUser(function(user, done) {
 		db.authors.findOne({"id": user.id})
 			.then((data) => {
-				console.log("here", data);
 				if (data !== undefined) {
 					user._json.image.url = user._json.image.url.replace(/sz=50$/, "sz=576");
 					return db.authors.update({"id": user.id}, user).then(() => done(undefined, JSON.stringify(user)));
