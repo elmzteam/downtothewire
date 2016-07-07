@@ -115,7 +115,7 @@ module.exports = function(__dirname) {
 	**/
 
 	var uploadPost = function(guid, body, author) {
-		if (body.tags.length == 0 && body.title.match(/^\s*$/) && body.content.match(/^\s*$/) && modify) {
+		if (body.tags.length == 0 && body.title.match(/^\s*$/) && body.content.match(/^\s*$/) && guid) {
 			return db.posts.remove({ guid });
 		}
 
@@ -130,11 +130,13 @@ module.exports = function(__dirname) {
 						guid: id,
 						title: {
 							text: body.title,
-							url: `posts/${id}`
+							url: `/posts/${id}`
 						},
 						slug: utils.slugify(body.title),
 						content: body.content
-					}));
+					})
+						.then(() => id)
+				);
 		} else {
 			return db.posts.update({ guid }, {
 				$set: {

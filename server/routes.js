@@ -60,7 +60,7 @@ module.exports = [
 		context: ([_, __, postId], db) =>
 			db.posts.findOne({ guid: postId })
 				.then((post) => {
-					if (post !== undefined) {
+					if (post != undefined) {
 						return {
 							title: `Editing "${post.title}"`,
 							post,

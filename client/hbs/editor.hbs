@@ -22,9 +22,7 @@
 
 		<main>
 			<input type="text" id="title" {{#if post}} value="{{post.title.text}}" {{/if}} placeholder="Post Title" autocomplete="off" />
-			<div id="editor">
-				{{#if post}}{{post.content}}{{/if}}
-			</div>
+			<div id="editor">{{#if post}}{{post.content}}{{/if}}</div>
 			<input type="text" id="tags" value="{{#if post}}{{#each post.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags" />
 
 			<footer>

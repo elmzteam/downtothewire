@@ -10,17 +10,9 @@ var slugify = function(str) {
 }
 
 //Recursive promises, weeee....
-var generateId = function(db) {
-	return new Promise(function(resolve, reject) {
-		var id = shortid.generate()
-		db.find({guid: id}, function(e, data) {
-			if (data.length != 0 || e) {
-				resolve(generateId(db))
-			} else {
-				resolve(id)
-			}
-		})
-	})
+var generateId = function(collection) {
+	let id = shortid.generate();
+	return collection.findOne({guid: id}).then((data) => data ? generateId(db) : id);
 }
 
 module.exports = {
