@@ -150,10 +150,12 @@ module.exports = [
 		path:/^\/raw\/([0-9a-zA-Z_-]{7,14})$/,
 		page: "raw.hbs",
 		cache: true,
-		prerenderFIXME: (db) => {
+		prerender: (db) => {
 			return db.posts.find({})
 				.then((posts) => posts.map((post) => `/raw/${post.guid}`));
-		}
+		},
+		context: ([_, postId], db) =>
+			db.posts.findOne({ guid: postId })
 	},
 	{
 		path:/^\/admin\/?$/,
