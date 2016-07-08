@@ -240,7 +240,7 @@ button {
 	body {
 		display: flex;
 		flex-flow: column nowrap;
-		&.static {
+		&.editor {
 			header {
 				position: static;
 				margin-bottom: 4px;

@@ -2,7 +2,7 @@
 	{{#if user}}
 	{{set this "admin" true}}
 	{{> head.hbs}}
-	<body class="static">
+	<body class="editor">
 		{{#if content}}
 		{{set this "info" (fetchpost content)}}
 		{{/if}}
