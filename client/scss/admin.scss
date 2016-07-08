@@ -237,18 +237,19 @@ button {
 }
 
 @media only screen and (max-device-width: $width-small) {
+	html.editor {
+		header {
+			position: static;
+			margin-bottom: 4px;
+		}
+		main {
+			margin: 0;
+		}
+	}
+
 	body {
 		display: flex;
 		flex-flow: column nowrap;
-		&.editor {
-			header {
-				position: static;
-				margin-bottom: 4px;
-			}
-			main {
-				margin: 0;
-			}
-		}
 	}
 
 	header {
