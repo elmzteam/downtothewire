@@ -1,31 +1,24 @@
 <aside>
-	{{#if (not single)}}
-	{{#each (sidebar)}}
-	<article>
-		<h1>{{title}}</h1>
-		{{content}}
-	</article>
-	{{/each}}
-	<article>
-		<h1><a href="/about">Who</a></h1>
-		Contributers include:
-		{{#with (tail (profiles))}}
-		{{#each head}}
-			<a href="/author/{{handle}}">{{name}}</a>, 
-		{{/each}}
-		and 
-		{{#with tail}}
-			<a href="/author/{{handle}}">{{name}}</a>
-		{{/with}}
-			
-		{{/with}}
-	</article>
-	<article>
-		<h1>Tags</h1>
-		{{#each (tags)}}
-			{{tag this}}
-		{{/each}}
-	</article>
-	{{/if}}
-</aside>
+	{{#each sidebar}}
+		<article>
+			<h1>{{title}}</h1>
+			{{#if (eq type "authors")}}
+				<ul class="author-list">
+					{{#each authors}}
+						<li><a href="/author/{{handle}}">{{name}}</a></li>
+					{{/each}}
+				</ul>
 
+				{{else if (eq type "tags")}}
+				{{#each tags}}
+					{{tag this}}
+				{{/each}}
+
+			{{else}}
+				{{{content}}}
+
+			{{/if}}
+		</article>
+
+	{{/each}}
+</aside>

@@ -1,72 +1,42 @@
 <html>
-	{{#if (and restricted (not user))}}
-		{{> no-admin.hbs}}
-	{{else}}
-	{{!-- Set headers for all pages that use this template --}}
-	{{#with this as |ctx|}}
-		{{#if single}}
-			{{#with (fetchpost post)}}
-				{{set ctx "title" this.title.text}}
-			{{/with}}
-			{{set ctx "desc" (generateDesc post)}}
-		{{/if}}
-		{{#if currtag}}
-			{{set ctx "title" (concat "Posts tagged \"" currtag "\"")}}
-		{{/if}}
-		{{#if activename}}
-			{{#with (subscript (profiles) activename)}}
-				{{set ctx "title" (concat "Posts by " name)}}
-			{{/with}}
-		{{/if}}
-		{{#if restricted}}
-			{{set ctx "title" (concat "(Preview) " title)}}
-		{{/if}}
-	{{/with}}
-	{{> head.hbs}}
-	<body>
-		{{> header.hbs}}
-		<content-row>
-			<main>
-				{{#if currtag}}
-				<div class="tagged">Posts Tagged with "{{currtag}}"</div>
+{{> head.hbs}}
+
+<body>
+	{{> header.hbs}}
+	<content-row>
+		<main>
+			{{#if filter}}
+				{{#if (eq filter.type "author")}}
+					Posts by {{filter.author.name}}
+
+				{{else if (eq filter.type "tag")}}
+					Posts tagged "{{filter.tag}}"
+
 				{{/if}}
-				{{#if activename}}
-				{{#with (subscript (profiles) activename)}}
-					<div class="author-bio">
-						<img class="author-image large" src="/images/{{#if image}}{{image}}{{else}}default.png{{/if}}"/>
-						<div class="bio">{{bio}}</div>
-					</div>
-					<div class="tagged">Posts by {{name}}</div>
-				{{/with}}
-				{{/if}}
-				{{#if single}}
-				
-				{{#with (fetchpost post)}}
-				
-				{{set this "single" true}}
-				{{> post.hbs }}
-				
-				{{/with}}
-				
-				{{else}}
-				
-				{{#each (posts index currtag activename)}}
+			{{/if}}
+
+			{{#each posts}}
 				{{> post.hbs}}
-				{{/each}}
-				
+			{{/each}}
+
+			{{#with pagination}}
+				{{#if left}}
+					<a href= {{left}}>
+						<button class="pagination left">
+							<dttw-icon class="material-icons">arrow_back</dttw-icon>
+						</button>
 				{{/if}}
-				
-				{{#if currtag}}
-				{{else}}
-				{{#if activename}}
-				{{else}}
-				{{#if (notTop index)}}<a href="/page/{{dec index}}">{{/if}}<button class="pagination left {{#if (atTop index)}}disabled{{/if}}"><dttw-icon class="material-icons">arrow_back</dttw-icon></button>{{#if (notTop index)}}</a>{{/if}}
-				{{#if (notBottom index)}}<a href="/page/{{inc index}}">{{/if}}<button class="pagination right {{#if (atBottom index)}}disabled{{/if}}"><dttw-icon class="material-icons">arrow_forward</dttw-icon></button>{{#if (notBottom index)}}</a>{{/if}}
+
+				{{#if right}}
+					<a href= {{right}}>
+						<button class="pagination right">
+							<dttw-icon class="material-icons">arrow_forward</dttw-icon>
+						</button>
 				{{/if}}
-				{{/if}}
-			</main>
-			{{> sidebar.hbs}}
-		</content-row>
-	</body>
-	{{/if}}
+			{{/with}}
+		</main>
+		{{> sidebar.hbs}}
+	</content-row>
+</body>
+
 </html>

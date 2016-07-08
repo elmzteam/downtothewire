@@ -20,11 +20,8 @@ module.exports = {
 	paths: {
 		posts: "posts",
 		client: "client",
-		render: "render"
+		render: "render",
+		templates: "client/hbs"
 	},
-	adminInfo: require("./users.js"),	
-	sidebar: [{
-		title: (new handlebars.SafeString("<a href='/about'>About</a>")),
-		content: "Down to the Wire is a blog about everything new in tech"
-	}],
+	adminInfo: require("./users.js")
 }
