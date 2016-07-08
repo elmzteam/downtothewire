@@ -1,7 +1,6 @@
 "use strict";
 
 var sprintf     = require("sprintf")
-var deasync     = require("deasync")
 var moment      = require("moment")
 var path        = require("path")
 var fs          = require("fs")
@@ -12,16 +11,16 @@ var md          = require("./markdown")
 
 var POST_BREAK_REGEX = /\n\^{3,}\n/;
 
-module.exports = function(handlebars, db, root) {
+module.exports = function(handlebars, root) {
 	handlebars.registerHelper("noop", function(options) {
 		return ""
 	})
-	
-	/** 
+
+	/**
 		* Helper Functions
 	**/
 
-	//String Manipulation Methods 
+	//String Manipulation Methods
 	function djb2(str){
 		var hash = 0xc0ffee
 		for (var i = 0; i < str.length; i++) {
@@ -38,142 +37,29 @@ module.exports = function(handlebars, db, root) {
 		return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2)
 	}
 
-	//Database Access Functions
-	function getUser(id, cb) {
-		db.authors.findOne({id: id}, cb)
-	}
-
-	function getPosts(start, end, tag, author, all, cb) {
-		var query = {}
-		if (tag) query.tags = tag
-		if (author) query.author = author
-		if (!all) query.visible = true
-		db.posts.find(query).sort({timestamp: -1}).skip(start).limit(end-start, cb)
-	}
-
-	function getTags(cb) {
-		db.posts.distinct("tags", {visible: true}, function(err, data){
-			data.sort()
-			cb(err, data)
-		})
-	}
-
-	function getContent(id, cb) {
-		fs.readFile(path.join(config.paths.posts, id+".md"), cb)
-	}
-
-	function getSize(cb) {
-		db.posts.stats(function(err, res) {
-			cb(null, res.count)
-		})
-	}
-
-	function getPost(id, cb) {
-		db.posts.findOne({guid: id}, cb)
-	}
-
 	//String Manipulation Helpers
-	handlebars.registerHelper("expand", function(id) {
-		return new handlebars.SafeString("<div class='expand'><a class='no-line' href='/posts/"+id+"'>Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a></div>")
-	})
-
-	handlebars.registerHelper("generateDesc", function(id) {
-		var out = md.render(deasync(getContent)(id).toString())
-					.split(POST_BREAK_REGEX)[0]
-					.replace(/(<.*?>)|(<.*?script.*?>.*?<\/script>)|(<.*?style.*?>.*?<\/style>)/g,"")
-					.replace(/[\n\t\ ]+/g," ")
-		return out
-	})
-
-	handlebars.registerHelper("longtime", function(time) {
+	handlebars.registerHelper("formatTime", function(time) {
 		return new handlebars.SafeString(moment(time).format("MMMM Do, YYYY"))
 	})
 
 	handlebars.registerHelper("tag", function(tag, options) {
 		return new handlebars.SafeString(
-			sprintf("<a class='tag' href='/tags/%s' style='background-color: %s;'>%s</a>", tag, hashStringToColor(tag), tag)
+			sprintf("<a class='tag' href='/tag/%s' style='background-color: %s;'>%s</a>", tag, hashStringToColor(tag), tag)
 		)
 	})
 
-	//Database Access and Manipulation
-	handlebars.registerHelper("loadcontent", function(id, abbreviate) {
-		var out = deasync(getContent)(id)
-		if (out) {
-			out = out.toString()
-			if (abbreviate) {
-				out = out.split(POST_BREAK_REGEX)[0]
-			} else {
-				out = out.replace(POST_BREAK_REGEX, "")
-			}
-			return md.render(out)
-		} else {
-			return "Error"
-		}
-	})
-	
-	handlebars.registerHelper("tags", function() {
-		return deasync(getTags)();
-	})
+	handlebars.registerHelper("markdown", function(content) {
+		return new handlebars.SafeString(md.render(content));
+	});
 
-	handlebars.registerHelper("fetchcontent", function(id) {
-		var out = deasync(getContent)(id)
-		if (out) {
-			return out.toString().replace(POST_BREAK_REGEX, "")
-		} else {
-			return "Error"
-		}
-	})
-	
-	handlebars.registerHelper("fetchpost", function(id) {
-		var out = deasync(getPost)(id)
-		if (out) {
-			return out
-		} else {
-			return null
-		}
-	})
-	
-	handlebars.registerHelper("getAuthorInfo", function(id) {
-		return deasync(getUser)(id)._json
-	})
+	handlebars.registerHelper("short", function(content) {
+		return content.split(POST_BREAK_REGEX)[0];
+	});
 
-	handlebars.registerHelper("posts", function(page, tag, author) {
-		var val = parseInt(page)
-		return deasync(getPosts)(val*5, (val+1)*5, tag, config.adminInfo[author] ? config.adminInfo[author].gid : undefined, false)
-	})
+	handlebars.registerHelper("full", function(content) {
+		return content.replace(POST_BREAK_REGEX, "");
+	});
 
-	handlebars.registerHelper("allPosts", function() {
-		return deasync(getPosts)(0,0, undefined, undefined, true)
-	})
-
-	handlebars.registerHelper("rss", function() {
-		var posts = deasync(getPosts)(0, 20, undefined, undefined, false)
-		var feed = new RSS(config.rssInfo)
-		
-		for(var i = 0; i < posts.length; i++){
-			feed.item({
-				title: posts[i].title.text,
-				description: md.render(deasync(getContent)(posts[i].guid).toString()),
-				url: config.rssInfo.site_url + posts[i].title.url,
-				guid: posts[i].guid,
-				categories: posts[i].tags,
-				author: deasync(getUser)(posts[i].author)._json.displayName,
-				date: posts[i].timestamp
-			})
-		}
-		
-		return feed.xml()
-	})
-	
-	//Content Access
-	handlebars.registerHelper("sidebar", function() {
-		return 	config.sidebar
-	})
-
-	handlebars.registerHelper("profiles", function() {
-		return config.adminInfo
-	})
-	
 	//Handlebars Utilities
 	handlebars.registerHelper("and", function(b1, b2) {
 		return b1 && b2
@@ -184,8 +70,8 @@ module.exports = function(handlebars, db, root) {
 	handlebars.registerHelper("or", function(b1, b2) {
 		return b1 || b2
 	})
-	handlebars.registerHelper("set", function(obj, key, val){
-		obj[key] = val
+	handlebars.registerHelper("eq", function(a, b) {
+		return a === b
 	})
 
 	handlebars.registerHelper("log", function(val) {
@@ -193,42 +79,7 @@ module.exports = function(handlebars, db, root) {
 		return ""
 	})
 
-	handlebars.registerHelper("inc", function(ind) {
-		return parseInt(ind) + 1
-	})
 
-	handlebars.registerHelper("dec", function(ind) {
-		return parseInt(ind) - 1
-	})
-
-	handlebars.registerHelper("atBottom", function(ind) {
-		return parseInt(ind) >= Math.ceil(deasync(getSize)()/5)-1
-	})
-
-	handlebars.registerHelper("atTop", function(ind) {
-		return parseInt(ind) <= 0
-	})
-
-	handlebars.registerHelper("notBottom", function(ind) {
-		return parseInt(ind) <  Math.ceil(deasync(getSize)()/5)-1
-	})
-
-	handlebars.registerHelper("notTop", function(ind) {
-		return parseInt(ind) > 0
-	})
-
-	handlebars.registerHelper("subscript", function(obj, key) {
-		return obj[key]
-	})
-
-	handlebars.registerHelper("tail", function(obj) {
-		if (!(obj instanceof Array)) {
-			obj = Object.keys(obj).map(function(e) {
-				return obj[e]
-			})
-		}
-		return {head: obj.slice(0,-1), tail: obj.slice(-1)[0]}
-	})
 
 	return handlebars
 }

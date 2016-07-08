@@ -1,55 +1,46 @@
 <article>
 	{{#if title.url}}
-	<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
+		<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
 	{{else}}
-	<h1>{{title.text}}</h1>
+		<h1>{{title.text}}</h1>
 	{{/if}}
 
-	<time>{{longtime timestamp}}</time>
+	<time>{{formatTime timestamp}}</time>
 
-	{{!--
-	{{#if preview}}
-	<img class="preview-image" src="{{preview}}" />
-	{{/if}}
-	--}}
+	{{#with author}}
+		<div class="author">
+			{{#if image.url}}
+				<img class="author-image" src="{{image.url}}" />
+			{{else}}
+				<img class="author-image" src="/images/default.png" />
+			{{/if}}
 
-	{{#with (getAuthorInfo author)}} 
-	
-	{{#if image.url}}
-	<div class="author">
-		<img class="author-image" src="{{image.url}}" />
-		<div class="author-name">{{displayName}}</div>
-	</div>
-	{{else}}
-	<div class="author">
-		<img src="/images/default.png" />
-		<div class="author-name">{{displayName}}</div>
-	</div>
-	{{/if}}
-	
+			<div class="author-name">{{displayName}}</div>
+		</div>
 	{{/with}}
 
 	<div class="body">
-		{{#if single}}
-		{{{loadcontent guid false}}}
+		{{#if short}}
+			{{markdown (short content)}}
 		{{else}}
-		{{{loadcontent guid true}}}
+			{{markdown (full content)}}
 		{{/if}}
 	</div>
 
-	{{#if single}}
-	{{else}}
-	{{expand guid}}
+	{{#if short}}
+		<div class="expand">
+			<a class="no-line" href="/posts/{{guid}}">Read More <dttw-icon class='material-icons'>arrow_forward</dttw-icon></a>
+		</div>
 	{{/if}}
-	
+
 	{{#if tags}}
-	<footer>
-		Tags: {{#each tags}}{{tag this}}{{/each}}
-	</footer>
+		<footer>
+			Tags:
+			{{#each tags}}{{tag this}}{{/each}}
+		</footer>
 	{{/if}}
-	
-	{{#if single}}
-	{{> disqus.hbs guid}}
+
+	{{#if (and (not hideComments) (not short))}}
+		{{> disqus.hbs guid}}
 	{{/if}}
-	
 </article>

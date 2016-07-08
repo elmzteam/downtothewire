@@ -37,7 +37,7 @@ var parseData = function(data) {
 				visible: true,
 			},
 			content: {
-				address: data.content	
+				address: data.content
 			}
 		}
 		resolve(out)
@@ -59,12 +59,12 @@ var writeFile = function(data) {
 }
 
 var saveDatabase = function(data) {
-	data.db.tags = tagCheck(data.db.tags)	
+	data.db.tags = tagCheck(data.db.tags)
 	return denodeify(globals.coll.insert, [data.db], undefined, globals.coll)
 }
 
 var updateDatabase = function(data) {
-	data.db.tags = tagCheck(data.db.tags)	
+	data.db.tags = tagCheck(data.db.tags)
 	return denodeify(globals.coll.update, [{guid: data.db.guid}, {$set: data.db}], undefined , globals.coll)
 }
 
@@ -124,7 +124,7 @@ if (!module.parent) {
 	prompt.start()
 	prompt.colors = false
 	var mongojs = require("mongojs")
-	var db      = mongojs("mongodb://localhost/bydesign",["posts"])	
+	var db      = mongojs("mongodb://localhost/bydesign",["posts"])
 	fetchData().then(parseData, crash).then(getFile, crash).then(module.exports(db, path.join(__dirname, "..", "client")), crash).then(function() {
 		console.log("Finished")
 		return Promise.resolve("done")
