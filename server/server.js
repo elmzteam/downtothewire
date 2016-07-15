@@ -3,8 +3,10 @@ module.exports = function(__dirname) {
 	  * Imports and Initializations
 	**/
 
-	var path        = require("path");
+	var crypto      = require("crypto")
+	var path        = require("path")
 	var config      = require("../config")
+	var utils       = require("./utils")
 
 	var pm          = require("promised-mongo")
 	var db          = pm("mongodb://localhost/bydesign", ["authors", "posts"])
@@ -21,6 +23,9 @@ module.exports = function(__dirname) {
 
 	var cookie      = require("cookie-parser")
 	var body        = require("body-parser")
+	var multer      = require("multer")
+	/** Won't work on windows probably **/
+	var upload      = multer({dest: '/tmp/'})
 	var session     = require("express-session")
 	var MongoStore  = require("connect-mongo")(session)
 
@@ -30,6 +35,7 @@ module.exports = function(__dirname) {
 	var logger      = require("./logger")
 	var morgan      = require("morgan")
 	var utils       = require("./utils")
+	var fs          = utils.fs
 
 	var renderer = new Renderer(__dirname, db, handlebars);
 
@@ -57,7 +63,7 @@ module.exports = function(__dirname) {
 	**/
 
 	app.use(express.static("build"))
-
+	app.use("/upload", express.static(config.paths.upload))
 
 	app.post("/visible", function(req, res) {
 		if (req.user) {
@@ -82,6 +88,21 @@ module.exports = function(__dirname) {
 			req.status(403)
 			res.send("Please Log In first")
 		}
+	})
+
+	app.post("/static/", upload.single('file'), function(req, res) {
+		let hash = req.file.filename.slice(0,8)
+		console.log(req.file)
+		let sluggedFile = req.file.originalname
+					.split(".")
+					.map((e) => utils.slugify(e))
+					.join(".")
+		/** No directory traversals in my house **/
+		sluggedFile = sluggedFile.replace(/\.(\.)+/g, "")
+		let prefixName = `${hash}-${sluggedFile}`
+		fs.rename(req.file.path, path.join(__dirname, config.paths.upload, prefixName)) 
+			.then( () => res.send(path.join("/upload/", prefixName)) )
+			.catch( logger.error )
 	})
 
 	app.post("/editor/", function(req, res) {

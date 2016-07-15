@@ -135,6 +135,41 @@ main {
 	}
 }
 
+.uploader {
+	width: 80ch;
+	height: 4ch;
+	margin: auto;
+	display: flex;
+	
+	.upload-item {
+		&.upload-name {
+			flex-grow: 1;
+			border: 1px solid $color-divider;
+			border-bottom: 0px;
+			box-shadow: 0px 4px $color-drop-shadow;
+			background-color: $color-white; 
+
+			margin-left: 10px;
+			margin-right: 10px;
+			padding: 0.4em 1em;;
+			padding-left: 10px;
+			padding-right: 10px;
+
+			&.disabled {
+				background-color: #ebebeb;
+			}
+		}
+
+		&.upload-launch {
+			background-color: #03A9F4;
+
+			i {
+				vertical-align: -0.2ch;
+			}
+		}
+	}
+}
+
 #editor {
 	width: 100%;
 	height: 50%;
@@ -346,4 +381,8 @@ input[type="checkbox"] {
 	&:checked + label:after {
 		content: "check_box";
 	}
+}
+
+.hidden {
+	display: none;
 }

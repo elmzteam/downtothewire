@@ -1,7 +1,20 @@
 //Probably should move more stuff into here
 
-var shortid = require("shortid")
-var logger = require("./logger")
+var shortid   = require("shortid")
+var logger    = require("./logger")
+var denodeify = require("denodeify")
+var _fs       = require("fs")
+
+const fs = {
+	mkdir: denodeify(_fs.mkdir),
+	readdir: denodeify(_fs.readdir),
+	readFile: denodeify(_fs.readFile),
+	rmdir: denodeify(_fs.rmdir),
+	unlink: denodeify(_fs.unlink),
+	writeFile: denodeify(_fs.writeFile),
+	rename: denodeify(_fs.rename),
+	realpath: denodeify(_fs.realpath),
+}
 
 var slugify = function(str) {
 	str = str.replace(/[ \t\n_]+/g, "_")
@@ -18,4 +31,5 @@ var generateId = function(collection) {
 module.exports = {
 	slugify: slugify,
 	generateId: generateId,
+	fs: fs,
 }

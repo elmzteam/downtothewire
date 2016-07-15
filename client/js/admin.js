@@ -38,6 +38,24 @@ $(function() {
 			return false;
 		}
 	});
+
+	$("#uploadTrigger").click(function(e) {
+		var form = $("#fileUpload")
+		form.off("change")
+		form.on("change", () => {
+			var XHR = new XMLHttpRequest()
+			XHR.open("POST", "/static/")
+			var fData = new FormData(form[0].form)
+			XHR.onload = function() {
+				var res = $(".upload-name.upload-item")
+				res.removeClass("disabled")
+				res.text(XHR.response)
+				console.log(XHR)
+			}
+			XHR.send(fData)
+		})
+		form.click()
+	})
 })
 
 var submit = function() {
