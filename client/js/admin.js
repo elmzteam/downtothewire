@@ -76,6 +76,7 @@ var attachHandles = function() {
 				$("main").append(dummy)
 				setTimeout( () => {
 					$(".file-item:last-child").removeClass("deleting")
+					$("#file-page-trigger").off()
 					attachHandles()
 				}, 200)
 			}
