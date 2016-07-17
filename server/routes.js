@@ -2,10 +2,8 @@ var _fs             = require("fs")
 let denodeify       = require("denodeify")
 let config          = require("../config")
 let users           = require("../users")
-
-const fs = {
-	readFile: denodeify(_fs.readFile)
-}
+let fs              = require("./utils").fs
+let path            = require("path")
 
 module.exports = [
 	{
@@ -162,6 +160,20 @@ module.exports = [
 			db.posts.findOne({ guid: postId })
 	},
 	{
+		path:/^\/files\/?/,
+		page: "files.hbs",
+		cache: false,
+		context: (_, db) => 
+			aggregatePosts(db, { $sort: { timestamp: -1 } })
+				.then(fillAuthorInfo(db))
+				.then((posts) => ({
+					posts,
+					admin: true
+				}))
+				.then(findFiles(db))
+				
+	},
+	{
 		path:/^\/admin\/?$/,
 		page: "admin.hbs",
 		cache: false,
@@ -259,4 +271,22 @@ function fillDefaultSidebar(db) {
 				];
 				return context;
 			})
+}
+
+function findFiles(db) {
+	return (context) =>
+		 fs.readdir( path.join(__dirname, "..", config.paths.upload) )
+		.then( (files) => {
+			context.files = files.map( (f) => {return {
+				path: path.join("/upload/", f),
+				delete: path.join("/static/", f), 
+				name: f.split("-").splice(1).join("-")
+			}})
+			context.files.unshift({
+				path: "/upload/{{file}}",
+				delete: "/static/{{file}}",
+				name: "{{short-file}}",
+			})
+			return context
+		})
 }

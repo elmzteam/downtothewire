@@ -14,6 +14,7 @@ const fs = {
 	writeFile: denodeify(_fs.writeFile),
 	rename: denodeify(_fs.rename),
 	realpath: denodeify(_fs.realpath),
+	stat: denodeify(_fs.stat),
 }
 
 var slugify = function(str) {
