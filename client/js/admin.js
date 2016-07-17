@@ -40,8 +40,8 @@ var attachHandles = function() {
 		}
 	});
 
-	$("#uploadTrigger").click(function(e) {
-		var form = $("#fileUpload")
+	$("#upload-trigger").click(function(e) {
+		var form = $("#file-upload")
 		form.off("change")
 		form.on("change", () => {
 			var XHR = new XMLHttpRequest()
@@ -58,8 +58,8 @@ var attachHandles = function() {
 		form.click()
 	})
 
-	$("#filePageTrigger").click(function(e) {
-		var form = $("#fileUpload")
+	$("#file-page-trigger").click(function(e) {
+		var form = $("#file-upload")
 		form.off("change")
 		form.on("change", () => {
 			var XHR = new XMLHttpRequest()

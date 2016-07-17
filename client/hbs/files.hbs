@@ -4,7 +4,7 @@
 {{#if user}}
 	<header>
 		<h1>File Browser</h1>
-		<a id="filePageTrigger">
+		<a id="file-page-trigger">
 			<dttw-icon id="upload" class="material-icons">file_upload</dttw-icon>
 		</a>
 		<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
@@ -22,7 +22,7 @@
 	</main>
 	<div class="hidden" id="copy-buffer"><div>
 	<form action='/static/' method='POST' class='hidden'>
-		<input type='file' name='file' id='fileUpload'>
+		<input type='file' name='file' id='file-upload'>
 	</form>
 {{else}}
 	{{> no-admin.hbs}}
