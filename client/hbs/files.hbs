@@ -1,0 +1,31 @@
+<html class="admin">
+{{> head.hbs}}
+
+{{#if user}}
+	<header>
+		<h1>File Browser</h1>
+		<a id="filePageTrigger">
+			<dttw-icon id="upload" class="material-icons">file_upload</dttw-icon>
+		</a>
+		<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
+	</header>
+
+	<main>
+		{{#each files}}
+			<div class="file-item">
+				<a href="{{path}}" target="_blank"><dttw-icon class="material-icons dark left-elem">file_download</dttw-icon></a>
+				<a class="copy-path" path="{{path}}"><dttw-icon class="material-icons right-elem">content_copy</dttw-icon></a>
+				<span class="title">{{name}}</span>
+				<a class="delete-path" path="{{delete}}" confirming="false"><dttw-icon class="material-icons right-elem delete">delete</dttw-icon></a>
+			</div>
+		{{/each}}
+	</main>
+	<div class="hidden" id="copy-buffer"><div>
+	<form action='/static/' method='POST' class='hidden'>
+		<input type='file' name='file' id='fileUpload'>
+	</form>
+{{else}}
+	{{> no-admin.hbs}}
+{{/if}}
+
+</html>

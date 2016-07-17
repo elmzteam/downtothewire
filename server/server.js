@@ -100,7 +100,6 @@ module.exports = function(__dirname) {
 
 	app.post("/static/", upload.single('file'), requireAdmin(function(req, res) {
 		let hash = req.file.filename.slice(0,8)
-		console.log(req.file)
 		let sluggedFile = req.file.originalname
 					.split(".")
 					.map((e) => utils.slugify(e))
