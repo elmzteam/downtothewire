@@ -104,23 +104,23 @@ module.exports = function(__dirname) {
 					.split(".")
 					.map((e) => utils.slugify(e))
 					.join(".")
-		/** No directory traversals in my house **/
+		// No directory traversals in my house
 		sluggedFile = sluggedFile.replace(/\.(\.)+/g, "")
 		let prefixName = `${hash}-${sluggedFile}`
 		fs.rename(req.file.path, path.join(__dirname, config.paths.upload, prefixName)) 
 			.then( () => res.send({path: path.join("/upload/", prefixName), 
-			                       file: prefixName,
-				               shortFile: sluggedFile}) )
-			.catch( (e) => {
+		        	file: prefixName,
+		        	shortFile: sluggedFile
+			})).catch( (e) => {
 				logger.error(e)
-				res.status(503).send({error: "Could not upload file"})
+				res.status(500).send({error: "Could not upload file"})
 			})
 	}))
 
 	app.delete("/static/:FILE", requireAdmin(function(req, res) {
 		var filePath = path.join(__dirname, config.paths.upload, req.params.FILE)
 		fs.stat(filePath).then( (stat) => {
-			if (stat || stat.isFile()) {
+			if (stat && stat.isFile()) {
 				//All Good!
 				return
 			} else {
@@ -128,6 +128,9 @@ module.exports = function(__dirname) {
 			}
 		}).then(fs.unlink(filePath)).then( () => {
 			return res.send({success: true})
+		}).catch( (e) => {
+			logger.error(e)
+			res.status(503).send({error: "Resource unavailable", success: false})
 		})
 	}))
 

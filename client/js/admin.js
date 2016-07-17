@@ -48,10 +48,10 @@ var attachHandles = function() {
 			XHR.open("POST", "/static/")
 			var fData = new FormData(form[0].form)
 			XHR.onload = function() {
-				var res = $(".upload-name.upload-item")
-				res.removeClass("disabled")
 				var out = JSON.parse(XHR.response)
-				res.text(out.path)
+				var res = $(".upload-name.upload-item")
+					.removeClass("disabled")
+					.text(out.path)
 			}
 			XHR.send(fData)
 		})
