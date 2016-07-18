@@ -163,14 +163,21 @@ main {
 			background-color: $color-white; 
 
 			margin-left: 10px;
-			margin-right: 10px;
 			padding: 0.4em 1em;;
 			padding-left: 10px;
 			padding-right: 10px;
+			opacity: 1;
+
+			transition: opacity 200ms $transition-timing;
+
 
 			&.disabled {
-				background-color: #ebebeb;
+				opacity: 0;
 			}
+		}
+
+		&#upload-trigger {
+			margin-left: 10px;
 		}
 
 		&.upload-launch {
@@ -318,6 +325,30 @@ button {
 
 		&:hover {
 			text-decoration: none;
+		}
+	}
+	.copy-path {
+		position: relative;
+		cursor: pointer;
+
+		&:after {
+			content: "Copied";
+			position: absolute;
+			background: $color-text-main;
+			color: $color-white;
+			font-size: .8em;
+			padding: .1em .4em;
+			left: 50%;
+			transform: translateX(-50%);
+			transition: 600ms opacity, 600ms bottom;
+			opacity: 0;
+			bottom: 100%;
+		}
+
+		&.copied:after {
+			transition: 0ms opacity, 0ms bottom;
+			opacity: 1;
+			bottom: 50%;
 		}
 	}
 }

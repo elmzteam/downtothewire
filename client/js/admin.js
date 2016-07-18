@@ -73,9 +73,9 @@ var attachHandles = function() {
 				dummy = dummy.replace(/\{\{short-file\}\}/g, out.shortFile)
 				dummy = $(dummy)
 				dummy.addClass("deleting")
-				$("main").append(dummy)
+				dummy.insertAfter('.file-item:first-child')
 				setTimeout( () => {
-					$(".file-item:last-child").removeClass("deleting")
+					dummy.removeClass("deleting")
 					$("#file-page-trigger").off()
 					attachHandles()
 				}, 200)
@@ -95,6 +95,9 @@ var attachHandles = function() {
 		window.getSelection().removeAllRanges ? window.getSelection().removeAllRanges() : undefined
 		window.getSelection().addRange(range)
 		document.execCommand("copy")
+		$(this).addClass("copied")
+		$(this).outerWidth()
+		$(this).removeClass("copied")
 	})
 
 	$(".delete-path").click(function(e) {

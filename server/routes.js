@@ -273,14 +273,28 @@ function fillDefaultSidebar(db) {
 			})
 }
 
+var getStats = (base) => (file) =>
+	fs.stat(path.join(base, file)).then( (stats) => ({
+		file: file,
+		stats: stats,
+	}))
+
+
 function findFiles(db) {
-	return (context) =>
-		 fs.readdir( path.join(__dirname, "..", config.paths.upload) )
+	return (context) => {
+		let base = path.join(__dirname, "..", config.paths.upload)
+		return fs.readdir(base)
+		.then( (files) => Promise.all(files.map(getStats(base))))
 		.then( (files) => {
+			files = files.sort( (a, b) => {
+				if (b.stats.birthtime > a.stats.birthtime) return  1
+				if (a.stats.birthtime > b.stats.birthtime) return -1
+				return 0
+			})
 			context.files = files.map( (f) => {return {
-				path: path.join("/upload/", f),
-				delete: path.join("/static/", f), 
-				name: f.split("-").splice(1).join("-")
+				path: path.join("/upload/", f.file),
+				delete: path.join("/static/", f.file), 
+				name: f.file.split("-").splice(1).join("-")
 			}})
 			context.files.unshift({
 				path: "/upload/{{file}}",
@@ -289,4 +303,5 @@ function findFiles(db) {
 			})
 			return context
 		})
+	}
 }
