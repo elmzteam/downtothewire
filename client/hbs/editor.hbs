@@ -35,15 +35,15 @@
 			</footer>
 		</main>
 		<div class='uploader'>
-			<button id='upload-trigger' class='upload-button upload-item'>Upload New File</button>
-			<div class='upload-name upload-item disabled'></div>
-			<a href='/files/' target='_blank' class='button upload-launch upload-item'>
+			<button id='upload-trigger' class='upload-button'>Upload New File</button>
+			<div class='upload-name disabled'></div>
+			<a href='/files/' target='_blank' class='button upload-launch'>
 				<span>
 					Browse <dttw-icon class='material-icons'>launch</dttw-icon>
 				</span>
 			</a>
 		</div>
-		<form action='/static/' method='POST' class='hidden'>
+		<form action='/static/' method='POST' class='invisible'>
 			<input type='file' name='file' id='file-upload'>
 		</form>
 	</body>

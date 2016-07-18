@@ -154,7 +154,7 @@ main {
 	margin: auto;
 	display: flex;
 	
-	.upload-item {
+	* {
 		&.upload-name {
 			flex-grow: 1;
 			border: 1px solid $color-divider;
@@ -438,6 +438,6 @@ input[type="checkbox"] {
 	}
 }
 
-.hidden {
+.invisible {
 	opacity: 0;
 }

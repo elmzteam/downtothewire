@@ -62,7 +62,7 @@ module.exports = function(__dirname) {
 	**/ 
 
 	var requireAdmin = (fn) =>
-		function (req, res) {
+		(req, res) => {
 			if (req.user) {
 				return fn(req, res)
 			} else {
