@@ -44,12 +44,12 @@ var attachHandles = function() {
 		var form = $("#file-upload")
 		form.off("change")
 		form.on("change", () => {
-			var XHR = new XMLHttpRequest()
+			let XHR = new XMLHttpRequest()
 			XHR.open("POST", "/static/")
 			var fData = new FormData(form[0].form)
 			XHR.onload = function() {
 				var out = JSON.parse(XHR.response)
-				var res = $(".upload-name.upload-item")
+				var res = $(".upload-name")
 					.removeClass("disabled")
 					.text(out.path)
 			}
@@ -62,7 +62,7 @@ var attachHandles = function() {
 		var form = $("#file-upload")
 		form.off("change")
 		form.on("change", () => {
-			var XHR = new XMLHttpRequest()
+			let XHR = new XMLHttpRequest()
 			XHR.open("POST", "/static/")
 			var fData = new FormData(form[0].form)
 			XHR.onload = function() {
