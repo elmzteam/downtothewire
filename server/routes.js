@@ -163,7 +163,7 @@ module.exports = [
 		path:/^\/files\/?/,
 		page: "files.hbs",
 		cache: false,
-		context: (_, db) => 
+		context: (_, db) =>
 			aggregatePosts(db, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => ({
@@ -171,7 +171,7 @@ module.exports = [
 					admin: true
 				}))
 				.then(findFiles(db))
-				
+
 	},
 	{
 		path:/^\/admin\/?$/,
@@ -241,7 +241,7 @@ function fillAuthorInfo(db) {
 }
 
 function aggregatePosts(db, ...pipeline) {
-	return db.posts.aggregate(...pipeline);
+	return db.posts.aggregate({ match: { visible: true }}, ...pipeline);
 }
 
 function range(a, b) {
@@ -293,7 +293,7 @@ function findFiles(db) {
 			})
 			context.files = files.map( (f) => {return {
 				path: path.join("/upload/", f.file),
-				delete: path.join("/static/", f.file), 
+				delete: path.join("/static/", f.file),
 				name: f.file.split("-").splice(1).join("-")
 			}})
 			context.files.unshift({
