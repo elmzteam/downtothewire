@@ -1,9 +1,11 @@
-var _fs             = require("fs")
-let denodeify       = require("denodeify")
-let config          = require("../config")
-let users           = require("../users")
-let fs              = require("./utils").fs
-let path            = require("path")
+var _fs       = require("fs")
+let denodeify = require("denodeify")
+let config    = require("../config")
+let users     = require("../users")
+let fs        = require("./utils").fs
+let path      = require("path")
+let RSS       = require("rss")
+let md        = require("./markdown")
 
 module.exports = [
 	{
@@ -12,7 +14,7 @@ module.exports = [
 		cache: true,
 		prerender: ["/"],
 		context: (_, db) =>
-			aggregatePosts(db, { $sort: { timestamp: -1 } }, { $limit: 5 })
+			aggregatePosts(db, { $match: { visible: true }}, { $sort: { timestamp: -1 } }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -34,7 +36,7 @@ module.exports = [
 		prerender: range(5).map((i) => `/archive/${i + 1}`),
 		context: ([_, pageNumber], db) => {
 			pageNumber = parseInt(pageNumber);
-			return aggregatePosts(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
+			return aggregatePosts(db, { $match: { visible: true }}, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -81,7 +83,7 @@ module.exports = [
 				.then((tags) => tags.map((tag) => `/tag/${tag}`))
 		},
 		context: ([_, tag], db) =>
-			aggregatePosts(db, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
+			aggregatePosts(db, { $match: { visible: true }}, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -102,7 +104,7 @@ module.exports = [
 		cache: true,
 		prerender: Object.keys(config.adminInfo).map((author) => `/author/${author}`),
 		context: ([_, author], db) =>
-			aggregatePosts(db, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
+			aggregatePosts(db, { $match: { visible: true }}, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -164,7 +166,7 @@ module.exports = [
 		page: "files.hbs",
 		cache: false,
 		context: (_, db) =>
-			aggregatePosts(db, { $sort: { timestamp: -1 } })
+			aggregatePosts(db, { $match: { visible: true }}, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => ({
 					posts,
@@ -189,7 +191,12 @@ module.exports = [
 		path:/^\/rss\/?$/,
 		page: "rss.hbs",
 		cache: true,
-		prerender: ["/rss"]
+		mime: "application/xml",
+		prerender: ["/rss"],
+		context: (_, db) =>
+			aggregatePosts(db, { $match: { visible: true }}, {$sort: {timestamp: -1}}, {$limit: 20})
+				.then(fillAuthorInfo(db))
+				.then(buildSyndicate(db))
 	},
 	{
 		path:/^\/contact\/?$/,
@@ -240,8 +247,29 @@ function fillAuthorInfo(db) {
 	}
 }
 
+function buildSyndicate(db, num=20) {
+	return (posts) => {
+		var feed = new RSS(config.rssInfo)		
+			
+		for(var i = 0; i < posts.length; i++){		
+			feed.item({		
+				title: posts[i].title.text,		
+				description: md.render(posts[i].content),		
+				url: config.rssInfo.site_url + posts[i].title.url,		
+				guid: posts[i].guid,		
+				categories: posts[i].tags,		
+				author: posts[i].author.displayName,		
+				date: posts[i].timestamp		
+			})		
+		}		
+				
+		return {rss: feed.xml()}	
+	}
+
+}
+
 function aggregatePosts(db, ...pipeline) {
-	return db.posts.aggregate({ $match: { visible: true }}, ...pipeline);
+	return db.posts.aggregate(...pipeline);
 }
 
 function range(a, b) {

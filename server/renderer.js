@@ -84,9 +84,18 @@ module.exports = class Renderer {
 
 		fs.readFile(cachePath)
 			.then((content) => { // the page was cached
+				let route = routes.find((route) => route.path.test(path));
+
+				if (route === undefined) {
+					logger.error(`Cache polluted with path ${path}`);
+					this.fourohfour(undefined, res, undefined);
+					return;
+				}
+
 				logger.ok(`Pulled ${path} from cache`);
+				let mime = route.mime || "text/html"
 				if (res !== undefined) {
-					res.type("text/html"); // TODO
+					res.type(mime); // TODO
 					res.send(content);
 				}
 			})
@@ -102,6 +111,8 @@ module.exports = class Renderer {
 				let params = route.path.exec(path);
 				let options = (route.options || (() => ({ render: {}, serving: {} })))(params);
 
+				let mime = route.mime || "text/html"
+
 				return reduceToPromise(route.context || {}, params, this.db)
 					.then((context) => {
 						logger.info(`Building ${path}`);
@@ -113,7 +124,7 @@ module.exports = class Renderer {
 					.then((content) => { // the render succeeded
 						if (res !== undefined) {
 							logger.ok(`Sending ${path}`);
-							res.type("text/html"); // TODO
+							res.type(mime); // TODO
 							res.send(content);
 						}
 
