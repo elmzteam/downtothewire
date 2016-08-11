@@ -14,7 +14,7 @@ module.exports = [
 		cache: true,
 		prerender: ["/"],
 		context: (_, db) =>
-			aggregateSafe(db, { $sort: { timestamp: -1 } }, { $limit: 5 })
+			aggregatePublic(db, { $sort: { timestamp: -1 } }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -36,7 +36,7 @@ module.exports = [
 		prerender: range(5).map((i) => `/archive/${i + 1}`),
 		context: ([_, pageNumber], db) => {
 			pageNumber = parseInt(pageNumber);
-			return aggregateSafe(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
+			return aggregatePublic(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -83,7 +83,7 @@ module.exports = [
 				.then((tags) => tags.map((tag) => `/tag/${tag}`))
 		},
 		context: ([_, tag], db) =>
-			aggregateSafe(db, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
+			aggregatePublic(db, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -104,7 +104,7 @@ module.exports = [
 		cache: true,
 		prerender: Object.keys(config.adminInfo).map((author) => `/author/${author}`),
 		context: ([_, author], db) =>
-			aggregateSafe(db, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
+			aggregatePublic(db, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -166,7 +166,7 @@ module.exports = [
 		page: "files.hbs",
 		cache: false,
 		context: (_, db) =>
-			aggregateSafe(db, { $sort: { timestamp: -1 } })
+			aggregatePublic(db, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => ({
 					posts,
@@ -194,7 +194,7 @@ module.exports = [
 		mime: "application/xml",
 		prerender: ["/rss"],
 		context: (_, db) =>
-			aggregateSafe(db, {$sort: {timestamp: -1}}, {$limit: 20})
+			aggregatePublic(db, {$sort: {timestamp: -1}}, {$limit: 20})
 				.then(fillAuthorInfo(db))
 				.then(buildSyndicate(db))
 	},
@@ -272,7 +272,7 @@ function aggregatePosts(db, ...pipeline) {
 	return db.posts.aggregate(...pipeline);
 }
 
-function aggregateSafe(db, ...pipeline) {
+function aggregatePublic(db, ...pipeline) {
 	return aggregatePosts(db, {$match: { visible: true }}, ...pipeline);
 }
 
