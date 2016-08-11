@@ -241,7 +241,7 @@ function fillAuthorInfo(db) {
 }
 
 function aggregatePosts(db, ...pipeline) {
-	return db.posts.aggregate({ match: { visible: true }}, ...pipeline);
+	return db.posts.aggregate({ $match: { visible: true }}, ...pipeline);
 }
 
 function range(a, b) {
