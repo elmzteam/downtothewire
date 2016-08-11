@@ -21,7 +21,8 @@ module.exports = {
 		posts: "posts",
 		client: "client",
 		render: "render",
-		templates: "client/hbs"
+		templates: "client/hbs",
+		upload: "upload"
 	},
 	adminInfo: require("./users.js")
 }

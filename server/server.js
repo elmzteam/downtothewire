@@ -3,8 +3,10 @@ module.exports = function(__dirname) {
 	  * Imports and Initializations
 	**/
 
-	var path        = require("path");
+	var crypto      = require("crypto")
+	var path        = require("path")
 	var config      = require("../config")
+	var utils       = require("./utils")
 
 	var pm          = require("promised-mongo")
 	var db          = pm("mongodb://localhost/bydesign", ["authors", "posts"])
@@ -21,6 +23,9 @@ module.exports = function(__dirname) {
 
 	var cookie      = require("cookie-parser")
 	var body        = require("body-parser")
+	var multer      = require("multer")
+	/** Won't work on windows probably **/
+	var upload      = multer({dest: '/tmp/'})
 	var session     = require("express-session")
 	var MongoStore  = require("connect-mongo")(session)
 
@@ -30,6 +35,7 @@ module.exports = function(__dirname) {
 	var logger      = require("./logger")
 	var morgan      = require("morgan")
 	var utils       = require("./utils")
+	var fs          = utils.fs
 
 	var renderer = new Renderer(__dirname, db, handlebars);
 
@@ -51,64 +57,98 @@ module.exports = function(__dirname) {
 	app.use(renderer.handle.bind(renderer))
 	app.use(api)
 
+	/**
+	  * Annotations
+	**/ 
+
+	var requireAdmin = (fn) =>
+		(req, res) => {
+			if (req.user) {
+				return fn(req, res)
+			} else {
+				req.status(403)
+				res.send("Please Log In first")
+			}
+		}
 
 	/**
 	  * App routing
 	**/
 
 	app.use(express.static("build"))
+	app.use("/upload", express.static(config.paths.upload))
 
-
-	app.post("/visible", function(req, res) {
-		if (req.user) {
-			handleVisibility(req.body.state, req.body.page).
-				then(function() {
-					res.status(200)
-					res.send({
-						"state": req.body.state ? "visible" : "hidden",
-						"visible": req.body.state
-					})
-					renderer.reload()
-				}).
-				catch(function(err) {
-					res.status(500)
-					res.send({
-						"state": !req.body.state ? "visible" : "hidden",
-						"visible": !req.body.state
-					})
-					logger.error(err)
+	app.post("/visible", requireAdmin(function(req, res) {
+		handleVisibility(req.body.state, req.body.page).
+			then(function() {
+				res.status(200)
+				res.send({
+					"state": req.body.state ? "visible" : "hidden",
+					"visible": req.body.state
 				})
-		} else {
-			req.status(403)
-			res.send("Please Log In first")
-		}
-	})
-
-	app.post("/editor/", function(req, res) {
-		if (req.user) {
-			uploadPost(null, req.body, req.user.id)
-				.then(function (id) {
-					renderer.reload()
-					res.send({msg: "Ok", id: id})
+				renderer.reload()
+			}).
+			catch(function(err) {
+				res.status(500)
+				res.send({
+					"state": !req.body.state ? "visible" : "hidden",
+					"visible": !req.body.state
 				})
-				.catch(logger.error)
-		} else {
-			req.status(403)
-			res.send("Please Log In first")
-		}
-	})
+				logger.error(err)
+			})
+	}))
 
-	app.post("/editor/:MOD", function(req, res) {
-		if (req.user) {
-			uploadPost(req.params.MOD, req.body, req.user.id)
-				.then(renderer.reload.bind(renderer))
-				.catch(logger.error)
-			res.send({msg: "Ok"})
-		} else {
-			req.status(403)
-			res.send("Please Log In first")
-		}
-	})
+	app.post("/static/", upload.single('file'), requireAdmin(function(req, res) {
+		let hash = req.file.filename.slice(0,8)
+		let sluggedFile = req.file.originalname
+					.split(".")
+					.map((e) => utils.slugify(e))
+					.join(".")
+		// No directory traversals in my house
+		sluggedFile = sluggedFile.replace(/\.(\.)+/g, "")
+		let prefixName = `${hash}-${sluggedFile}`
+		fs.rename(req.file.path, path.join(__dirname, config.paths.upload, prefixName)) 
+			.then( () => res.send({path: path.join("/upload/", prefixName), 
+		        	file: prefixName,
+		        	shortFile: sluggedFile
+			})).catch( (e) => {
+				logger.error(e)
+				res.status(500).send({error: "Could not upload file"})
+			})
+	}))
+
+	app.delete("/static/:FILE", requireAdmin(function(req, res) {
+		var filePath = path.join(__dirname, config.paths.upload, req.params.FILE)
+		fs.stat(filePath).then( (stat) => {
+			if (stat && stat.isFile()) {
+				//All Good!
+				return
+			} else {
+				throw new Error("File Not Found")
+			}
+		}).then(fs.unlink(filePath)).then( () => {
+			return res.send({success: true})
+		}).catch( (e) => {
+			logger.error(e)
+			res.status(503).send({error: "Resource unavailable", success: false})
+		})
+	}))
+
+	app.post("/editor/", requireAdmin(function(req, res) {
+		uploadPost(null, req.body, req.user.id)
+			.then(function (id) {
+				renderer.reload()
+				res.send({msg: "Ok", id: id})
+			})
+			.catch(logger.error)
+	}))
+
+	app.post("/editor/:MOD", requireAdmin(function(req, res) {
+		uploadPost(req.params.MOD, req.body, req.user.id)
+			.then(renderer.reload.bind(renderer))
+			.catch(logger.error)
+		res.send({msg: "Ok"})
+	}))
 
 	/**
 	  * Upload Handling
@@ -219,7 +259,6 @@ module.exports = function(__dirname) {
 	/**
 	  * API Access
 	**/
-
 
 
 	/**

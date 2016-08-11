@@ -34,9 +34,20 @@
 				</button>
 			</footer>
 		</main>
+		<div class='uploader'>
+			<a href='/files/' target='_blank' class='button upload-launch'>
+				<span>
+					Browse <dttw-icon class='material-icons'>launch</dttw-icon>
+				</span>
+			</a>
+			<button id='upload-trigger' class='upload-button'>Upload New File</button>
+			<div class='upload-name disabled'></div>
+		</div>
+		<form action='/static/' method='POST' class='invisible'>
+			<input type='file' name='file' id='file-upload'>
+		</form>
 	</body>
 {{else}}
 	{{> no-admin.hbs}}
 {{/if}}
-
 </html>

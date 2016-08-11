@@ -2,10 +2,8 @@ var _fs             = require("fs")
 let denodeify       = require("denodeify")
 let config          = require("../config")
 let users           = require("../users")
-
-const fs = {
-	readFile: denodeify(_fs.readFile)
-}
+let fs              = require("./utils").fs
+let path            = require("path")
 
 module.exports = [
 	{
@@ -162,6 +160,20 @@ module.exports = [
 			db.posts.findOne({ guid: postId })
 	},
 	{
+		path:/^\/files\/?/,
+		page: "files.hbs",
+		cache: false,
+		context: (_, db) => 
+			aggregatePosts(db, { $sort: { timestamp: -1 } })
+				.then(fillAuthorInfo(db))
+				.then((posts) => ({
+					posts,
+					admin: true
+				}))
+				.then(findFiles(db))
+				
+	},
+	{
 		path:/^\/admin\/?$/,
 		page: "admin.hbs",
 		cache: false,
@@ -259,4 +271,37 @@ function fillDefaultSidebar(db) {
 				];
 				return context;
 			})
+}
+
+var getStats = (base) => (file) =>
+	fs.stat(path.join(base, file)).then( (stats) => ({
+		file: file,
+		stats: stats,
+	}))
+
+
+function findFiles(db) {
+	return (context) => {
+		let base = path.join(__dirname, "..", config.paths.upload)
+		return fs.readdir(base)
+		.then( (files) => Promise.all(files.map(getStats(base))))
+		.then( (files) => {
+			files = files.sort( (a, b) => {
+				if (b.stats.birthtime > a.stats.birthtime) return  1
+				if (a.stats.birthtime > b.stats.birthtime) return -1
+				return 0
+			})
+			context.files = files.map( (f) => {return {
+				path: path.join("/upload/", f.file),
+				delete: path.join("/static/", f.file), 
+				name: f.file.split("-").splice(1).join("-")
+			}})
+			context.files.unshift({
+				path: "/upload/{{file}}",
+				delete: "/static/{{file}}",
+				name: "{{short-file}}",
+			})
+			return context
+		})
+	}
 }

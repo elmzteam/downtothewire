@@ -3,7 +3,8 @@
 var editor
 var confirmedDelete = false
 
-$(function() {
+		
+var attachHandles = function() {
 	if($("#editor").length > 0){
 		editor = ace.edit("editor")
 		editor.setTheme("ace/theme/chrome")
@@ -38,7 +39,90 @@ $(function() {
 			return false;
 		}
 	});
-})
+
+	$("#upload-trigger").click(function(e) {
+		var form = $("#file-upload")
+		form.off("change")
+		form.on("change", () => {
+			let XHR = new XMLHttpRequest()
+			XHR.open("POST", "/static/")
+			var fData = new FormData(form[0].form)
+			XHR.onload = function() {
+				var out = JSON.parse(XHR.response)
+				var res = $(".upload-name")
+					.removeClass("disabled")
+					.text(out.path)
+			}
+			XHR.send(fData)
+		})
+		form.click()
+	})
+
+	$("#file-page-trigger").click(function(e) {
+		var form = $("#file-upload")
+		form.off("change")
+		form.on("change", () => {
+			let XHR = new XMLHttpRequest()
+			XHR.open("POST", "/static/")
+			var fData = new FormData(form[0].form)
+			XHR.onload = function() {
+				var dummy = $(".file-item:first-child")[0].outerHTML
+				var out = JSON.parse(XHR.response)
+				dummy = dummy.replace(/\{\{path\}\}/g, out.path)
+				dummy = dummy.replace(/\{\{file\}\}/g, out.file)
+				dummy = dummy.replace(/\{\{short-file\}\}/g, out.shortFile)
+				dummy = $(dummy)
+				dummy.addClass("deleting")
+				dummy.insertAfter('.file-item:first-child')
+				setTimeout( () => {
+					dummy.removeClass("deleting")
+					$("#file-page-trigger").off()
+					attachHandles()
+				}, 200)
+			}
+			XHR.send(fData)
+		})
+		form.click()
+	})
+
+	$(".copy-path").click(function(e) {
+		var path = $(this).attr("path")
+		var cb = $("#copy-buffer")
+		cb.text(path)
+		var range = document.createRange()
+		range.selectNode(cb[0])
+		window.getSelection().empty ? window.getSelection().empty() : undefined
+		window.getSelection().removeAllRanges ? window.getSelection().removeAllRanges() : undefined
+		window.getSelection().addRange(range)
+		document.execCommand("copy")
+		$(this).addClass("copied")
+		$(this).outerWidth()
+		$(this).removeClass("copied")
+	})
+
+	$(".delete-path").click(function(e) {
+		var obj = $(this)
+		var isConfirming = obj.attr("confirming")
+		if (isConfirming == "false") {
+			obj.attr("confirming", true)
+			obj.children().text("delete_forever")
+			return
+		}
+		var path = obj.attr("path")
+		
+		var XHR = new XMLHttpRequest()
+		XHR.open("DELETE", path)
+		XHR.onload = function() {
+			if (XHR.status == 200 && XHR.response && JSON.parse(XHR.response).success) {
+				obj.parent().addClass("deleting")
+				setTimeout( () => obj.parent().remove(), 500) 
+			}
+		}
+		XHR.send()
+	})
+}
+
+$(attachHandles)	
 
 var submit = function() {
 	var content = editor.getValue()

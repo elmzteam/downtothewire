@@ -1,25 +1,17 @@
 "use strict";
 
-var _fs             = require("fs")
 var path            = require("path")
-
 var config          = require("../config")
 var logger          = require("./logger")
 var deasync         = require("deasync")
 var extend          = require("extend")
 let denodeify       = require("denodeify")
 let routes          = require("./routes")
+let utils           = require("./utils")
+
+let fs              = utils.fs
 
 var RENDER_ROOT_STR = "@"
-
-const fs = {
-	mkdir: denodeify(_fs.mkdir),
-	readdir: denodeify(_fs.readdir),
-	readFile: denodeify(_fs.readFile),
-	rmdir: denodeify(_fs.rmdir),
-	unlink: denodeify(_fs.unlink),
-	writeFile: denodeify(_fs.writeFile)
-}
 
 const pathjoin = path.join;
 
