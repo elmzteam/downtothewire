@@ -14,7 +14,7 @@ module.exports = [
 		cache: true,
 		prerender: ["/"],
 		context: (_, db) =>
-			aggregatePosts(db, { $match: { visible: true }}, { $sort: { timestamp: -1 } }, { $limit: 5 })
+			aggregateSafe(db, { $sort: { timestamp: -1 } }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -36,7 +36,7 @@ module.exports = [
 		prerender: range(5).map((i) => `/archive/${i + 1}`),
 		context: ([_, pageNumber], db) => {
 			pageNumber = parseInt(pageNumber);
-			return aggregatePosts(db, { $match: { visible: true }}, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
+			return aggregateSafe(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -83,7 +83,7 @@ module.exports = [
 				.then((tags) => tags.map((tag) => `/tag/${tag}`))
 		},
 		context: ([_, tag], db) =>
-			aggregatePosts(db, { $match: { visible: true }}, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
+			aggregateSafe(db, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -104,7 +104,7 @@ module.exports = [
 		cache: true,
 		prerender: Object.keys(config.adminInfo).map((author) => `/author/${author}`),
 		context: ([_, author], db) =>
-			aggregatePosts(db, { $match: { visible: true }}, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
+			aggregateSafe(db, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
 					posts.forEach((post) => post.short = true);
@@ -194,7 +194,7 @@ module.exports = [
 		mime: "application/xml",
 		prerender: ["/rss"],
 		context: (_, db) =>
-			aggregatePosts(db, { $match: { visible: true }}, {$sort: {timestamp: -1}}, {$limit: 20})
+			aggregateSafe(db, {$sort: {timestamp: -1}}, {$limit: 20})
 				.then(fillAuthorInfo(db))
 				.then(buildSyndicate(db))
 	},
@@ -270,6 +270,10 @@ function buildSyndicate(db, num=20) {
 
 function aggregatePosts(db, ...pipeline) {
 	return db.posts.aggregate(...pipeline);
+}
+
+function aggregateSafe(db, ...pipeline) {
+	return aggregatePosts(db, {$match: { visible: true }}, ...pipeline);
 }
 
 function range(a, b) {

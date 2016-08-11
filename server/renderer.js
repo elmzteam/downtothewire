@@ -95,7 +95,7 @@ module.exports = class Renderer {
 				logger.ok(`Pulled ${path} from cache`);
 				let mime = route.mime || "text/html"
 				if (res !== undefined) {
-					res.type(mime); // TODO
+					res.type(mime);
 					res.send(content);
 				}
 			})
@@ -124,7 +124,7 @@ module.exports = class Renderer {
 					.then((content) => { // the render succeeded
 						if (res !== undefined) {
 							logger.ok(`Sending ${path}`);
-							res.type(mime); // TODO
+							res.type(mime);
 							res.send(content);
 						}
 
