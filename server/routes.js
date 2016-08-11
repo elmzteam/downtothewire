@@ -166,7 +166,7 @@ module.exports = [
 		page: "files.hbs",
 		cache: false,
 		context: (_, db) =>
-			aggregatePosts(db, { $match: { visible: true }}, { $sort: { timestamp: -1 } })
+			aggregateSafe(db, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => ({
 					posts,
