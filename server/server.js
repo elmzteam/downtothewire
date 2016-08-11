@@ -180,11 +180,9 @@ module.exports = function(__dirname) {
 		} else {
 			return db.posts.update({ guid }, {
 				$set: {
-					title: {
-						text: body.title
-					},
-					content: body.content,
-					tags: body.tags
+					"title.text": body.title,
+					"content": body.content,
+					"tags": body.tags
 				}
 			});
 		}
