@@ -52,7 +52,7 @@ header {
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}
-	
+
 	a,
 	a:hover {
 		color: $color-white;
@@ -358,30 +358,34 @@ button {
 }
 
 @media only screen and (max-device-width: $width-small) {
+	html.editor {
+		header {
+			position: static;
+			margin-bottom: 4px;
+		}
+		main {
+			margin: 0;
+		}
+	}
+
 	body {
 		display: flex;
 		flex-flow: column nowrap;
 	}
 
 	header {
-		position: relative;
-		height: 8rem;
+		height: 4rem;
 
 		&>h1 {
-			font-size: 4rem;
+			font-size: 1.6rem;
 		}
-	}
-
-	#theme-switcher {
-		font-size: 4rem;
-		padding: 1rem;
 	}
 
 	main {
 		display: flex;
 		flex-flow: column nowrap;
 		flex-grow: 1;
-		margin: 0;
+		margin: 4rem 0px 0px;
 		box-shadow: none;
 		width: 100%;
 		height: auto;
@@ -404,32 +408,7 @@ button {
 	#editor {
 		flex-grow: 1;
 		height: auto;
-		font-size: 2.5rem;
-	}
-
-	#submit {
-		display: block;
-		box-shadow: none;
-		background-color: transparent;
-		color: #2196F3;
-		font-size: 3rem;
-		padding: 1rem 0;
-		width: 100%;
-		font-weight: bold;
-
-		&:hover,
-		&:active {
-			color: #2196F3;
-			box-shadow: none;
-		}
-
-		&:hover {
-			background-color: transparent;
-		}
-
-		&:active {
-			background-color: rgba(0, 0, 0, 0.1);
-		}
+		min-height: 5rem;
 	}
 }
 
