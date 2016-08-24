@@ -35,6 +35,7 @@ header {
 	margin: 0;
 	padding: 0 2rem;
 	transition: background-color 0.2s $transition-timing, box-shadow .2s $transition-timing;
+	z-index: 20;
 
 	.dark & {
 		background-color: $color-primary-vdark;
@@ -51,7 +52,7 @@ header {
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}
-	
+
 	a,
 	a:hover {
 		color: $color-white;
@@ -61,20 +62,23 @@ header {
 	dttw-icon.material-icons {
 		font-size: 24px;
 		display: block;
-		border-radius: 50%;
 		flex-grow: 0;
 		flex-shrink: 0;
-		padding: 5px;
-		cursor: pointer;
 		user-select: none;
 		-webkit-tap-highlight-color: rgba(0,0,0,0);
 		-webkit-tap-highlight-color: transparent;
 		margin: 0px .4em;
+	}
+}
+a > dttw-icon {
+	border-radius: 50%;
+	padding: 5px;
+	cursor: pointer;
+	transition: background-color 200ms $transition-timing;
 
-		&:active {
-			background-color: rgba(0, 0, 0, 0.1);
-			color: darken(white, 10%);
-		}
+	&:active {
+		background-color: rgba(0, 0, 0, 0.1);
+		color: darken(white, 10%);
 	}
 }
 
@@ -133,6 +137,66 @@ main {
 			font-style: italic;
 		}
 	}
+
+	.file-item {
+		transition: height 200ms $transition-timing;
+		overflow-y: hidden;
+
+		&.deleting {
+			height: 0px;
+		}
+	}
+}
+
+.uploader {
+	width: 80ch;
+	height: 4ch;
+	margin: auto;
+	display: flex;
+	
+	* {
+		&.upload-name {
+			flex-grow: 1;
+			border: 1px solid $color-divider;
+			border-bottom: 0px;
+			box-shadow: 0px 4px $color-drop-shadow;
+			background-color: $color-white; 
+
+			margin-left: 10px;
+			padding: 0.4em 1em;;
+			padding-left: 10px;
+			padding-right: 10px;
+			opacity: 1;
+
+			transition: opacity 200ms $transition-timing;
+
+
+			&.disabled {
+				opacity: 0;
+			}
+		}
+
+		&#upload-trigger {
+			margin-left: 10px;
+		}
+
+		&.upload-launch {
+			background-color: #03A9F4;
+
+			&:hover {
+				background-color: #1E88E5;
+			}
+
+			&:active {
+				background-color: #1976D2;	
+			}
+
+			.material-icons {
+				vertical-align: -0.2ch;
+				font-size: 24px;
+			}
+		}
+	}
 }
 
 #editor {
@@ -144,6 +208,7 @@ main {
 	transition: color 0.2s $transition-timing, background 0.2s $transition-timing, border 0.2s $transition-timing;
 }
 
+a.button, 
 button {
 	@extend %shadowed;
 
@@ -159,6 +224,7 @@ button {
 	-webkit-tap-highlight-color: transparent;
 	font-family: inherit;
 	outline: none;
+	text-decoration: none;
 
 	&:hover, &:active {
 		color: $color-white;
@@ -173,7 +239,8 @@ button {
 	}
 }
 
-.post {
+.post,
+.file-item {
 	height: 4em;
 	width: 100%;
 	display: flex;
@@ -218,12 +285,13 @@ button {
 		overflow: hidden;
 	}
 
+	.left-elem,
+	.right-elem,
 	#view,
 	#edit {
 		font-size: 24px;
 		margin-left: .4em;
 		color: $color-text-main;
-		transition: color 200ms $transition-timing;
 		flex-shrink: 0;
 
 		.dark & {
@@ -231,36 +299,93 @@ button {
 		}
 	}
 
+	.right-elem,
 	#edit {
 		margin-right: .4em;
 	}
+
+	.delete-path {
+		height: 100%;
+		display: flex;
+		justify-content: space-around;
+		flex-direction: column;
+		transition: background-color 400ms $transition-timing;
+
+		dttw-icon {
+			transition: color 400ms $transition-timing;
+		}
+
+		&[confirming=true] {
+			background-color: #f44336;
+
+			dttw-icon {
+				color: white;
+			}
+		}
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+	.copy-path {
+		position: relative;
+		cursor: pointer;
+
+		&:after {
+			content: "Copied";
+			position: absolute;
+			background: $color-text-main;
+			color: $color-white;
+			font-size: .8em;
+			padding: .1em .4em;
+			left: 50%;
+			transform: translateX(-50%);
+			transition: 600ms opacity, 600ms bottom;
+			opacity: 0;
+			bottom: 100%;
+		}
+
+		&.copied:after {
+			transition: 0ms opacity, 0ms bottom;
+			opacity: 1;
+			bottom: 50%;
+		}
+	}
+}
+
+.file-item:first-child {
+	display: none;
 }
 
 @media only screen and (max-device-width: $width-small) {
+	html.editor {
+		header {
+			position: static;
+			margin-bottom: 4px;
+		}
+		main {
+			margin: 0;
+		}
+	}
+
 	body {
 		display: flex;
 		flex-flow: column nowrap;
 	}
 
 	header {
-		position: relative;
-		height: 8rem;
+		height: 4rem;
 
 		&>h1 {
-			font-size: 4rem;
+			font-size: 1.6rem;
 		}
-	}
-
-	#theme-switcher {
-		font-size: 4rem;
-		padding: 1rem;
 	}
 
 	main {
 		display: flex;
 		flex-flow: column nowrap;
 		flex-grow: 1;
-		margin: 0;
+		margin: 4rem 0px 0px;
 		box-shadow: none;
 		width: 100%;
 		height: auto;
@@ -283,32 +408,7 @@ button {
 	#editor {
 		flex-grow: 1;
 		height: auto;
-		font-size: 2.5rem;
-	}
-
-	#submit {
-		display: block;
-		box-shadow: none;
-		background-color: transparent;
-		color: #2196F3;
-		font-size: 3rem;
-		padding: 1rem 0;
-		width: 100%;
-		font-weight: bold;
-
-		&:hover,
-		&:active {
-			color: #2196F3;
-			box-shadow: none;
-		}
-
-		&:hover {
-			background-color: transparent;
-		}
-
-		&:active {
-			background-color: rgba(0, 0, 0, 0.1);
-		}
+		min-height: 5rem;
 	}
 }
 
@@ -346,4 +446,8 @@ input[type="checkbox"] {
 	&:checked + label:after {
 		content: "check_box";
 	}
+}
+
+.invisible {
+	opacity: 0;
 }

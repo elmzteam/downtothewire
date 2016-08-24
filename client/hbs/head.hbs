@@ -4,9 +4,10 @@
 	<meta name="msapplication-TileColor" content="#E53935">
 	<meta property="og:image" content="http://dttw.tech/images/icon_large.jpg">
 	<meta property="og:title" content="{{#if postinf.title.text}}{{postinf.title.text}}{{else}}Down to the Wire{{/if}}">
-	<meta property="og:description" content="{{#if this.desc}}{{this.desc}}{{else}}Down to the Wire is a collaborative project hosted by a group of students across the country. Topics range from hardware to software to security.{{/if}}"> 
+	<meta property="og:description" content="{{#if this.desc}}{{this.desc}}{{else}}Down to the Wire is a collaborative project hosted by a group of students across the country. Topics range from hardware to software to security.{{/if}}">
 	<meta property="og:type" content="article">
-	<!--meta property="article:author" content="100006401946800"--> <!-- Waiting until I get everyone's gid and approval -->
+	<!--meta property="article:author" content="100006401946800"-->
+	<!-- Waiting until I get everyone's gid and approval -->
 	<meta property="article:publisher" content="dttwtech">
 	<link rel="manifest" href="/manifest.json">
 	<link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
@@ -18,22 +19,24 @@
 	<link rel="apple-touch-icon" sizes="144x144" href="/images/apple-icon-144x144.png">
 	<link rel="apple-touch-icon" sizes="152x152" href="/images/apple-icon-152x152.png">
 	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
-	<link rel="icon" type="image/png" sizes="192x192"  href="/images/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="/images/android-icon-192x192.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
 	<meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
 
 	<!-- JS -->
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	{{#if (and (not admin) (not restricted))}}
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-		ga('create', 'UA-72198191-1', 'auto');
-		ga('send', 'pageview');
-	</script>
+			ga('create', 'UA-72198191-1', 'auto');
+			ga('send', 'pageview');
+		</script>
+	{{/if}}
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 
@@ -46,7 +49,7 @@
 					if (elmt.length) {
 						let range = document.createRange()
 						range.selectNode(elmt[0])
-						
+
 						let selection = window.getSelection()
 						selection.removeAllRanges()
 						selection.addRange(range)
@@ -75,12 +78,13 @@
 
 
 	{{#if admin}}
-	<!-- EDITOR -->
-	<link rel="stylesheet" href="/css/admin.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script src="/js/admin.js"></script>
+		<!-- EDITOR -->
+		<link rel="stylesheet" href="/css/admin.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+		<script src="/js/admin.js"></script>
 	{{/if}}
 
-	<title>DttW{{#if postinf.title.text}}: {{postinf.title.text}}{{/if}}</title>
+	<title>
+		{{#if title}}{{title}} — {{/if}}Down to the Wire</title>
 </head>

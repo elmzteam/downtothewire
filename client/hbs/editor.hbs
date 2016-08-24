@@ -1,39 +1,53 @@
-<html class="admin">
-	{{#if user}}
-	{{set this "admin" true}}
-	{{> head.hbs}}
-	<body>
-		{{#if content}}
-		{{set this "info" (fetchpost content)}}
-		{{/if}}
+<html class="admin editor">
+{{> head.hbs}}
 
+{{#if user}}
+
+	<body>
 		<header>
-			<a href="/admin"><dttw-icon id="back" class="material-icons">arrow_back</dttw-icon></a>
-			
-			{{#if info}}
-			<h1>Editing "{{info.title.text}}"</h1>
+			<a href="/admin">
+				<dttw-icon id="back" class="material-icons">arrow_back</dttw-icon>
+			</a>
+
+			{{log this}}
+
+			{{#if post}}
+				<h1>Editing "{{post.title.text}}"</h1>
 			{{else}}
-			<h1>Create New Post</h1>
+				<h1>Editing New Post</h1>
 			{{/if}}
 
 			<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
 		</header>
 
 		<main>
-			<input type="text" id="title" {{#if info}}value="{{info.title.text}}"{{/if}} placeholder="Post Title" autocomplete="off" />
-			<div id="editor">{{#if info}}{{fetchcontent info.timestamp}}{{/if}}</div>
-			<input type="text" id="tags" value="{{#if info}}{{#each info.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags"/>
+			<input type="text" id="title" {{#if post}} value="{{post.title.text}}" {{/if}} placeholder="Post Title" autocomplete="off" />
+			<div id="editor">{{#if post}}{{post.content}}{{/if}}</div>
+			<input type="text" id="tags" value="{{#if post}}{{#each post.tags}}{{this}} {{/each}}{{/if}}" placeholder="Tags" />
 
 			<footer>
 				<span id="status"></span>
-				<input id="visible" type="checkbox" {{#if info}}{{#if info.visible}}checked{{/if}}{{/if}} />
+				<input id="visible" type="checkbox" {{#if post}} {{#if post.visible}} checked {{/if}} {{/if}} />
 				<label for="visible">Visible</label>
-				<button id="submit">{{#if info}}Update{{else}}Save{{/if}}</button>
+				<button id="submit">
+					{{#if post}}Update{{else}}Save{{/if}}
+				</button>
 			</footer>
 		</main>
+		<div class='uploader'>
+			<a href='/files/' target='_blank' class='button upload-launch'>
+				<span>
+					Browse <dttw-icon class='material-icons'>launch</dttw-icon>
+				</span>
+			</a>
+			<button id='upload-trigger' class='upload-button'>Upload New File</button>
+			<div class='upload-name disabled'></div>
+		</div>
+		<form action='/static/' method='POST' class='invisible'>
+			<input type='file' name='file' id='file-upload'>
+		</form>
 	</body>
-
-	{{else}}
-		{{> no-admin.hbs}}
-	{{/if}}
+{{else}}
+	{{> no-admin.hbs}}
+{{/if}}
 </html>

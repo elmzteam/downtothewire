@@ -1,363 +1,175 @@
 "use strict";
 
-var fs              = require("fs")
 var path            = require("path")
-
 var config          = require("../config")
 var logger          = require("./logger")
 var deasync         = require("deasync")
 var extend          = require("extend")
+let denodeify       = require("denodeify")
+let routes          = require("./routes")
+let utils           = require("./utils")
 
-var TEMPLATES_DIR   = path.join(config.paths.client, "/hbs/")
+let fs              = utils.fs
 
 var RENDER_ROOT_STR = "@"
 
-var getTags
-var getPosts
+const pathjoin = path.join;
 
-var compileRoutes = function(db) {
-	var obj = {}
-	obj.routes = {
-		"^/$": {
-			page: "page.hbs",
-			cache: true,
-			index: 0,
-		},
-		"^/page/([0-9]+)$": {
-			page: "page.hbs",
-			cache: true,
-			groups: ["index"]
-		},
-		"^/editor(/([0-9]*))?$": {
-			page: "editor.hbs",
-			cache: false,
-			groups: ["null", "content"]
-		},
-		"^/tags/([a-z0-9\-]{1,16})$": {
-			page: "page.hbs",
-			cache: true,
-			groups: ["currtag"]
-		},
-		"^/author/([a-zA-Z]{1,16})$": {
-			page: "page.hbs",
-			cache: true,
-			groups: ["activename"]
-		},
-		"^/posts/([0-9]{13})$": {
-			page: "page.hbs",
-			cache: true,
-			groups: ["post"],
-			single: true
-		},
-		"^/preview/([0-9]{13})$": {
-			page: "page.hbs",
-			cache: false,
-			groups: ["post"],
-			single: true,
-			restricted: true,
-		},
-		"^/raw/([0-9]{13})$": {
-			page: "raw.hbs",
-			cache: true,
-			groups: ["post"]
-		},
-		"^/admin/?$": {
-			page: "admin.hbs",
-			cache: false,
-		},
-		"^/rss/?$": {
-			page: "rss.hbs",
-			cache: true,
-			mime: "text/xml"
-		},
-		"^/contact/?$":  {
-			page: "single.hbs",
-			cache: true,
-			contact: true
-		},
-		"^/about/?$":  {
-			page: "single.hbs",
-			cache: true,
-			about: true
-		},
-		"^/404$": {
-			page: "single.hbs",
-			cache: true,
-			fourohfour: true
-		},
-		"^/manifest.json$": {
-			page: "manifest.json",
-			cache: true,
-			mime: "application/json"
+module.exports = class Renderer {
+	constructor(dirname, db, hbs) {
+		this.TEMPLATE_DIR = pathjoin(dirname, config.paths.templates)
+		this.RENDER_DIR = pathjoin(dirname, config.paths.render);
+
+		this.db = db;
+		this.templates = {};
+		this.hbs = hbs;
+
+		this.reload();
+	}
+
+	// Express middleware handler
+	handle(req, res, next) {
+		logger.info(`Querying renderer for ${req.originalUrl}`);
+		let route = routes.find((route) => route.path.test(req.originalUrl));
+
+		if (req.method !== "GET" || route === undefined) {
+			logger.warn(`Exiting renderer`);
+			next();
+			return;
 		}
-	}
-	obj.prerender = [
-		{path: "/", options: null},
-		{path: "/page/{0}", options: {groups: [
-			{
-				range: {start: 0, end: 5}
-			}
-		]}},
-		{path: "/tags/{0}", options: {groups: [
-			{
-				each: getTags(db) 
-			}
-		]}},
-		{path: "/author/{0}", options: {groups: [
-			{
-				each: ((function() {
-					var out = []
-					for (var i in config.adminInfo) {
-						out.push(config.adminInfo[i].handle)
-					}
-					return out 
-				})())
-			}
-		]}},
-		{path: "/posts/{0}", options: {groups: [
-			{
-				each: getPosts(db)
-			}
-		]}},
-		{path: "/raw/{0}", options: {groups: [
-			{
-				each: getPosts(db)
-			}
-		]}},
-		{path: "/rss{0}", options: {groups: [
-			{
-				each: ["","/"]
-			}
-		],
-		}},
-		{path: "/contact{0}", options: {groups: [
-			{
-				each: ["","/"]
-			}
-		],
-		}},
-		{path: "/about{0}", options: {groups: [
-			{
-				each: ["","/"]
-			}
-		],
-		}},
-		{path: "/404", options: null},
-		{path: "/manifest.json", options: null}
-	]
-	return obj
-}
 
-module.exports = function(__dirname, handlebars, db) {
-	var cl = new renderer(__dirname, handlebars, db)
-	return {
-		handle: function(req, res, next) {
-			cl.handle(req, res, next)
-		},
-		reload: function() {
-			cl.clearCache().then(function() {
-				cl.renderAll()
-			}).catch(crash)
-		},
-		fourohfour: function(req, res, next) {
-			cl.fourohfour(req, res, next)
-		}
+		this.renderPath(req.originalUrl, res, req.user);
 	}
-}
 
-var renderer = function(__dirname, handlebars, db) {
-	this.__dirname = __dirname
-	this.handlebars = handlebars
-	this.db = db
-	this.templates = {}
-	this.compiled = {}
-	this.rendered = {}
-	var that = this
-	var comp = function() {
-		that.compileAll().then(function(a) {
-			return that.renderAll() 
-		}).catch(crash)
+	// Clears the render cache, reloads all templates, and prerenders
+	reload() {
+		this.clearCache().then(this.compileAll.bind(this)).then(this.prerender.bind(this)).catch(this.crash);
 	}
-	comp()
-}
 
-renderer.prototype = {
-	renderPath:function(context) {
-		return this.compiled[context.page](context)
-	},
-	clearCache: function() {
-		var that = this
-		return denodeify(fs.readdir, [path.join(that.__dirname,config.paths.render)]).then(function(files) {
-			var regex = new RegExp("^" + RENDER_ROOT_STR + ".*$")
-			var promises = []
-			for (var i = 0; i < files.length; i++) {
-				if (files[i].match(regex)) {
-					logger.info("[render] Clearing "+files[i])
-					promises.push(
-						denodeify(fs.unlink, [path.join(that.__dirname, config.paths.render, files[i])])
-					)
+	// Compiles all templates in the template directory and caches them locally
+	compileAll() {
+		logger.info("Compiling all");
+		return fs.readdir(this.TEMPLATE_DIR)
+			.then((files) =>
+				Promise.all(files.map((file) => fs.readFile(pathjoin(this.TEMPLATE_DIR, file)).then((contents) =>
+					({file, contents: contents.toString()})))))
+			.then((files) =>
+				files.forEach(({file, contents}) => {
+					this.templates[file] = this.hbs.compile(contents, { preventIndent: true });
+					this.hbs.registerPartial(file, contents);
+				}))
+			.catch(this.crash);
+	}
+
+	// Clears the cache of rendered pages
+	clearCache() {
+		return fs.mkdir(this.RENDER_DIR) // in case the dir doesn't exist, create it to prevent failure
+			.catch(() => undefined) // if it existed, catch the error
+			.then(() => fs.readdir(this.RENDER_DIR))
+			.then((files) => Promise.all(files.map((file) => fs.unlink(pathjoin(this.RENDER_DIR, file)))));
+	}
+
+	// Prerenders all pages specified in routes
+	prerender() {
+		return Promise.all(routes.filter((route) => route.prerender !== undefined)
+				.map((route) => reduceToPromise(route.prerender, this.db)))
+			.then((paths) => paths.reduce((a, b) => a.concat(b), []))
+			.then((paths) => paths.forEach((path) => this.renderPath(path))); // todo: fix scoping?
+	}
+
+	// Renders a single path, pulling from the cache if available, and storing in the cache if allowed
+	renderPath(path, res, user) {
+		logger.info(`Rendering ${path}`);
+		let cachePath = this.getCachePath(path);
+
+		fs.readFile(cachePath)
+			.then((content) => { // the page was cached
+				let route = routes.find((route) => route.path.test(path));
+
+				if (route === undefined) {
+					logger.error(`Cache polluted with path ${path}`);
+					this.fourohfour(undefined, res, undefined);
+					return;
 				}
-			}
-			return Promise.all(promises)
-		})
-	},
-	compileAll: function() {
-		var that = this
-		return new Promise(function(resolve, reject) {
-			that.readFiles().then(function(templates) {
-				that.templates = {}
-				that.compiled = {}
-				for (var i = 0; i < templates.length; i++) {
-					that.templates[templates[i].name] = templates[i].data
-					that.handlebars.registerPartial(templates[i].name, templates[i].data)
+
+				logger.ok(`Pulled ${path} from cache`);
+				let mime = route.mime || "text/html"
+				if (res !== undefined) {
+					res.type(mime);
+					res.send(content);
 				}
-				for (var i = 0; i < templates.length; i++) {
-					that.compiled[templates[i].name] = that.handlebars.compile(templates[i].data, {
-						preventIndent: true,
-					})
-				}
-				resolve(that.compiled)
-			}, crash)
-		})
-	},
-	readFiles: function() {
-		var that = this
-		return new Promise(function(resolve, reject) {
-			fs.readdir(path.join(that.__dirname,TEMPLATES_DIR),  function(err, files) {
-				if (err) {
-					crash(err)
-					return
-				}
-				var promises = []
-				for (var i = 0; i < files.length; i++) {
-					promises.push(promiseFile(path.join(that.__dirname, TEMPLATES_DIR), files[i]))
-				}
-				Promise.all(promises).then(resolve, reject)
 			})
-		})
-	},
-	renderAll: function() {
-		var obj = compileRoutes(this.db)
-		this.routes = obj.routes
-		this.prerender = obj.prerender
-		var promises = []
-		for (var p in this.prerender) {
-			if (!this.prerender[p].options || !this.prerender[p].options.groups) {
-				promises.push(this.renderPage(this.prerender[p].path))
-			} else {
-				var groups = this.prerender[p].options.groups
-				for (var i in groups) {
-					if (groups[i].range) {
-						for (var l = groups[i].range.start; l <= groups[i].range.end; l += 1) {
-							var r = new RegExp("\\{"+i+"\\}","g")
-							var url = this.prerender[p].path.replace(r, l)
-							promises.push(this.renderPage(url))
+			.catch(() => { // it's not cached, so we'll render it
+				let route = routes.find((route) => route.path.test(path));
+
+				if (route === undefined) {
+					logger.error(`No route found for ${path}`);
+					this.fourohfour(undefined, res, undefined);
+					return;
+				}
+
+				let params = route.path.exec(path);
+				let options = (route.options || (() => ({ render: {}, serving: {} })))(params);
+
+				let mime = route.mime || "text/html"
+
+				return reduceToPromise(route.context || {}, params, this.db)
+					.then((context) => {
+						logger.info(`Building ${path}`);
+						context.user = user;
+						let content = this.renderPage(route.page, context);
+
+						return content;
+					})
+					.then((content) => { // the render succeeded
+						if (res !== undefined) {
+							logger.ok(`Sending ${path}`);
+							res.type(mime);
+							res.send(content);
 						}
-					}
-					if (groups[i].each) {
-						for (var l = 0; l < groups[i].each.length; l++) {
-							var r = new RegExp("\\{"+i+"\\}","g")
-							var url = this.prerender[p].path.replace(r, groups[i].each[l])
-							promises.push(this.renderPage(url))
+
+						if (route.cache) {
+							logger.ok(`Caching ${path}`);
+							return fs.writeFile(cachePath, content)
+								.then(() => content);
 						}
-					}
-				}
-			}
+					})
+
+			})
+			.catch(this.crash);
+	}
+
+	// Renders a single page with handlebars
+	renderPage(page, options) {
+		return this.templates[page](options);
+	}
+
+	// Debugging function if something goes wrong
+	crash(error) {
+		logger.error(error.stack);
+	}
+
+	// Converts a path to its location in the cache
+	getCachePath(path) {
+		return pathjoin(this.RENDER_DIR, "@" + path.replace(/\/$/, "").replace(/\//g, "."));
+	}
+
+	// Sends a 404
+	fourohfour(req, res, next) {
+		if (res !== undefined) {
+			res.status(404).type("text/html").sendFile(this.getCachePath("/404"));
+		} else if (next !== undefined) {
+			next();
 		}
-		return Promise.all(promises)
-	},
-	renderPage: function(url) {
-		logger.info("[render]", "Rendering", url)
-		var loc = path.join(this.__dirname, config.paths.render)
-		for (var i in this.routes) {
-			var m = url.match(i)
-			if (m) {
-				var context = extend(true, {}, this.routes[i])
-				if (context.cache === false) {
-					return new Promise(function (resolve, reject) {resolve()})	
-				}
-				for (var ind = 1; ind < m.length; ind++) {
-					if (context.groups && (ind-1) < context.groups.length) {
-						context[context.groups[ind-1]] = m[ind]
-					}
-				}
-				var out = this.renderPath(context)
-				var written = RENDER_ROOT_STR + url.replace(/\//g,".")
-				logger.info("[render]", "Caching", url)
-				return denodeify(fs.writeFile, [path.join(loc, written), out])
-			}
-		}
-	},
-	handle: function(req, res, next) {
-		var that = this;
-		for (var i in this.routes) {
-			var m = req.originalUrl.match(i)
-			if (m && req.method == "GET") {
-				var context = extend(true, {}, this.routes[i])
-				if (context.cache === true) {
-					var written = RENDER_ROOT_STR + req.originalUrl.replace(/\//g,".")
-					res.type(context.mime || "text/html")
-					promiseFile(path.join(this.__dirname, config.paths.render), written).then(function(val) {
-						res.send(val.data)
-					}, function(err) {
-						that.fourohfour(req, res, next)
-					}).catch(crash)
-					return 
-				} else {
-					for (var ind = 1; ind < m.length; ind++) {
-						if (context.groups && (ind-1) < context.groups.length) {
-							context[context.groups[ind-1]] = m[ind]
-						}
-					}
-					if (req.user) context.user = req.user
-					var out = this.renderPath(context)
-					res.send(out)
-					return
-				}
-			}
-		}
-		next()
-	},
-	fourohfour: function(req, res, next) {
-		var loc = path.join(this.__dirname, config.paths.render)
-		//Inelegent, but best I could come up with in my tired state
-		promiseFile(loc, RENDER_ROOT_STR+".404").then(function(file) {
-			res.status(404)
-			res.send(file.data)
-		}).catch(function(err) {
-			res.status(666) // this is not a valid http code.  please resubmit.
-			logger.error("[error]", "Error:", err)
-			res.send("Error Recursion too deep. Please brace for the apocalypse.")
-		}).catch(crash)
 	}
 }
 
-var crash = function(err) {
-	logger.error(err.stack || err)
-}
+function reduceToPromise(val, ...args) {
+	while (typeof val == "function") {
+		val = val(...args);
+	}
 
-var promiseFile = function(dir, filename) {
-	logger.info("[file-request]", dir, filename)
-	return new Promise(function(resolve, reject) {
-		fs.readFile(path.join(dir, filename), function(err, file) {
-			if (err) {
-				console.log("error")
-				reject(err)
-			} else {
-				resolve({name: filename, data: file.toString()})
-			}
-		})
-	})
-}
-
-var denodeify = function(fn, args) {
-	return new Promise(function(resolve, reject) {
-		args[args.length] = (function(err, data) {
-			if (err) reject(err || "No Data")
-			else resolve(data)
-		})
-		fn.apply(fn,args)
-	})
+	return Promise.resolve(val);
 }
 
 var getTags = function(db) {
@@ -372,7 +184,7 @@ var getPosts = function(db, all) {
 	return deasync(function(cb) {
 		var query = {}
 		if (!all) query.visible = true
-		db.posts.distinct("timestamp", query, function(err, data) {
+		db.posts.distinct("guid", query, function(err, data) {
 			cb(err, data)
 		})
 	})()

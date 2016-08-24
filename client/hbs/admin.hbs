@@ -1,30 +1,32 @@
 <html class="admin">
-	{{#if user}}
-	{{set this "admin" true}}
-	{{> head.hbs}}
+{{> head.hbs}}
 
+{{#if user}}
 	<header>
 		<h1>Posts</h1>
-		<a href="/editor"><dttw-icon id="new" class="material-icons">note_add</dttw-icon></a>
+		<a href="/editor">
+			<dttw-icon id="new" class="material-icons">note_add</dttw-icon>
+		</a>
 		<dttw-icon id="theme-switcher" class="material-icons">invert_colors</dttw-icon>
 	</header>
 
 	<main>
-		{{#each (allPosts)}}
-		<div class="post">
-			<span post="{{timestamp}}" visible="{{visible}}" class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
+		{{#each posts}}
+			<div class="post">
+				<span post="{{guid}}" visible="{{visible}}" class="status-bar {{#if visible}}visible{{else}}hidden{{/if}}"></span>
 
-			{{#with (getAuthorInfo author)}}
-			<img class="author-image small" src="{{image.url}}" />
-			{{/with}}
+				{{#with author}}
+					<img class="author-image small" src="{{image.url}}" />
+				{{/with}}
 
-			<span class="title">{{title.text}}</span>
-			<a href="/preview/{{timestamp}}"><dttw-icon class="material-icons" id="view">pageview</dttw-icon></a>
-			<a href="/editor/{{timestamp}}"><dttw-icon class="material-icons" id="edit">edit</dttw-icon></a>
-		</div>
+				<span class="title">{{title.text}}</span>
+				<a href="/preview/{{guid}}"><dttw-icon class="material-icons" id="view">pageview</dttw-icon></a>
+				<a href="/editor/{{guid}}"><dttw-icon class="material-icons" id="edit">edit</dttw-icon></a>
+			</div>
 		{{/each}}
 	</main>
-	{{else}}
-		{{> no-admin.hbs}}
-	{{/if}}
+{{else}}
+	{{> no-admin.hbs}}
+{{/if}}
+
 </html>

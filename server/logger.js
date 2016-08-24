@@ -16,6 +16,10 @@ var info = function(){
 	write("info", arguments, "blue")
 }
 
+var ok = function(){
+	write("info", arguments, "green")
+}
+
 var warn = function(){
 	write("warn", arguments, "yellow")
 }
@@ -28,5 +32,6 @@ module.exports = {
 	log: log,
 	info: info,
 	warn: warn,
-	error: error
-} 
+	error: error,
+	ok: ok
+}

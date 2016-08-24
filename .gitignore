@@ -81,4 +81,6 @@ posts
 # Mongo Data
 data
 
+# Upload Info
+upload
 .init

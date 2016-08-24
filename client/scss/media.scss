@@ -1,13 +1,5 @@
 @import "vars";
 @media (max-width: $width-small) {
-	content-row>aside {
-		display: none;
-	}
-	content-row {
-		display: block;
-		overflow-wrap: break-word;
-	}
-
 	html:not(.admin)>body>header {
 		flex-direction: column;
 
@@ -18,26 +10,57 @@
 		&>a {
 			padding: 0px;
 			justify-content: center;
-			
+
 			h1 {
 				width: auto;
+				font-size: 12vw;
 			}
 
 			&:after {
 				display: none;
 			}
 		}
-		
+
 		nav {
 			padding: 0px;
 			justify-content: center;
 			border-bottom-color: $color-text-main;
 			width: 100%;
 			margin-left: 0px;
+
+			a {
+				width: 5.6em;
+				display: inline-block;
+				text-align: center;
+
+				.nav-item {
+					padding: 0px .4em;
+				}
+			}
 		}
 	}
-	
-	content-row main article .author-image {
-		display: none;
+
+	content-row {
+		display: block;
+		overflow-wrap: break-word;
+
+		&>aside {
+			display: none;
+		}
+
+		main article {
+			.author-image {
+				display: none;
+			}
+
+			aside {
+				position: static;
+				transform: none;
+				width: auto;
+				margin-bottom: 1em;
+				background: transparent;
+				border-bottom: none;
+			}
+		}
 	}
 }
