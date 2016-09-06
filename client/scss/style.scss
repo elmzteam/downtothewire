@@ -132,6 +132,10 @@ content-row {
 			background: $color-content-background;
 			margin-bottom: 2em;
 
+			img {
+				max-width: 100%;
+			}
+
 			&:last-child {
 				margin-bottom: 0px;
 			}
