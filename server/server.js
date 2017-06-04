@@ -37,6 +37,8 @@ module.exports = function(__dirname) {
 	var utils       = require("./utils")
 	var fs          = utils.fs
 
+	var secret      = process.env.PASSPORT_SECRET ? process.env.PASSPORT_SECRET : "testsecret"
+
 	var renderer = new Renderer(__dirname, db, handlebars);
 
 	/**
@@ -46,7 +48,7 @@ module.exports = function(__dirname) {
 	app.use(morgan("dev"))
 	app.use(cookie())
 	app.use(body.json())
-	app.use(session({ secret: 'temporarysecret', store: new MongoStore({
+	app.use(session({ secret: secret, store: new MongoStore({
 		url: "mongodb://localhost/bydesign"
 	}),
 		resave: true,
