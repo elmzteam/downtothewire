@@ -207,11 +207,11 @@ module.exports = function(__dirname) {
 	passport.serializeUser(function(user, done) {
 		db.authors.findOne({"id": user.id})
 			.then((data) => {
-				if (data !== undefined) {
+				if (data !== undefined && data !== null) {
 					user._json.image.url = user._json.image.url.replace(/sz=50$/, "sz=576");
 					return db.authors.update({"id": user.id}, user).then(() => done(undefined, JSON.stringify(user)));
 				} else {
-					return db.authors.insert(user, () => done(undefined, JSON.stringify(user)))
+					return db.authors.insert(user).then(() => done(undefined, JSON.stringify(user)))
 				}
 		})
 			.catch((err) => done(err, JSON.stringify(user)))
