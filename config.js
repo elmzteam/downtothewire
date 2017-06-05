@@ -1,4 +1,6 @@
 var handlebars = require("handlebars")
+
+//Zach: I'd really like to see most of these options be dynamically configurable
 module.exports = {
 	admins: [
 		"zacharywade@gmail.com",
@@ -24,5 +26,20 @@ module.exports = {
 		templates: "client/hbs",
 		upload: "upload"
 	},
+	categories: {
+		[{
+			name: "Technology",
+			shortname: "Tech",
+		}, {
+			name: "Creative Writing",
+			shortname: "Writing",
+		}, {
+			name: "Opinion Pieces",
+			shortname: "Op-Ed",
+		}, {
+			name: "Miscellaneous",
+			shortname: "Misc",
+		}]
+	}
 	adminInfo: require("./users.js")
 }
