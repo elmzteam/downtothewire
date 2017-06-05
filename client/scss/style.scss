@@ -183,6 +183,15 @@ content-row {
 						font-size: 1.28em;
 					}
 				}
+
+				.category {
+					font-size: .6em;
+					font-weight: 800;
+					font-style: italic;
+					text-transform: uppercase;
+					margin-left: .4em;
+					// color: $color-page-background;
+				}
 			}
 
 			time {
@@ -325,13 +334,14 @@ content-row {
 			}
 
 			aside {
-				position: absolute;
-				left: calc(100% + 32px);
+				// position: absolute;
+				// left: calc(100% + 32px);
+				float: right;
 				width: 240px;
 				background: $color-content-background;
 				padding: 8px;
-				border-bottom: 2px solid $color-drop-shadow;
-				transform: translateY(-50%);
+				// border-bottom: 2px solid $color-drop-shadow;
+				// transform: translateY(-50%);
 
 				.border {
 					padding: 8px;
@@ -493,6 +503,16 @@ a {
 	text-decoration: none;
 	border-radius: 4px;
 	margin: 0px .4em 0px 0px;
+
+	background: $color-text-main !important;
+	color: $color-white;
+
+	.count {
+		background: $color-primary;
+		margin: 0px -.4em 0px .4em;
+		padding: .1em .4em;
+		border-radius: 0px 4px 4px 0px;
+	}
 }
 
 button.pagination {

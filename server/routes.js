@@ -7,6 +7,9 @@ let path      = require("path")
 let RSS       = require("rss")
 let md        = require("./markdown")
 
+let tags = [];
+let categories = [];
+
 module.exports = [
 	{
 		path:/^\/$/,
@@ -21,6 +24,7 @@ module.exports = [
 					return db.posts.count()
 						.then((count) => ({
 							title: "",
+							categories,
 							posts,
 							pagination: {
 								right: count > 5 ? "/archive/2" : undefined
@@ -43,6 +47,7 @@ module.exports = [
 					return db.posts.count()
 						.then((count) => ({
 							title: "",
+							categories,
 							posts,
 							pagination: {
 								left: pageNumber > 1 ? `/archive/${pageNumber - 1}` : undefined,
@@ -63,12 +68,14 @@ module.exports = [
 					if (post != undefined) {
 						return {
 							title: `Editing "${post.title}"`,
+							categories,
 							post,
 							admin: true
 						}
 					} else {
 						return {
 							title: `Editing New Post`,
+							categories,
 							admin: true
 						}
 					}
@@ -89,6 +96,7 @@ module.exports = [
 					posts.forEach((post) => post.short = true);
 					return {
 						title: `Tagged "${tag}"`,
+						categories,
 						posts: posts,
 						filter: {
 							type: "tag",
@@ -110,6 +118,7 @@ module.exports = [
 					posts.forEach((post) => post.short = true);
 					return {
 						title: `Posts by ${users[author].name}`,
+						categories,
 						posts: posts,
 						filter: {
 							type: "author",
@@ -132,6 +141,7 @@ module.exports = [
 				.then(fillAuthorInfo(db))
 				.then((post) => ({
 						title: post.title.text,
+						categories,
 						posts: [post]
 					}))
 	},
@@ -146,6 +156,7 @@ module.exports = [
 					post.hideComments = true;
 					return {
 						title: post.title.text,
+						categories,
 						posts: [post]
 					};
 				})
@@ -203,14 +214,20 @@ module.exports = [
 		page: "contact.hbs",
 		cache: true,
 		prerender: ["/contact"],
-		context: { users }
+		context: {
+			categories,
+			users
+		}
 	},
 	{
 		path:/^\/about\/?$/,
 		page: "about.hbs",
 		cache: true,
 		prerender: ["/about"],
-		context: { users }
+		context: {
+			categories,
+			users
+		}
 	},
 	{
 		path:/^\/404$/,
@@ -228,6 +245,22 @@ module.exports = [
 		prerender: ["/manifest.json"]
 	}
 ];
+
+module.exports.loadGlobalData = function(db) {
+	let tagPrm = db.posts
+		.aggregate(
+			{ $project: { _id: true, tags: true } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $match: { count: { $gt: 1 } } }
+		).then((data) => tags = data);
+
+	let catPrm = db.posts
+		.distinct("category")
+		.then((data) => categories = data);
+
+	return Promise.all([tagPrm, catPrm]);
+}
 
 function fillAuthorInfo(db) {
 	return (posts) => {
@@ -249,21 +282,21 @@ function fillAuthorInfo(db) {
 
 function buildSyndicate(db, num=20) {
 	return (posts) => {
-		var feed = new RSS(config.rssInfo)		
-			
-		for(var i = 0; i < posts.length; i++){		
-			feed.item({		
-				title: posts[i].title.text,		
-				description: md.render(posts[i].content),		
-				url: config.rssInfo.site_url + posts[i].title.url,		
-				guid: posts[i].guid,		
-				categories: posts[i].tags,		
-				author: posts[i].author.displayName,		
-				date: posts[i].timestamp		
-			})		
-		}		
-				
-		return {rss: feed.xml()}	
+		var feed = new RSS(config.rssInfo)
+
+		for(var i = 0; i < posts.length; i++){
+			feed.item({
+				title: posts[i].title.text,
+				description: md.render(posts[i].content),
+				url: config.rssInfo.site_url + posts[i].title.url,
+				guid: posts[i].guid,
+				categories: posts[i].tags,
+				author: posts[i].author.displayName,
+				date: posts[i].timestamp
+			})
+		}
+
+		return {rss: feed.xml()}
 	}
 
 }
@@ -286,23 +319,21 @@ function range(a, b) {
 }
 
 function fillDefaultSidebar(db) {
-	return (context) =>
-		db.posts.distinct("tags")
-			.then((tags) => {
-				context.sidebar = [
-					{
-						title: "Authors",
-						type: "authors",
-						authors: Object.keys(users).map((name) => users[name])
-					},
-					{
-						title: "Tags",
-						type: "tags",
-						tags
-					}
-				];
-				return context;
-			})
+	return (context) => {
+		context.sidebar = [
+			{
+				title: "Authors",
+				type: "authors",
+				authors: Object.keys(users).map((name) => users[name])
+			},
+			{
+				title: "Tags",
+				type: "tags",
+				tags
+			}
+		];
+		return context;
+	};
 }
 
 var getStats = (base) => (file) =>

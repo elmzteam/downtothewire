@@ -11,7 +11,7 @@
 
 				{{else if (eq type "tags")}}
 				{{#each tags}}
-					{{tag this}}
+					{{tagWithCount _id count}}
 				{{/each}}
 
 			{{else}}

@@ -7,14 +7,10 @@
 		</h1>
 	</a>
 	<nav>
-		<a href="/">
-			<div class="nav-item">Home</div>
-		</a>
-		<a href="/about">
-			<div class="nav-item">About</div>
-		</a>
-		<a href="/contact">
-			<div class="nav-item">Contact</div>
-		</a>
+		{{#each categories}}
+			<a href="/category/{{this}}">
+				<div class="nav-item">{{this}}</div>
+			</a>
+		{{/each}}
 	</nav>
 </header>

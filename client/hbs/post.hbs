@@ -1,9 +1,17 @@
 <article>
+	<h1>
 	{{#if title.url}}
-		<h1><a class="no-display" href="{{title.url}}">{{title.text}}</a></h1>
+		<a class="no-display" href="{{title.url}}">{{title.text}}</a>
 	{{else}}
-		<h1>{{title.text}}</h1>
+		{{title.text}}
 	{{/if}}
+	<span class="category">
+		in
+		{{#each category}}{{#if @first}}<a href="/category/{{this}}" class="no-display">{{this}}</a>{{else}}, <a href="/category/{{this}}" class="no-display">{{this}}</a>{{/if}}{{else}}
+			<a href="/category/other" class="no-display">Other</a>
+		{{/each}}
+	</span>
+	</h1>
 
 	<time>{{formatTime timestamp}}</time>
 

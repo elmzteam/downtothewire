@@ -43,7 +43,13 @@ module.exports = function(handlebars, root) {
 
 	handlebars.registerHelper("tag", function(tag, options) {
 		return new handlebars.SafeString(
-			sprintf("<a class='tag' href='/tag/%s' style='background-color: %s;'>%s</a>", tag, hashStringToColor(tag), tag)
+			`<a class='tag' href='/tag/${tag}' style='background-color: ${hashStringToColor(tag)};'>${tag}</a>`
+		)
+	})
+
+	handlebars.registerHelper("tagWithCount", function(tag, count, options) {
+		return new handlebars.SafeString(
+			`<a class='tag' href='/tag/${tag}' style='background-color: ${hashStringToColor(tag)};'>${tag}<span class="count">${count}</span></a>`
 		)
 	})
 

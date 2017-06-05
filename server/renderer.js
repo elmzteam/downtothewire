@@ -43,7 +43,11 @@ module.exports = class Renderer {
 
 	// Clears the render cache, reloads all templates, and prerenders
 	reload() {
-		this.clearCache().then(this.compileAll.bind(this)).then(this.prerender.bind(this)).catch(this.crash);
+		this.clearCache()
+			.then(() => routes.loadGlobalData(this.db))
+			.then(() => this.compileAll())
+			.then(() => this.prerender())
+			.catch(this.crash);
 	}
 
 	// Compiles all templates in the template directory and caches them locally
@@ -170,14 +174,6 @@ function reduceToPromise(val, ...args) {
 	}
 
 	return Promise.resolve(val);
-}
-
-var getTags = function(db) {
-	return deasync(function(cb) {
-		db.posts.distinct("tags", {}, function(err, data) {
-			cb(err, data)
-		})
-	})()
 }
 
 var getPosts = function(db, all) {
