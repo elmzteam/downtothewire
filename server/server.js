@@ -1,4 +1,4 @@
-module.exports = function(__dirname) {
+function start(__dirname) {
 	/**
 	  * Imports and Initializations
 	**/
@@ -268,4 +268,11 @@ module.exports = function(__dirname) {
 	app.listen(3000)
 
 	return app
+}
+
+module.exports = function(__dirname) {
+	var upgrade = require("./upgrade")
+	upgrade()
+	  .then(() => start(__dirname))
+	  .catch(console.error)
 }

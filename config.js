@@ -26,8 +26,8 @@ module.exports = {
 		templates: "client/hbs",
 		upload: "upload"
 	},
-	categories: {
-		[{
+	categories:[
+		{
 			name: "Technology",
 			shortname: "Tech",
 		}, {
@@ -39,7 +39,7 @@ module.exports = {
 		}, {
 			name: "Miscellaneous",
 			shortname: "Misc",
-		}]
-	}
+		}
+	],
 	adminInfo: require("./users.js")
 }
