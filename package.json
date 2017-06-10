@@ -4,6 +4,7 @@
   "description": "Code for the jsby.design blog",
   "main": "index.js",
   "scripts": {
+	  "lint": "eslint .",
     "postinstall": "/bin/sh bin/startup.sh $(pwd)",
     "start": "node index.js"
   },
@@ -55,5 +56,8 @@
     "rss": "^1.2.1",
     "shortid": "^2.2.6",
     "sprintf": "^0.1.5"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0"
   }
 }
