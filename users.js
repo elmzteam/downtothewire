@@ -1,3 +1,4 @@
+/* eslint max-len: off, comma-dangle: [error, always] */
 module.exports = {
 	"ben": {
 		name: "Ben Zhang",
@@ -36,7 +37,7 @@ module.exports = {
 		bio: "<b>Kyle</b> is a Computer Science and Physics double major at University of Illinois at Urbana-Champaign. He enjoys almost everything related computer science and physics, but especially quantum computing and computational physics. In his spare time, he plays video games, swing dances, and plans his quest to take over the world.",
 		gid: "116891590650962784089",
 		fid: "kyle.herndon.90",
-	},	
+	},
 	"matt": {
 		name: "Matthew Savage",
 		handle: "matt",
@@ -59,5 +60,5 @@ module.exports = {
 		bio: "<b>Zach</b> is a student of Computer Science at Carnegie Mellon University. He likes hacking, game development, and has an unhealthy love for javascript. He loves competitions, and frequently participates in hackathons and ctfs. ",
 		gid: "109335746170550705996",
 		fid: "zach.ary.545",
-	}
+	},
 }

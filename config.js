@@ -1,4 +1,5 @@
-var handlebars = require("handlebars")
+// const handlebars = require("handlebars")
+/* eslint camelcase: off, global-require: off, comma-dangle: [error, always] */
 module.exports = {
 	admins: [
 		"zacharywade@gmail.com",
@@ -22,7 +23,7 @@ module.exports = {
 		client: "client",
 		render: "render",
 		templates: "client/hbs",
-		upload: "upload"
+		upload: "upload",
 	},
-	adminInfo: require("./users.js")
+	adminInfo: require("./users.js"),
 }

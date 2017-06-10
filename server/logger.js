@@ -1,30 +1,31 @@
-"use strict";
+"use strict"
 
-var colors = require("colors/safe")
+const colors = require("colors/safe")
 
-var write = function(method, args, color){
-	var msg = []
+const write = function(method, args, color) {
+	const msg = []
 	msg.push.apply(msg, args)
+	// eslint-disable-next-line no-console
 	console[method](colors[color](msg.join(" ")))
 }
 
-var log = function(){
+const log = function() {
 	write("log", arguments, "white")
 }
 
-var info = function(){
+const info = function() {
 	write("info", arguments, "blue")
 }
 
-var ok = function(){
+const ok = function() {
 	write("info", arguments, "green")
 }
 
-var warn = function(){
+const warn = function() {
 	write("warn", arguments, "yellow")
 }
 
-var error = function(){
+const error = function() {
 	write("error", arguments, "red")
 }
 

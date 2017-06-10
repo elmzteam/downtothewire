@@ -1,14 +1,14 @@
-"use strict";
+"use strict"
 
-var SRC     = "client"
-var BUILD   = "build"
+const SRC     = "client"
+const BUILD   = "build"
 
-var es2015  = require("babel-preset-es2015");
-var gulp    = require("gulp")
-var path    = require("path")
-var $       = require("gulp-load-plugins")()
+const es2015  = require("babel-preset-es2015")
+const gulp    = require("gulp")
+const path    = require("path")
+const $       = require("gulp-load-plugins")()
 
-gulp.task("watch", function(){
+gulp.task("watch", function() {
 	gulp.watch(path.join(SRC, "scss/**/*"), ["sass"])
 	gulp.watch(path.join(SRC, "js/**/*"), ["js"])
 	gulp.watch(path.join(SRC, "images/**/*"), ["images"])
@@ -18,12 +18,12 @@ gulp.task("build", ["sass", "js", "images"])
 
 gulp.task("sass", function() {
 	return gulp.src(path.join(SRC, "scss/{style.scss,admin.scss,*.css}"))
-		.pipe($.sass({outputStyle: "compressed"}))
+		.pipe($.sass({ outputStyle: "compressed" }))
 		.pipe($.autoprefixer({
-		browsers: ["last 2 versions", "> 1%"],
-		cascade: false,
-		remove: false
-	}))
+			browsers: ["last 2 versions", "> 1%"],
+			cascade: false,
+			remove: false
+		}))
 		.pipe(gulp.dest(path.join(BUILD, "css")))
 })
 

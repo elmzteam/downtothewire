@@ -1,9 +1,10 @@
 //Probably should move more stuff into here
+/* global db */
 
-var shortid   = require("shortid")
-var logger    = require("./logger")
-var denodeify = require("denodeify")
-var _fs       = require("fs")
+const shortid   = require("shortid")
+// const logger    = require("./logger")
+const denodeify = require("denodeify")
+const _fs       = require("fs")
 
 const fs = {
 	mkdir: denodeify(_fs.mkdir),
@@ -14,23 +15,23 @@ const fs = {
 	writeFile: denodeify(_fs.writeFile),
 	rename: denodeify(_fs.rename),
 	realpath: denodeify(_fs.realpath),
-	stat: denodeify(_fs.stat),
+	stat: denodeify(_fs.stat)
 }
 
-var slugify = function(str) {
+const slugify = function(str) {
 	str = str.replace(/[ \t\n_]+/g, "_")
 	str = str.replace(/[^\w_]+/g, "")
 	return str.toLowerCase()
 }
 
 //Recursive promises, weeee....
-var generateId = function(collection) {
-	let id = shortid.generate();
-	return collection.findOne({guid: id}).then((data) => data ? generateId(db) : id);
+const generateId = function(collection) {
+	const id = shortid.generate()
+	return collection.findOne({ guid: id }).then((data) => (data ? generateId(db) : id))
 }
 
 module.exports = {
 	slugify: slugify,
 	generateId: generateId,
-	fs: fs,
+	fs: fs
 }
