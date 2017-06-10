@@ -1,18 +1,18 @@
 "use strict"
 
-const fail = function(res, msg) {
+function fail(res, msg) {
 	res.status(503)
 	res.send(msg)
 }
 
-const prep = function(res) {
+function prep(res) {
 	return function(data) {
 		res.type("application/json")
 		res.send(data)
 	}
 }
 
-const denodeify = function(fn, args, alt, th) {
+function denodeify(fn, args, alt, th) {
 	return new Promise(function(resolve, reject) {
 		args[args.length] = (function(err, data) {
 			if (err) {
@@ -25,7 +25,7 @@ const denodeify = function(fn, args, alt, th) {
 	})
 }
 
-const apiHandler = function(db) {
+function apiHandler(db) {
 	this.db = db
 }
 

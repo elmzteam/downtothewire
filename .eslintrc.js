@@ -1,10 +1,11 @@
 module.exports = {
 	"env": {
-		"browser": true,
+		"browser": false,
 		"es6": true,
 		"node": true
 	},
 	"extends": "eslint:recommended",
+	"root": true,
 	"rules": {
 		// --init
 		"indent": [
@@ -25,10 +26,13 @@ module.exports = {
 			"never"
 		],
 		// Functional
+		"array-callback-return": "error",
+		"class-methods-use-this": "warn",
 		"eqeqeq": [
 			"error",
 			"always"
 		],
+		"no-alert": "error",
 		"no-eval": "error",
 		"no-useless-escape": "error",
 		"no-useless-return": "error",
@@ -51,11 +55,20 @@ module.exports = {
 		"comma-dangle": "error",
 		"eol-last": "error",
 		"func-call-spacing": "error",
+		"func-style": [
+			"error",
+			"declaration",
+			{ "allowArrowFunctions": true }
+		],
 		"global-require": "error",
 		"key-spacing": "error",
 		"max-len": ["warn", 120],
 		"no-lonely-if": "error",
 		"no-mixed-requires": "error",
+		"no-mixed-spaces-and-tabs": [
+			"error",
+			"smart-tabs"
+		],
 		"no-multiple-empty-lines": "error",
 		"no-negated-condition": "error",
 		"no-trailing-spaces": "error",

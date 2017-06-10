@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint no-console: off */
 
 const denodeify = require("denodeify")
 const _fs       = require("fs")

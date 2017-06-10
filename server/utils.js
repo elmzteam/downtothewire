@@ -1,5 +1,4 @@
-//Probably should move more stuff into here
-/* global db */
+// Probably should move more stuff into here
 
 const shortid   = require("shortid")
 // const logger    = require("./logger")
@@ -18,16 +17,16 @@ const fs = {
 	stat: denodeify(_fs.stat)
 }
 
-const slugify = function(str) {
+function slugify(str) {
 	str = str.replace(/[ \t\n_]+/g, "_")
 	str = str.replace(/[^\w_]+/g, "")
 	return str.toLowerCase()
 }
 
-//Recursive promises, weeee....
-const generateId = function(collection) {
+// Recursive promises, weeee....
+function generateId(collection) {
 	const id = shortid.generate()
-	return collection.findOne({ guid: id }).then((data) => (data ? generateId(db) : id))
+	return collection.findOne({ guid: id }).then((data) => (data ? generateId(collection) : id))
 }
 
 module.exports = {

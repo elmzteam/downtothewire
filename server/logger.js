@@ -2,30 +2,30 @@
 
 const colors = require("colors/safe")
 
-const write = function(method, args, color) {
+function write(method, args, color) {
 	const msg = []
 	msg.push.apply(msg, args)
 	// eslint-disable-next-line no-console
 	console[method](colors[color](msg.join(" ")))
 }
 
-const log = function() {
+function log() {
 	write("log", arguments, "white")
 }
 
-const info = function() {
+function info() {
 	write("info", arguments, "blue")
 }
 
-const ok = function() {
+function ok() {
 	write("info", arguments, "green")
 }
 
-const warn = function() {
+function warn() {
 	write("warn", arguments, "yellow")
 }
 
-const error = function() {
+function error() {
 	write("error", arguments, "red")
 }
 

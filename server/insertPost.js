@@ -14,7 +14,7 @@ const globals = {}
 globals.coll = undefined
 globals.path = undefined
 
-const denodeify = function(fn, args, alt, th) {
+function denodeify(fn, args, alt, th) {
 	return new Promise(function(resolve, reject) {
 		args[args.length] = (function(err, data) {
 			if (err) {
@@ -31,15 +31,15 @@ const denodeify = function(fn, args, alt, th) {
 	})
 }
 
-const fetchData = function() {
+function fetchData() {
 	return denodeify(prompt.get, [["author", "title", "tags", "content"]])
 }
 
-const crash = function(a) {
+function crash(a) {
 	logger.error(a)
 }
 
-const tagCheck = function(tags) {
+function tagCheck(tags) {
 	const re = /^[-a-z0-9]{1,16}$/
 	for (let t = 0; t < tags.length; t++) {
 		if (!re.test(tags[t])) {
@@ -50,7 +50,7 @@ const tagCheck = function(tags) {
 	return tags
 }
 
-const parseData = function(data) {
+function parseData(data) {
 	return new Promise((resolve) => {
 		const time = Date.now()
 		const out = {
@@ -70,14 +70,14 @@ const parseData = function(data) {
 	})
 }
 
-const getFile = function(data) {
+function getFile(data) {
 	return denodeify(fs.readFile, [path.join(process.cwd(), data.content.address)], (content) => {
 		data.content.value = content.toString()
 		return data
 	})
 }
 
-const writeFile = function(data) {
+function writeFile(data) {
 	// eslint-disable-next-line no-console
 	console.log(data.db.guid)
 	return denodeify(fs.writeFile,
@@ -86,17 +86,17 @@ const writeFile = function(data) {
 	)
 }
 
-const saveDatabase = function(data) {
+function saveDatabase(data) {
 	data.db.tags = tagCheck(data.db.tags)
 	return denodeify(globals.coll.insert, [data.db], undefined, globals.coll)
 }
 
-const updateDatabase = function(data) {
+function updateDatabase(data) {
 	data.db.tags = tagCheck(data.db.tags)
 	return denodeify(globals.coll.update, [{ guid: data.db.guid }, { $set: data.db }], undefined, globals.coll)
 }
 
-const insertPost = function(data, coll, path, update) {
+function insertPost(data, coll, path, update) {
 	globals.path = path
 	globals.coll = coll
 	return writeFile(data).then((val) => {

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint no-console: off */
 const mongojs = require("mongojs")
 const db      = mongojs("mongodb://localhost/bydesign", ["authors", "posts"])
 const fs      = require("fs")

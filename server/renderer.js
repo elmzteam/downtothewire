@@ -71,7 +71,10 @@ module.exports = class Renderer {
 
 	// Clears the render cache, reloads all templates, and prerenders
 	reload() {
-		this.clearCache().then(this.compileAll.bind(this)).then(this.prerender.bind(this)).catch(this.crash)
+		this.clearCache()
+			.then(this.compileAll.bind(this))
+			.then(this.prerender.bind(this))
+			.catch(this.crash)
 	}
 
 	// Compiles all templates in the template directory and caches them locally
@@ -79,8 +82,9 @@ module.exports = class Renderer {
 		logger.info("Compiling all")
 		return fs.readdir(this.TEMPLATE_DIR)
 			.then((files) =>
-				Promise.all(files.map((file) => fs.readFile(pathjoin(this.TEMPLATE_DIR, file)).then((contents) =>
-					({ file, contents: contents.toString() })))))
+				Promise.all(files.map((file) => fs.readFile(pathjoin(this.TEMPLATE_DIR, file))
+					.then((contents) => ({ file, contents: contents.toString() }))
+				)))
 			.then((files) =>
 				files.forEach(({ file, contents }) => {
 					this.templates[file] = this.hbs.compile(contents, { preventIndent: true })
@@ -173,7 +177,7 @@ module.exports = class Renderer {
 	}
 
 	// Debugging function if something goes wrong
-	crash(error) {
+	static crash(error) {
 		logger.error(error.stack)
 	}
 

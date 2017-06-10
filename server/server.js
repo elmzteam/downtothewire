@@ -71,7 +71,7 @@ module.exports = function(__dirname) {
 		}
 	}
 
-	const handleVisibility = function(visible, guid) {
+	function handleVisibility(visible, guid) {
 		return db.posts.update({ guid }, { $set: { visible } })
 	}
 
@@ -79,7 +79,7 @@ module.exports = function(__dirname) {
 	 * Upload Handling
 	 **/
 
-	const uploadPost = (guid, body, author) => {
+	function uploadPost(guid, body, author) {
 		if (body.tags.length === 0 && body.title.match(/^\s*$/) && body.content.match(/^\s*$/) && guid) {
 			return db.posts.remove({ guid })
 		}
