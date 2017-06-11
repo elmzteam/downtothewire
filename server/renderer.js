@@ -8,10 +8,9 @@ const logger          = require("./logger")
 // const denodeify       = require("denodeify")
 const routes          = require("./routes")
 const utils           = require("./utils")
-
 const fs              = utils.fs
 
-// const RENDER_ROOT_STR = "@"
+const RENDER_ROOT_STR = "@"
 
 const pathjoin = path.join
 
@@ -183,7 +182,7 @@ module.exports = class Renderer {
 
 	// Converts a path to its location in the cache
 	getCachePath(path) {
-		return pathjoin(this.RENDER_DIR, `@${path.replace(/\/$/, "").replace(/\//g, ".")}`)
+		return pathjoin(this.RENDER_DIR, RENDER_ROOT_STR + path.replace(/[/\\]$/, "").replace(/[/\\]/g, "."))
 	}
 
 	// Sends a 404
