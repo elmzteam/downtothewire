@@ -1,4 +1,6 @@
 /* eslint global-require: off */
+"use strict"
+
 module.exports = function(__dirname) {
 	/**
 	 * Imports and Initializations

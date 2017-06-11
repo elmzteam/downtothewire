@@ -1,4 +1,3 @@
-"use strict"
 /* global $:false, ace:false, localforage: false */
 
 let editor = null

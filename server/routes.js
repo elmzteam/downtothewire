@@ -1,3 +1,4 @@
+"use strict"
 // const _fs       = require("fs")
 // const denodeify = require("denodeify")
 const config    = require("../config")

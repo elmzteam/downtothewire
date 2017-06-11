@@ -1,3 +1,4 @@
+"use strict"
 // const handlebars = require("handlebars")
 /* eslint camelcase: off, global-require: off, comma-dangle: [error, always] */
 module.exports = {

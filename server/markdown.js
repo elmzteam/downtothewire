@@ -1,5 +1,5 @@
-"use strict"
 /* global escapeHtml:false */
+"use strict"
 
 const markdownIt   = require("markdown-it")
 const logger       = require("./logger")

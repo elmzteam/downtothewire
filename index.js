@@ -1,3 +1,5 @@
+"use strict"
+
 const app    = require("./server/server")
 const config = require("./config")
 const mkdirp = require("mkdirp")

@@ -8,6 +8,10 @@ module.exports = {
 		"func-style": [
 			"error",
 			"expression"
+		],
+		"strict": [
+			"error",
+			"never"
 		]
 	}
 }

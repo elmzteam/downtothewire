@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict"
+
 const mongojs = require("mongojs")
 const db      = mongojs("mongodb://localhost/bydesign", ["authors", "posts"])
 const fs      = require("fs")

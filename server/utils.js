@@ -1,3 +1,4 @@
+"use strict"
 // Probably should move more stuff into here
 
 const shortid   = require("shortid")

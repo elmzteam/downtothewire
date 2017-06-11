@@ -40,6 +40,7 @@ module.exports = {
 			"error",
 			{ "functions": false, "classes": true }
 		],
+		"strict": "error",
 		// Style
 		"array-bracket-spacing": [
 			"error",
@@ -92,7 +93,6 @@ module.exports = {
 		"no-useless-constructor": "error",
 		"no-useless-rename": "error",
 		"no-var": "error",
-		"prefer-const": "warn",
 		"prefer-numeric-literals": "error",
 		"prefer-template": "warn",
 		"template-curly-spacing": "error"

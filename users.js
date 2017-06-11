@@ -1,4 +1,5 @@
 /* eslint max-len: off, comma-dangle: [error, always] */
+"use strict"
 module.exports = {
 	"ben": {
 		name: "Ben Zhang",
