@@ -4,11 +4,15 @@
 const mongojs = require("mongojs")
 const db      = mongojs("mongodb://localhost/bydesign", ["authors", "posts"])
 const fs      = require("fs")
+const path    = require("path")
 const utils   = require("../server/utils")
 
-const upgradeFiles = () => {
+const ROOT_DIR = path.join(__dirname, "..")
+const POSTS_DIR = path.join(ROOT_DIR, "posts")
+
+function upgradeFiles() {
 	const promises = []
-	fs.readdir(`${__dirname}/../posts`, (e, data) => {
+	fs.readdir(POSTS_DIR, (e, data) => {
 		if (e) return console.error("Could not upgrade", e)
 		for (const datum of data) {
 			const match = datum.match(/(.*)\.md/)
@@ -23,9 +27,9 @@ const upgradeFiles = () => {
 						resolve()
 						return
 					}
-					fs.rename(`${__dirname}/../posts/${datum}`,
-						`${__dirname}/../posts/${data[0].guid}.md`, () => {
-							console.log(`Renamed ${datum}`)
+					fs.rename(path.join(POSTS_DIR, datum),
+						path.join(POSTS_DIR, `${data[0].guid}.md`), () => {
+							console.log(`Renamed "${datum}" to "${data[0].guid}.md"`)
 							resolve()
 						})
 				})
@@ -38,21 +42,21 @@ const upgradeFiles = () => {
 	})
 }
 
-const upgradeDB = () => {
+function upgradeDB() {
 	const promises = []
-	db.posts.find({}, function(e, data) {
+	db.posts.find({}, (e, data) => {
 		if (e) return console.error("Could not upgrade", e)
 		for (const datum of data) {
 			if (!datum.slug) {
 				datum.slug = utils.slugify(datum.title.text)
 			}
-			(function(datum) {
-				promises.push(new Promise(function(resolve) {
+			((datum) => {
+				promises.push(new Promise((resolve) => {
 					if (datum.guid) return resolve()
-					utils.generateId(db.posts).then(function(id) {
+					utils.generateId(db.posts).then((id) => {
 						datum.guid = id
 						datum.title.url = `/posts/${id}`
-						db.posts.save(datum, function(e, d) {
+						db.posts.save(datum, (e, d) => {
 							console.log("Updating: ", datum.slug)
 							resolve(d)
 						})
@@ -60,9 +64,9 @@ const upgradeDB = () => {
 				}))
 			})(datum)
 		}
-		Promise.all(promises).then(function() {
-			upgradeFiles()
-		}).catch(console.error)
+		Promise.all(promises)
+			.then(() => upgradeFiles())
+			.catch(console.error)
 	})
 }
 
