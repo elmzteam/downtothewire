@@ -59,7 +59,7 @@ module.exports = [
 		context: ([_, __, postId], db) =>
 			db.posts.findOne({ guid: postId })
 				.then((post) => {
-					if (post === undefined) {
+					if (post === null) {
 						return {
 							title: "Editing New Post",
 							admin: true
