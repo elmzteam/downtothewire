@@ -1,6 +1,6 @@
 const mongo   = require("promised-mongo")
 const db      = mongo("mongodb://localhost/bydesign", ["authors", "posts", "metadata", "categories"])
-const console = require("beautiful-log")
+const logger  = require("beautiful-log")
 const config  = require("../config")
 const utils   = require("./utils")
 
@@ -14,13 +14,13 @@ let isLessThan = (desired, upgrader) =>
  *     config file
  */
 let upgradeToOne = (version) => {
-	console.warn(`Upgrading database from version ${version} to 1`)
-	let promises = []
+	logger.warn(`Upgrading database from version ${version} to 1`)
+	let categoryPromises = []
 
 	// Add in a categories table with each of the config's
 	// categories in it
 	for (let category of config.categories) {
-		promises.push(db.categories.insert({
+		categoryPromises.push(db.categories.insert({
 			category: category.name,
 			shortname: category.shortname,
 		}))
@@ -30,15 +30,15 @@ let upgradeToOne = (version) => {
 	// Then return the current version number
 	return db.posts.find({})
 	  .then((posts) => {
-		let promises = []
+		let postPromises = []
 
 		for (let post of posts) {
 			post.category = [config.categories[0].name]
-			promises.push(db.posts.save(post))
+			postPromises.push(db.posts.save(post))
 		}
 
-		return Promise.all(promises)
-	}).then(Promise.all(promises))
+		return Promise.all(postPromises)
+	}).then(Promise.all(catgoryPromises))
 	  .then(() => 1)
 }
 
@@ -59,7 +59,7 @@ let saveVersion = (version) => {
 function upgradeDatabase() {
 	return db.metadata.find({version: {$exists: true}}, {version: true, _id: false})
 	  .then(databaseVersion => {
-		console.log(databaseVersion)
+		logger.log(databaseVersion)
 		if (databaseVersion === [] || !databaseVersion) {
 			return 0
 		}
