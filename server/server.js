@@ -19,7 +19,7 @@ module.exports = function(__dirname) {
 
 	// const insert      = require("./insertPost")(db, config.paths.client)
 	const Renderer    = require("./renderer")
-	const api         = require("./api")(db)
+	const ApiHandler  = require("./api")
 
 	const express     = require("express")
 	const app         = express()
@@ -42,6 +42,7 @@ module.exports = function(__dirname) {
 	const secret      = process.env.PASSPORT_SECRET ? process.env.PASSPORT_SECRET : "testsecret"
 
 	const renderer    = new Renderer(__dirname, db, handlebars)
+	const api         = new ApiHandler(db)
 
 	/**
 	 * Middleware Initialization
@@ -57,8 +58,6 @@ module.exports = function(__dirname) {
 	}))
 	app.use(passport.initialize())
 	app.use(passport.session())
-	app.use(renderer.handle.bind(renderer))
-	app.use(api)
 
 	/**
 	 * Annotations
@@ -121,6 +120,9 @@ module.exports = function(__dirname) {
 
 	app.use(express.static("build"))
 	app.use("/upload", express.static(config.paths.upload))
+
+	app.use(renderer.handle.bind(renderer))
+	app.use(api.handle.bind(api))
 
 	app.post("/visible", requireAdmin((req, res) => {
 		handleVisibility(req.body.state, req.body.page).then(() => {

@@ -27,11 +27,11 @@ const submit = function() {
 
 	$("#status").text("Uploading...")
 
-	const XHR = new XMLHttpRequest()
-	XHR.open("POST", "")
-	XHR.setRequestHeader("Content-Type", "application/json")
+	const xhr = new XMLHttpRequest()
+	xhr.open("POST", "")
+	xhr.setRequestHeader("Content-Type", "application/json")
 
-	XHR.onload = function() {
+	xhr.onload = function() {
 		setTimeout(function(that) {
 			return function() {
 				switch (that.status) {
@@ -55,7 +55,7 @@ const submit = function() {
 		}(this), 200)
 	}
 
-	XHR.send(JSON.stringify({
+	xhr.send(JSON.stringify({
 		content: content,
 		tags: tags,
 		title: title,
@@ -64,19 +64,19 @@ const submit = function() {
 }
 
 const visible = function() {
-	const XHR = new XMLHttpRequest()
-	XHR.open("POST", "/visible")
-	XHR.setRequestHeader("Content-Type", "application/json")
+	const xhr = new XMLHttpRequest()
+	xhr.open("POST", "/visible")
+	xhr.setRequestHeader("Content-Type", "application/json")
 
 	const el = $(this)
-	XHR.onload = function() {
-		const res = JSON.parse(XHR.response)
+	xhr.onload = function() {
+		const res = JSON.parse(xhr.response)
 		el.removeClass("hidden")
 		el.removeClass("visible")
 		el.addClass(res.state)
 		el.attr("visible", res.visible)
 	}
-	XHR.send(JSON.stringify({
+	xhr.send(JSON.stringify({
 		page: el.attr("post"),
 		state: !JSON.parse(el.attr("visible"))
 	}))
@@ -124,16 +124,16 @@ const attachHandles = function() {
 		const form = $("#file-upload")
 		form.off("change")
 		form.on("change", () => {
-			const XHR = new XMLHttpRequest()
-			XHR.open("POST", "/static/")
+			const xhr = new XMLHttpRequest()
+			xhr.open("POST", "/static/")
 			const fData = new FormData(form[0].form)
-			XHR.onload = function() {
-				const out = JSON.parse(XHR.response)
+			xhr.onload = function() {
+				const out = JSON.parse(xhr.response)
 				$(".upload-name")
 					.removeClass("disabled")
 					.text(out.path)
 			}
-			XHR.send(fData)
+			xhr.send(fData)
 		})
 		form.click()
 	})
@@ -169,13 +169,14 @@ const attachHandles = function() {
 	$(".copy-path").click(function(e) {
 		e.stopPropagation()
 		const path = $(this).attr("path")
-		const cb = $("#copy-buffer")
-		cb.text(path)
-		const range = document.createRange()
-		range.selectNode(cb[0])
-		window.getSelection().empty ? window.getSelection().empty() : undefined
-		window.getSelection().removeAllRanges ? window.getSelection().removeAllRanges() : undefined
-		window.getSelection().addRange(range)
+		const $copyBuffer = $("#copy-buffer")
+		$copyBuffer.text(path)
+		let range = document.createRange()
+		range.selectNode($copyBuffer[0])
+		let selection = window.getSelection()
+		selection.empty && window.getSelection().empty()
+		selection.removeAllRanges && window.getSelection().removeAllRanges()
+		selection.addRange(range)
 		document.execCommand("copy")
 		$(this).addClass("copied")
 		$(this).outerWidth()
@@ -193,15 +194,15 @@ const attachHandles = function() {
 		}
 		const path = obj.attr("path")
 
-		const XHR = new XMLHttpRequest()
-		XHR.open("DELETE", path)
-		XHR.onload = function() {
-			if (XHR.status === 200 && XHR.response && JSON.parse(XHR.response).success) {
+		const xhr = new XMLHttpRequest()
+		xhr.open("DELETE", path)
+		xhr.onload = function() {
+			if (xhr.status === 200 && xhr.response && JSON.parse(xhr.response).success) {
 				obj.parent().addClass("deleting")
 				setTimeout(() => obj.parent().remove(), 500)
 			}
 		}
-		XHR.send()
+		xhr.send()
 	})
 }
 
