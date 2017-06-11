@@ -29,17 +29,8 @@ var generateId = function(collection) {
 	return collection.findOne({guid: id}).then((data) => data ? generateId(db) : id);
 }
 
-let isLessThan = (dest, thenable) => (src) => {
-	if (src < dest) {
-		return thenable(src)
-	} else {
-		return src
-	}
-}
-
 module.exports = {
 	slugify: slugify,
 	generateId: generateId,
-	isLessThan: isLessThan,
 	fs: fs,
 }

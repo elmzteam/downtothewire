@@ -4,7 +4,8 @@ const console = require("beautiful-log")
 const config  = require("../config")
 const utils   = require("./utils")
 
-let isLessThan = utils.isLessThan
+let isLessThan = (desired, upgrader) => 
+  version => version <= desired ? upgrader() : version
 
 /* 
  * upgradeToOne: Version 1 adds categories to the database
@@ -32,7 +33,7 @@ let upgradeToOne = (version) => {
 		let promises = []
 
 		for (let post of posts) {
-			post.category = config.categories[0].name
+			post.category = [config.categories[0].name]
 			promises.push(db.posts.save(post))
 		}
 
@@ -50,7 +51,7 @@ let saveVersion = (version) => {
 }
 
 /*
- * upgradeDatabase: Get's the current database version
+ * upgradeDatabase: Gets the current database version
  *      and then checks to see which updates need to be
  *      applied, and applies them sequentially.
  *      Returns a promise for when it's finished.
