@@ -1,15 +1,16 @@
-var _fs       = require("fs")
-let denodeify = require("denodeify")
-let config    = require("../config")
-let users     = require("../users")
-let fs        = require("./utils").fs
-let path      = require("path")
-let RSS       = require("rss")
-let md        = require("./markdown")
+"use strict"
+// const _fs       = require("fs")
+// const denodeify = require("denodeify")
+const config    = require("../config")
+const users     = require("../users")
+const fs        = require("./utils").fs
+const path      = require("path")
+const RSS       = require("rss")
+const md        = require("./markdown")
 
 module.exports = [
 	{
-		path:/^\/$/,
+		path: /^\/$/,
 		page: "page.hbs",
 		cache: true,
 		prerender: ["/"],
@@ -17,29 +18,27 @@ module.exports = [
 			aggregatePublic(db, { $sort: { timestamp: -1 } }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
-					posts.forEach((post) => post.short = true);
+					posts.forEach((post) => post.short = true)
 					return db.posts.count()
 						.then((count) => ({
 							title: "",
 							posts,
-							pagination: {
-								right: count > 5 ? "/archive/2" : undefined
-							}
+							pagination: { right: count > 5 ? "/archive/2" : undefined }
 						}))
 				})
 				.then(fillDefaultSidebar(db))
 	},
 	{
-		path:/^\/archive\/([1-9][0-9]*)$/,
+		path: /^\/archive\/([1-9][0-9]*)$/,
 		page: "page.hbs",
 		cache: true,
 		prerender: range(5).map((i) => `/archive/${i + 1}`),
 		context: ([_, pageNumber], db) => {
-			pageNumber = parseInt(pageNumber);
+			pageNumber = parseInt(pageNumber)
 			return aggregatePublic(db, { $sort: { timestamp: -1 } }, { $skip: (pageNumber - 1) * 5 }, { $limit: 5 })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
-					posts.forEach((post) => post.short = true);
+					posts.forEach((post) => post.short = true)
 					return db.posts.count()
 						.then((count) => ({
 							title: "",
@@ -54,39 +53,37 @@ module.exports = [
 		}
 	},
 	{
-		path:/^\/editor(\/([0-9a-zA-Z_-]{7,14}))?$/,
+		path: /^\/editor(\/([0-9a-zA-Z_-]{7,14}))?$/,
 		page: "editor.hbs",
 		cache: false,
 		context: ([_, __, postId], db) =>
 			db.posts.findOne({ guid: postId })
 				.then((post) => {
-					if (post != undefined) {
+					if (post === null) {
 						return {
-							title: `Editing "${post.title}"`,
-							post,
+							title: "Editing New Post",
 							admin: true
 						}
 					} else {
 						return {
-							title: `Editing New Post`,
+							title: `Editing "${post.title}"`,
+							post,
 							admin: true
 						}
 					}
 				})
 	},
 	{
-		path:/^\/tag\/([a-z0-9\-]{1,16})$/,
+		path: /^\/tag\/([-a-z0-9]{1,16})$/,
 		page: "page.hbs",
 		cache: true,
-		prerender: (db) => {
-			return db.posts.distinct("tags", {})
-				.then((tags) => tags.map((tag) => `/tag/${tag}`))
-		},
+		prerender: (db) => db.posts.distinct("tags", {})
+			.then((tags) => tags.map((tag) => `/tag/${tag}`)),
 		context: ([_, tag], db) =>
 			aggregatePublic(db, { $match: { tags: tag } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
-					posts.forEach((post) => post.short = true);
+					posts.forEach((post) => post.short = true)
 					return {
 						title: `Tagged "${tag}"`,
 						posts: posts,
@@ -94,7 +91,7 @@ module.exports = [
 							type: "tag",
 							tag: tag
 						}
-					};
+					}
 				})
 				.then(fillDefaultSidebar(db))
 	},
@@ -107,7 +104,7 @@ module.exports = [
 			aggregatePublic(db, { $match: { author: users[author].gid } }, { $sort: { timestamp: -1 } })
 				.then(fillAuthorInfo(db))
 				.then((posts) => {
-					posts.forEach((post) => post.short = true);
+					posts.forEach((post) => post.short = true)
 					return {
 						title: `Posts by ${users[author].name}`,
 						posts: posts,
@@ -115,54 +112,50 @@ module.exports = [
 							type: "author",
 							author: users[author]
 						}
-					};
+					}
 				})
 				.then(fillDefaultSidebar(db))
 	},
 	{
-		path:/^\/posts\/([0-9a-zA-Z_-]{7,14})$/,
+		path: /^\/posts\/([0-9a-zA-Z_-]{7,14})$/,
 		page: "page.hbs",
 		cache: true,
-		prerender: (db) => {
-			return db.posts.find({})
-				.then((posts) => posts.map((post) => `/posts/${post.guid}`));
-		},
+		prerender: (db) => db.posts.find({})
+			.then((posts) => posts.map((post) => `/posts/${post.guid}`)),
 		context: ([_, postId], db) =>
 			db.posts.findOne({ guid: postId })
 				.then(fillAuthorInfo(db))
 				.then((post) => ({
-						title: post.title.text,
-						posts: [post]
-					}))
+					title: post.title.text,
+					posts: [post]
+				}))
 	},
 	{
-		path:/^\/preview\/([0-9a-zA-Z_-]{7,14})$/,
+		path: /^\/preview\/([0-9a-zA-Z_-]{7,14})$/,
 		page: "page.hbs",
 		cache: false,
 		context: ([_, postId], db) =>
 			db.posts.findOne({ guid: postId })
 				.then(fillAuthorInfo(db))
 				.then((post) => {
-					post.hideComments = true;
+					post.hideComments = true
 					return {
 						title: post.title.text,
 						posts: [post]
-					};
+					}
 				})
 	},
 	{
-		path:/^\/raw\/([0-9a-zA-Z_-]{7,14})$/,
+		path: /^\/raw\/([0-9a-zA-Z_-]{7,14})$/,
 		page: "raw.hbs",
 		cache: true,
-		prerender: (db) => {
-			return db.posts.find({})
-				.then((posts) => posts.map((post) => `/raw/${post.guid}`));
-		},
+		prerender: (db) => db.posts.find({})
+			.then((posts) => posts.map((post) => `/raw/${post.guid}`)),
 		context: ([_, postId], db) =>
 			db.posts.findOne({ guid: postId })
 	},
 	{
-		path:/^\/files\/?/,
+		path: /^\/files\/?/,
 		page: "files.hbs",
 		cache: false,
 		context: (_, db) =>
@@ -176,7 +169,7 @@ module.exports = [
 
 	},
 	{
-		path:/^\/admin\/?$/,
+		path: /^\/admin\/?$/,
 		page: "admin.hbs",
 		cache: false,
 		context: (_, db) =>
@@ -188,101 +181,99 @@ module.exports = [
 				}))
 	},
 	{
-		path:/^\/rss\/?$/,
+		path: /^\/rss\/?$/,
 		page: "rss.hbs",
 		cache: true,
 		mime: "application/xml",
 		prerender: ["/rss"],
 		context: (_, db) =>
-			aggregatePublic(db, {$sort: {timestamp: -1}}, {$limit: 20})
+			aggregatePublic(db, { $sort: { timestamp: -1 } }, { $limit: 20 })
 				.then(fillAuthorInfo(db))
 				.then(buildSyndicate(db))
 	},
 	{
-		path:/^\/contact\/?$/,
+		path: /^\/contact\/?$/,
 		page: "contact.hbs",
 		cache: true,
 		prerender: ["/contact"],
 		context: { users }
 	},
 	{
-		path:/^\/about\/?$/,
+		path: /^\/about\/?$/,
 		page: "about.hbs",
 		cache: true,
 		prerender: ["/about"],
 		context: { users }
 	},
 	{
-		path:/^\/404$/,
+		path: /^\/404$/,
 		page: "not-found.hbs",
 		cache: true,
 		prerender: ["/404"],
-		context: {
-			fourohfour: true
-		}
+		context: { fourohfour: true }
 	},
 	{
-		path:/^\/manifest.json$/,
+		path: /^\/manifest.json$/,
 		page: "manifest.json",
 		cache: true,
 		prerender: ["/manifest.json"]
 	}
-];
+]
 
 function fillAuthorInfo(db) {
 	return (posts) => {
 		if (Array.isArray(posts)) {
 			return Promise.all(posts.map((post) => db.authors.findOne({ id: post.author })))
 				.then((authors) => {
-					posts.forEach((post, i) => post.author = authors[i]._json);
-					return posts;
-				});
+					posts.forEach((post, i) => post.author = authors[i]._json)
+					return posts
+				})
 		} else {
 			return db.authors.findOne({ id: posts.author })
 				.then((author) => {
-					posts.author = author._json;
-					return posts;
-				});
+					posts.author = author._json
+					return posts
+				})
 		}
 	}
 }
 
-function buildSyndicate(db, num=20) {
+function buildSyndicate() {
 	return (posts) => {
-		var feed = new RSS(config.rssInfo)		
-			
-		for(var i = 0; i < posts.length; i++){		
-			feed.item({		
-				title: posts[i].title.text,		
-				description: md.render(posts[i].content),		
-				url: config.rssInfo.site_url + posts[i].title.url,		
-				guid: posts[i].guid,		
-				categories: posts[i].tags,		
-				author: posts[i].author.displayName,		
-				date: posts[i].timestamp		
-			})		
-		}		
-				
-		return {rss: feed.xml()}	
+		const feed = new RSS(config.rssInfo)
+
+		for (let i = 0; i < posts.length; i++) {
+			feed.item({
+				title: posts[i].title.text,
+				description: md.render(posts[i].content),
+				url: config.rssInfo.site_url + posts[i].title.url,
+				guid: posts[i].guid,
+				categories: posts[i].tags,
+				author: posts[i].author.displayName,
+				date: posts[i].timestamp
+			})
+		}
+
+		return { rss: feed.xml() }
 	}
 
 }
 
 function aggregatePosts(db, ...pipeline) {
-	return db.posts.aggregate(...pipeline);
+	return db.posts.aggregate(...pipeline)
 }
 
 function aggregatePublic(db, ...pipeline) {
-	return aggregatePosts(db, {$match: { visible: true }}, ...pipeline);
+	return aggregatePosts(db, { $match: { visible: true } }, ...pipeline)
 }
 
 function range(a, b) {
 	if (b === undefined) {
-		b = a;
-		a = 0;
+		b = a
+		a = 0
 	}
 
-	return Array.from(new Array(b - a), (_, i) => i);
+	return Array.from(new Array(b - a), (_, i) => i)
 }
 
 function fillDefaultSidebar(db) {
@@ -300,40 +291,40 @@ function fillDefaultSidebar(db) {
 						type: "tags",
 						tags
 					}
-				];
-				return context;
+				]
+				return context
 			})
 }
 
-var getStats = (base) => (file) =>
-	fs.stat(path.join(base, file)).then( (stats) => ({
+const getStats = (base) => (file) =>
+	fs.stat(path.join(base, file)).then((stats) => ({
 		file: file,
-		stats: stats,
+		stats: stats
 	}))
 
 
-function findFiles(db) {
+function findFiles() {
 	return (context) => {
-		let base = path.join(__dirname, "..", config.paths.upload)
+		const base = path.join(__dirname, "..", config.paths.upload)
 		return fs.readdir(base)
-		.then( (files) => Promise.all(files.map(getStats(base))))
-		.then( (files) => {
-			files = files.sort( (a, b) => {
-				if (b.stats.birthtime > a.stats.birthtime) return  1
-				if (a.stats.birthtime > b.stats.birthtime) return -1
-				return 0
+			.then((files) => Promise.all(files.map(getStats(base))))
+			.then((files) => {
+				files = files.sort((a, b) => {
+					if (b.stats.birthtime > a.stats.birthtime) return 1
+					if (a.stats.birthtime > b.stats.birthtime) return -1
+					return 0
+				})
+				context.files = files.map((f) => ({
+					path: path.join("/upload/", f.file),
+					delete: path.join("/static/", f.file),
+					name: f.file.split("-").splice(1).join("-")
+				}))
+				context.files.unshift({
+					path: "/upload/{{file}}",
+					delete: "/static/{{file}}",
+					name: "{{short-file}}"
+				})
+				return context
 			})
-			context.files = files.map( (f) => {return {
-				path: path.join("/upload/", f.file),
-				delete: path.join("/static/", f.file),
-				name: f.file.split("-").splice(1).join("-")
-			}})
-			context.files.unshift({
-				path: "/upload/{{file}}",
-				delete: "/static/{{file}}",
-				name: "{{short-file}}",
-			})
-			return context
-		})
 	}
 }

@@ -1,39 +1,40 @@
-"use strict";
+"use strict"
 
-var sprintf     = require("sprintf")
-var moment      = require("moment")
-var path        = require("path")
-var fs          = require("fs")
-var config      = require("../config")
-var logger      = require("./logger")
-var md          = require("./markdown")
+const sprintf = require("sprintf")
+const moment = require("moment")
+// const path = require("path")
+// const fs = require("fs")
+// const config = require("../config")
+// const logger = require("./logger")
+const md = require("./markdown")
 
-var POST_BREAK_REGEX = /\n\^{3,}\n/;
+const POST_BREAK_REGEX = /\n\^{3,}\n/
 
-module.exports = function(handlebars, root) {
-	handlebars.registerHelper("noop", function(options) {
-		return ""
-	})
+module.exports = function(handlebars) {
+	handlebars.registerHelper("noop", () => "")
 
 	/**
-		* Helper Functions
-	**/
+	 * Helper Functions
+	 **/
 
 	//String Manipulation Methods
-	function djb2(str){
-		var hash = 0xc0ffee
-		for (var i = 0; i < str.length; i++) {
+	function djb2(str) {
+		let hash = 0xc0ffee
+		for (let i = 0; i < str.length; i++) {
 			hash = ((hash << 5) + hash) + str.charCodeAt(i) /* hash * 33 + c */
 		}
 		return hash
 	}
 
 	function hashStringToColor(str) {
-		var hash = djb2(str)
-		var r = (hash & 0xFF0000) >> 16
-		var g = (hash & 0x00FF00) >> 8
-		var b = hash & 0x0000FF
-		return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2)
+		const hash = djb2(str)
+		const rgb = [
+			(hash & 0xFF0000) >> 16,
+			(hash & 0x00FF00) >> 8,
+			hash & 0x0000FF
+		]
+		return rgb.map((color) => (`0${color.toString(16)}`).substr(-2))
+			.reduce((acc, hex) => acc + hex, "#")
 	}
 
 	//String Manipulation Helpers
@@ -41,23 +42,28 @@ module.exports = function(handlebars, root) {
 		return new handlebars.SafeString(moment(time).format("MMMM Do, YYYY"))
 	})
 
-	handlebars.registerHelper("tag", function(tag, options) {
+	handlebars.registerHelper("tag", function(tag) {
 		return new handlebars.SafeString(
-			sprintf("<a class='tag' href='/tag/%s' style='background-color: %s;'>%s</a>", tag, hashStringToColor(tag), tag)
+			sprintf(
+				"<a class='tag' href='/tag/%s' style='background-color: %s;'>%s</a>",
+				tag,
+				hashStringToColor(tag),
+				tag
+			)
 		)
 	})
 
 	handlebars.registerHelper("markdown", function(content) {
-		return new handlebars.SafeString(md.render(content));
-	});
+		return new handlebars.SafeString(md.render(content))
+	})
 
 	handlebars.registerHelper("short", function(content) {
-		return content.split(POST_BREAK_REGEX)[0];
-	});
+		return content.split(POST_BREAK_REGEX)[0]
+	})
 
 	handlebars.registerHelper("full", function(content) {
-		return content.replace(POST_BREAK_REGEX, "");
-	});
+		return content.replace(POST_BREAK_REGEX, "")
+	})
 
 	//Handlebars Utilities
 	handlebars.registerHelper("and", function(b1, b2) {
@@ -74,10 +80,10 @@ module.exports = function(handlebars, root) {
 	})
 
 	handlebars.registerHelper("log", function(val) {
+		// eslint-disable-next-line no-console
 		console.log(val)
 		return ""
 	})
-
 
 
 	return handlebars

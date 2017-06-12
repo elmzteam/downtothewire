@@ -1,6 +1,8 @@
-var app		= require("./server/server")
-var config	= require("./config")
-var mkdirp	= require("mkdirp")
+"use strict"
+
+const app    = require("./server/server")
+const config = require("./config")
+const mkdirp = require("mkdirp")
 
 // Make sure the render directory exists
 mkdirp(config.paths.render)

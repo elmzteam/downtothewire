@@ -1,27 +1,28 @@
 #!/usr/bin/env node
+"use strict"
 
-let denodeify = require("denodeify");
-let _fs       = require("fs");
-let path      = require("path");
-let pm        = require("promised-mongo");
+const denodeify = require("denodeify")
+const _fs       = require("fs")
+const path      = require("path")
+const pm        = require("promised-mongo")
 
-let db        = pm("mongodb://localhost/bydesign", ["authors", "posts"]);
+const db        = pm("mongodb://localhost/bydesign", ["authors", "posts"])
+const fs = { readFile: denodeify(_fs.readFile) }
 
-const fs = {
-	readFile: denodeify(_fs.readFile)
-};
+const ROOT_DIR = path.join(__dirname, "..")
+const POSTS_DIR = path.join(ROOT_DIR, "posts")
 
-console.log("Starting...");
+console.log("Starting...")
 
 db.posts.find({})
 	.then((posts) =>
 		Promise.all(posts.map((post) => {
-			console.log(`Reading ${post.title.text}...`);
-			return fs.readFile(path.join(__dirname, `../posts/${post.guid}.md`))
+			console.log(`Reading ${post.title.text}...`)
+			return fs.readFile(path.join(POSTS_DIR, `${post.guid}.md`))
 				.then((content) => {
-					console.log(`Updating ${post.title.text}.`);
-					return db.posts.update({ guid: post.guid }, { $set: { content: content.toString() } });
+					console.log(`Updating ${post.title.text}.`)
+					return db.posts.update({ guid: post.guid }, { $set: { content: content.toString() } })
 				})
 		})))
 	.then(() => process.exit(0))
-	.catch((e) => console.error(e));
+	.catch((e) => console.error(e))

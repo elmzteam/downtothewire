@@ -84,3 +84,6 @@ data
 # Upload Info
 upload
 .init
+
+# ESLint cache
+.eslintcache
