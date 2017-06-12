@@ -34,7 +34,6 @@ module.exports = {
 		],
 		"no-alert": "error",
 		"no-eval": "error",
-		"no-useless-escape": "error",
 		"no-useless-return": "error",
 		"no-use-before-define": [
 			"error",

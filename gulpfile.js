@@ -3,12 +3,11 @@
 const SRC     = "client"
 const BUILD   = "build"
 
-const es2015  = require("babel-preset-es2015")
 const gulp    = require("gulp")
 const path    = require("path")
 const $       = require("gulp-load-plugins")()
 
-gulp.task("watch", function() {
+gulp.task("watch", ["build"], function() {
 	gulp.watch(path.join(SRC, "scss/**/*"), ["sass"])
 	gulp.watch(path.join(SRC, "js/**/*"), ["js"])
 	gulp.watch(path.join(SRC, "images/**/*"), ["images"])
@@ -29,7 +28,7 @@ gulp.task("sass", function() {
 
 gulp.task("js", function() {
 	return gulp.src(path.join(SRC, "js/*.*"))
-		.pipe($.babel({ presets: [es2015] }))
+		.pipe($.babel({ presets: ["es2015"] }))
 		.pipe($.uglify())
 		.pipe(gulp.dest(path.join(BUILD, "js")))
 })
