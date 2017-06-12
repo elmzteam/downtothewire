@@ -4,8 +4,8 @@ const logger  = require("beautiful-log")
 const config  = require("../config")
 const utils   = require("./utils")
 
-let isLessThan = (desired, upgrader) => 
-  version => version <= desired ? upgrader() : version
+let isLessThan = (desired, upgrader) => (version) => 
+	(version <= desired ? upgrader() : version)
 
 /* 
  * upgradeToOne: Version 1 adds categories to the database
@@ -38,7 +38,7 @@ let upgradeToOne = (version) => {
 		}
 
 		return Promise.all(postPromises)
-	}).then(Promise.all(catgoryPromises))
+	}).then(Promise.all(categoryPromises))
 	  .then(() => 1)
 }
 
@@ -59,7 +59,6 @@ let saveVersion = (version) => {
 function upgradeDatabase() {
 	return db.metadata.find({version: {$exists: true}}, {version: true, _id: false})
 	  .then(databaseVersion => {
-		logger.log(databaseVersion)
 		if (databaseVersion === [] || !databaseVersion) {
 			return 0
 		}

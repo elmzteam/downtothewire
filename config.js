@@ -26,7 +26,7 @@ module.exports = {
 		templates: "client/hbs",
 		upload: "upload"
 	},
-	categories:[
+	categories: [
 		{
 			name: "Technology",
 			shortname: "Tech",
