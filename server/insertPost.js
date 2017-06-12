@@ -1,34 +1,18 @@
 #!/usr/bin/env node
 "use strict"
 
-const fs       = require("fs")
-const path     = require("path")
-const config   = require("../config")
+const fs        = require("fs")
+const denodeify = require("denodeify")
+const path      = require("path")
+const config    = require("../config")
 // const shortid  = require("shortid")
 // const utils    = require("./utils")
 const logger   = require("./logger")
 
-let prompt
+let prompt = undefined
 const globals = {}
 globals.coll = undefined
 globals.path = undefined
-
-function denodeify(fn, args, alt, th) {
-	return new Promise(function(resolve, reject) {
-		args[args.length] = (function(err, data) {
-			if (err) {
-				reject(err || "No Data")
-			} else {
-				resolve(alt ? alt(data) : data)
-			}
-		})
-		try {
-			fn.apply(th, args)
-		} catch (e) {
-			reject(e)
-		}
-	})
-}
 
 function fetchData() {
 	return denodeify(prompt.get, [["author", "title", "tags", "content"]])
