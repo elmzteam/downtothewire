@@ -84,3 +84,5 @@ data
 # Upload Info
 upload
 .init
+
+*.swp
