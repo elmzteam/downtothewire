@@ -124,7 +124,7 @@ module.exports = [
 		page: "page.hbs",
 		cache: true,
 		prerender: (db) => {
-			return db.posts.find({})
+			return db.posts.find({}).toArray()
 				.then((posts) => posts.map((post) => `/posts/${post.guid}`));
 		},
 		context: ([_, postId], db) =>
@@ -155,7 +155,7 @@ module.exports = [
 		page: "raw.hbs",
 		cache: true,
 		prerender: (db) => {
-			return db.posts.find({})
+			return db.posts.find({}).toArray()
 				.then((posts) => posts.map((post) => `/raw/${post.guid}`));
 		},
 		context: ([_, postId], db) =>
@@ -269,7 +269,10 @@ function buildSyndicate(db, num=20) {
 }
 
 function aggregatePosts(db, ...pipeline) {
-	return db.posts.aggregate(...pipeline);
+	return db.posts.aggregate({
+		pipeline,
+		cursor: {},
+	}).toArray();
 }
 
 function aggregatePublic(db, ...pipeline) {

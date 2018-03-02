@@ -3,43 +3,56 @@ module.exports = function(__dirname) {
 	  * Imports and Initializations
 	**/
 
-	var crypto      = require("crypto")
-	var path        = require("path")
-	var config      = require("../config")
-	var utils       = require("./utils")
+	let crypto      = require("crypto")
+	let path        = require("path")
+	let config      = require("../config")
+	let utils       = require("./utils")
 
-	var pm          = require("promised-mongo")
-	var db          = pm("mongodb://localhost/bydesign", ["authors", "posts"])
+	let mongodb     = require("mongodb").MongoClient
+	let dbs         = ["authors", "posts"]
+	let mongoUri    = "mongodb://localhost:27017"
+	let db          = {}
 
-	var handlebars  = require("handlebars")
+	let handlebars  = require("handlebars")
 	    handlebars  = require("./stachehelper")(handlebars, config.paths.client)
 
-	var insert      = require("./insertPost")(db, config.paths.client)
-	var Renderer    = require("./renderer")
-	var api         = require("./api")(db)
+	let insert      = require("./insertPost")(db, config.paths.client)
+	let Renderer    = require("./renderer")
+	let api         = require("./api")(db)
 
-	var express     = require("express")
-	var app         = express()
+	let express     = require("express")
+	let app         = express()
 
-	var cookie      = require("cookie-parser")
-	var body        = require("body-parser")
-	var multer      = require("multer")
+	let cookie      = require("cookie-parser")
+	let body        = require("body-parser")
+	let multer      = require("multer")
 	/** Won't work on windows probably **/
-	var upload      = multer({dest: '/tmp/'})
-	var session     = require("express-session")
-	var MongoStore  = require("connect-mongo")(session)
+	let upload      = multer({dest: '/tmp/'})
+	let session     = require("express-session")
+	let MongoStore  = require("connect-mongo")(session)
 
-	var Google      = require('passport-google-oauth').OAuth2Strategy
-	var passport    = require("passport")
+	let Google      = require('passport-google-oauth').OAuth2Strategy
+	let passport    = require("passport")
 
-	var logger      = require("./logger")
-	var morgan      = require("morgan")
-	var utils       = require("./utils")
-	var fs          = utils.fs
+	let logger      = require("./logger")
+	let morgan      = require("morgan");
+	let fs          = utils.fs
 
-	var secret      = process.env.PASSPORT_SECRET ? process.env.PASSPORT_SECRET : "testsecret"
+	let secret      = process.env.PASSPORT_SECRET ? process.env.PASSPORT_SECRET : "testsecret"
 
-	var renderer = new Renderer(__dirname, db, handlebars);
+	let renderer    = new Renderer(__dirname, db, handlebars);
+
+	let isReady     = new Promise((resolve, reject) => {
+		mongodb.connect(mongoUri, (err, client) => {
+			if (err) return reject(err)
+			
+			let database = client.db("bydesign")
+			for (let dbname of dbs) {
+				db[dbname] = database.collection(dbname);
+			}
+			resolve(db);
+		})
+	})
 
 	/**
 	  * Middleware Initialization
@@ -265,7 +278,7 @@ module.exports = function(__dirname) {
 	  * Start Server
 	**/
 
-	app.listen(3000)
+	isReady.then(() => app.listen(3000))
 
 	return app
 }

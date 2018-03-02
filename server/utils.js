@@ -1,20 +1,20 @@
 //Probably should move more stuff into here
 
-var shortid   = require("shortid")
-var logger    = require("./logger")
-var denodeify = require("denodeify")
-var _fs       = require("fs")
+let shortid       = require("shortid")
+let logger        = require("./logger")
+let _fs           = require("fs")
+let { promisify } = require("util")
 
 const fs = {
-	mkdir: denodeify(_fs.mkdir),
-	readdir: denodeify(_fs.readdir),
-	readFile: denodeify(_fs.readFile),
-	rmdir: denodeify(_fs.rmdir),
-	unlink: denodeify(_fs.unlink),
-	writeFile: denodeify(_fs.writeFile),
-	rename: denodeify(_fs.rename),
-	realpath: denodeify(_fs.realpath),
-	stat: denodeify(_fs.stat),
+	mkdir: promisify(_fs.mkdir),
+	readdir: promisify(_fs.readdir),
+	readFile: promisify(_fs.readFile),
+	rmdir: promisify(_fs.rmdir),
+	unlink: promisify(_fs.unlink),
+	writeFile: promisify(_fs.writeFile),
+	rename: promisify(_fs.rename),
+	realpath: promisify(_fs.realpath),
+	stat: promisify(_fs.stat),
 }
 
 var slugify = function(str) {
@@ -29,8 +29,9 @@ var generateId = function(collection) {
 	return collection.findOne({guid: id}).then((data) => data ? generateId(db) : id);
 }
 
+
 module.exports = {
-	slugify: slugify,
-	generateId: generateId,
-	fs: fs,
+	slugify,
+	generateId,
+	fs,
 }
