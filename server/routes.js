@@ -269,8 +269,7 @@ function buildSyndicate(db, num=20) {
 }
 
 function aggregatePosts(db, ...pipeline) {
-	return db.posts.aggregate({
-		pipeline,
+	return db.posts.aggregate(pipeline, {
 		cursor: {},
 	}).toArray();
 }
