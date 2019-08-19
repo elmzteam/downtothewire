@@ -29,8 +29,8 @@ module.exports = class Renderer {
 
 	// Express middleware handler
 	handle(req, res, next) {
-		logger.info(`Querying renderer for ${req.originalUrl}`);
-		let route = routes.find((route) => route.path.test(req.originalUrl));
+		logger.info(`Querying renderer for ${req.path}`);
+		let route = routes.find((route) => route.path.test(req.path));
 
 		if (req.method !== "GET" || route === undefined) {
 			logger.warn(`Exiting renderer`);
@@ -38,7 +38,7 @@ module.exports = class Renderer {
 			return;
 		}
 
-		this.renderPath(req.originalUrl, res, req.user);
+		this.renderPath(req.path, res, req.user);
 	}
 
 	// Clears the render cache, reloads all templates, and prerenders
