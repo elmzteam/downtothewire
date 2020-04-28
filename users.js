@@ -18,7 +18,7 @@ module.exports = {
 		name: "David Lanman",
 		handle: "david",
 		gid: "116292267178665003696",
-		bio: "<b>David</b> is a student at the University of Washington and a Software Development Intern at <a href='https://www.peachd.com'>Peach</a>. He wastes far too much time trying to get good at an illegal mod for a party game, and lets Stack Overflow do his coding for him.",
+		bio: "<b>David</b> is Software Developer at <a href='https://hitch.works'>Hitch</a> and a graduate of the Univerity of Washington. He likes Bowser and definitely doesn't stress too much before running a D&D session. His bio gets to be more up-to-date than most everyone else's for a while.",
 		fid: "david.lanman.3",
 	},
 	"ellis": {
