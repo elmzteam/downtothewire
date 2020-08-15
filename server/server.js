@@ -45,7 +45,7 @@ module.exports = function(__dirname) {
 	let isReady     = new Promise((resolve, reject) => {
 		mongodb.connect(mongoUri, (err, client) => {
 			if (err) return reject(err)
-			
+
 			let database = client.db("bydesign")
 			for (let dbname of dbs) {
 				db[dbname] = database.collection(dbname);
@@ -59,6 +59,10 @@ module.exports = function(__dirname) {
 	**/
 
 	app.use(morgan("dev"))
+
+	app.use(express.static("build"))
+	app.use("/upload", express.static(config.paths.upload))
+
 	app.use(cookie())
 	app.use(body.json())
 	app.use(session({ secret: secret, store: new MongoStore({
@@ -74,7 +78,7 @@ module.exports = function(__dirname) {
 
 	/**
 	  * Annotations
-	**/ 
+	**/
 
 	var requireAdmin = (fn) =>
 		(req, res) => {
@@ -89,10 +93,6 @@ module.exports = function(__dirname) {
 	/**
 	  * App routing
 	**/
-
-	app.use(express.static("build"))
-	app.use("/upload", express.static(config.paths.upload))
-
 	app.post("/visible", requireAdmin(function(req, res) {
 		handleVisibility(req.body.state, req.body.page).
 			then(function() {
@@ -122,8 +122,8 @@ module.exports = function(__dirname) {
 		// No directory traversals in my house
 		sluggedFile = sluggedFile.replace(/\.(\.)+/g, "")
 		let prefixName = `${hash}-${sluggedFile}`
-		fs.rename(req.file.path, path.join(__dirname, config.paths.upload, prefixName)) 
-			.then( () => res.send({path: path.join("/upload/", prefixName), 
+		fs.rename(req.file.path, path.join(__dirname, config.paths.upload, prefixName))
+			.then( () => res.send({path: path.join("/upload/", prefixName),
 		        	file: prefixName,
 		        	shortFile: sluggedFile
 			})).catch( (e) => {
