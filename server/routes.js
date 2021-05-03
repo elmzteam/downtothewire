@@ -62,7 +62,7 @@ module.exports = [
 				.then((post) => {
 					if (post != undefined) {
 						return {
-							title: `Editing "${post.title}"`,
+							title: `Editing "${post.title.text}"`,
 							post,
 							admin: true
 						}
@@ -130,10 +130,13 @@ module.exports = [
 		context: ([_, postId], db) =>
 			db.posts.findOne({ guid: postId })
 				.then(fillAuthorInfo(db))
-				.then((post) => ({
+				.then((post) => {
+					post.hideComments = true;
+					return {
 						title: post.title.text,
 						posts: [post]
-					}))
+					};
+				})
 	},
 	{
 		path:/^\/preview\/([0-9a-zA-Z_-]{7,14})$/,
@@ -249,21 +252,21 @@ function fillAuthorInfo(db) {
 
 function buildSyndicate(db, num=20) {
 	return (posts) => {
-		var feed = new RSS(config.rssInfo)		
-			
-		for(var i = 0; i < posts.length; i++){		
-			feed.item({		
-				title: posts[i].title.text,		
-				description: md.render(posts[i].content),		
-				url: config.rssInfo.site_url + posts[i].title.url,		
-				guid: posts[i].guid,		
-				categories: posts[i].tags,		
-				author: posts[i].author.displayName,		
-				date: posts[i].timestamp		
-			})		
-		}		
-				
-		return {rss: feed.xml()}	
+		var feed = new RSS(config.rssInfo)
+
+		for(var i = 0; i < posts.length; i++){
+			feed.item({
+				title: posts[i].title.text,
+				description: md.render(posts[i].content),
+				url: config.rssInfo.site_url + posts[i].title.url,
+				guid: posts[i].guid,
+				categories: posts[i].tags,
+				author: posts[i].author.displayName,
+				date: posts[i].timestamp
+			})
+		}
+
+		return {rss: feed.xml()}
 	}
 
 }
