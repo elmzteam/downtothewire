@@ -1,13 +1,14 @@
 "use strict";
 
-var markdownIt   = require("markdown-it")
-var logger       = require("./logger")
-var highlight    = require("highlight.js")
+const markdownIt   = require("markdown-it")
+const logger       = require("./logger")
+const highlight    = require("highlight.js")
 
-var mdiAnchor    = require("markdown-it-anchor");
-var mdiAttrs     = require("markdown-it-attrs");
-var mdiContainer = require("markdown-it-container");
-var mdiMark      = require("markdown-it-mark");
+const mdiAnchor    = require("markdown-it-anchor");
+const mdiAttrs     = require("markdown-it-attrs");
+const mdiContainer = require("markdown-it-container");
+const mdiMark      = require("markdown-it-mark");
+const mdiToc       = require("markdown-it-table-of-contents");
 
 const LANGS = {
 	"js": "JavaScript",
@@ -68,6 +69,11 @@ md.use(mdiContainer, "aside", {
 		: `</div></aside>`
 });
 md.use(mdiMark);
+md.use(mdiToc, {
+	level: [1, 2],
+	itemClass: "toc-option",
+	containerHeaderHtml: `<div class="toc-header">Table of Contents</div>`,
+});
 
 md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
 	var token = tokens[idx]
