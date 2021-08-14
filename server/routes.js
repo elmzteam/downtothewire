@@ -7,6 +7,8 @@ let path      = require("path")
 let RSS       = require("rss")
 let md        = require("./markdown")
 
+const { parseSummary } = require("./internalScraper")
+
 module.exports = [
 	{
 		path:/^\/$/,
@@ -133,6 +135,7 @@ module.exports = [
 				.then((post) => {
 					post.hideComments = true;
 					return {
+						summary: parseSummary(post.content),
 						title: post.title.text,
 						posts: [post]
 					};
@@ -148,6 +151,7 @@ module.exports = [
 				.then((post) => {
 					post.hideComments = true;
 					return {
+						summary: parseSummary(post.content),
 						title: post.title.text,
 						posts: [post]
 					};
