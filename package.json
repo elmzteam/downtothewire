@@ -38,7 +38,7 @@
     "gulp-uglify": "^1.5.1",
     "handlebars": "^4.0.11",
     "highlight.js": "^9.5.0",
-    "markdown-it": "^6.1.0",
+    "markdown-it": "^12.3.2",
     "markdown-it-anchor": "^2.5.0",
     "markdown-it-attrs": "^0.6.0",
     "markdown-it-container": "^2.0.0",
